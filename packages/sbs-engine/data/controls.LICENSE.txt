@@ -1,0 +1,7 @@
+// SPDX-FileCopyrightText: 2026 HelloMavens LLC (additions)
+// SPDX-FileCopyrightText: Security Benchmark for Salesforce contributors (source content)
+// SPDX-License-Identifier: CC-BY-SA-4.0
+//
+// AUTO-GENERATED — do not edit by hand. Run `pnpm sync:sbs` to regenerate.
+// Source: https://github.com/Salesforce-Security-Benchmark/docs-site
+// Pinned to v0.4.1 (850f3cb2f0da28a9b025e4ad2f89092a4933ae9d).

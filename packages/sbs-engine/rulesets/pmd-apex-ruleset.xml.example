@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 HelloMavens LLC
+  SPDX-License-Identifier: MIT
+
+  PLACEHOLDER PMD APEX RULESET — see TODO.md in this directory.
+
+  HelloMavens does not yet ship a custom PMD ruleset for Apex. When one is
+  authored, it lives here as `pmd-apex-ruleset.xml` and is applied through
+  Salesforce Code Analyzer (NOT a separately bundled PMD CLI):
+
+      sf code-analyzer run \
+        --rule-selector pmd \
+        --custom-pmd-config packages/sbs-engine/rulesets/pmd-apex-ruleset.xml
+
+  This file is intentionally empty so the path exists in the repo and the
+  Phase 5 CLI work has a stable place to point at.
+-->
+<ruleset name="HelloMavens Apex Security Baseline (placeholder)"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+  <description>
+    Placeholder. When HelloMavens authors a real ruleset, it will reference
+    rules from PMD's category/apex/security.xml (e.g. ApexCRUDViolation,
+    ApexSharingViolations, ApexSOQLInjection) and add HelloMavens-tuned
+    thresholds. Each rule will be mapped to the relevant SBS-CODE-* control
+    in the engine's controls.json enrichments.
+  </description>
+
+  <!-- Rules go here when authored. -->
+
+</ruleset>

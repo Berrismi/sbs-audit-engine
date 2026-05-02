@@ -20,14 +20,16 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "test": "vitest run --passWithNoTests",
-    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "sync:sbs": "tsx scripts/sync-sbs.ts"
   },
   "devDependencies": {
-    "tsx": "^4.19.2"
+    "smol-toml": "^1.4.2",
+    "tsx": "^4.19.2",
+    "yaml": "^2.7.0"
   },
   "publishConfig": {
     "access": "public"

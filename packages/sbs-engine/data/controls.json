@@ -1,0 +1,1243 @@
+{
+  "sbs_version": "0.4.1",
+  "upstream_ref": "v0.4.1",
+  "upstream_sha": "850f3cb2f0da28a9b025e4ad2f89092a4933ae9d",
+  "fetched_at": "2026-05-02T22:56:53.208Z",
+  "engine_version": "0.0.0-dev",
+  "controls": [
+    {
+      "id": "SBS-ACS-001",
+      "category": "ACS",
+      "title": "Enforce a Documented Permission Set Model",
+      "control_statement": "All permission sets, permission set groups, and profiles must conform to a documented model maintained in a system of record and enforced continuously.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Define, document, and enforce a standardized permission set model",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-002",
+      "category": "ACS",
+      "title": "Documented Justification for All `API-Enabled` Authorizations",
+      "control_statement": "Every authorization granting the `API Enabled` permission must have documented business or technical justification recorded in a system of record.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "PermissionSetAssignment"
+      },
+      "task_title_template": "Review and justify 'API Enabled' assignment: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-003",
+      "category": "ACS",
+      "title": "Documented Justification for `Approve Uninstalled Connected Apps` Permission",
+      "control_statement": "The `Approve Uninstalled Connected Apps` permission must only be assigned to highly trusted users with documented justification and must not be granted to end-users.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "PermissionSetAssignment"
+      },
+      "task_title_template": "Review and justify 'Approve Uninstalled Connected Apps' assignment: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-004",
+      "category": "ACS",
+      "title": "Documented Justification for All Super Admin–Equivalent Users",
+      "control_statement": "All users with simultaneous `View All Data`, `Modify All Data`, and `Manage Users` permissions must be documented in a system of record with clear business or technical justification.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "User"
+      },
+      "task_title_template": "Document justification for Super Admin-equivalent user: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-005",
+      "category": "ACS",
+      "title": "Only Use Custom Profiles for Active Users",
+      "control_statement": "All active users must be assigned custom profiles. The out-of-the-box standard profiles must not be used.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "Profile"
+      },
+      "task_title_template": "Ensure that {{entity.name}} is not assigned to any users",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-005.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-006",
+      "category": "ACS",
+      "title": "Documented Justification for `Use Any API Client` Permission",
+      "control_statement": "The `Use Any API Client` permission, which bypasses default behavior in orgs with \"API Access Control\" enabled, must only be assigned to highly trusted users with documented justification and must not be granted to end-users.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "inventory"
+      },
+      "task_title_template": "Establish and maintain inventory of 'Use Any API Client' permission assignments with documented justification",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-006.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-007",
+      "category": "ACS",
+      "title": "Maintain Inventory of Non-Human Identities",
+      "control_statement": "Organizations must maintain an authoritative inventory of all non-human identities, including integration users, automation users, bot users, and API-only accounts.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "inventory"
+      },
+      "task_title_template": "Establish and maintain inventory of non-human identities",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-007.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-008",
+      "category": "ACS",
+      "title": "Restrict Broad Privileges for Non-Human Identities",
+      "control_statement": "Non-human identities must not be assigned permissions that bypass sharing rules or grant administrative capabilities unless documented business justification exists.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "User"
+      },
+      "task_title_template": "Document justification for broad privileges on non-human identity: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-008.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-009",
+      "category": "ACS",
+      "title": "Implement Compensating Controls for Privileged Non-Human Identities",
+      "control_statement": "Non-human identities with permissions that bypass sharing rules or grant administrative capabilities must have compensating controls implemented to mitigate risk.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "User"
+      },
+      "task_title_template": "Implement compensating controls for privileged non-human identity: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-009.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-010",
+      "category": "ACS",
+      "title": "Enforce Periodic Access Review and Recertification",
+      "control_statement": "All user access and configuration influencing permissions and sharing must be formally reviewed and recertified at least annually by designated busines stakeholders, with documented approval and remediation of unauthorized or excessive access.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement periodic access review and recertification process with documented stakeholder approval",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-010.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-011",
+      "category": "ACS",
+      "title": "Enforce Governance of Access and Authorization Changes",
+      "control_statement": "All changes to Salesforce user access and authorization must be governed through a documented process that requires approval, records business justification, and produces an auditable record of the change.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Establish governance process for access and authorization changes with approval and audit trail",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-011.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-ACS-012",
+      "category": "ACS",
+      "title": "Classify Users for Login Hours Restrictions",
+      "control_statement": "Organizations must maintain a documented classification of users requiring login hours restrictions or equivalent off-hours authentication monitoring.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "inventory"
+      },
+      "task_title_template": "Establish and maintain user classification for login hours restrictions",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-ACS-012.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-AUTH-001",
+      "category": "AUTH",
+      "title": "Enable Organization-Wide SSO Enforcement Setting",
+      "control_statement": "Salesforce production orgs must enable the org-level setting that disables Salesforce credential logins for all users.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Enable org-wide SSO enforcement setting",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-AUTH-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-AUTH-002",
+      "category": "AUTH",
+      "title": "Govern and Document All Users Permitted to Bypass Single Sign-On",
+      "control_statement": "All users who do not have the \"Is Single Sign-On Enabled\" permission must be explicitly authorized, documented in a system of record, and limited to approved administrative or break-glass use cases.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "User"
+      },
+      "task_title_template": "Review and justify SSO bypass user: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-AUTH-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-AUTH-003",
+      "category": "AUTH",
+      "title": "Prohibit Broad or Unrestricted Profile Login IP Ranges",
+      "control_statement": "Profiles in Salesforce production orgs must not contain login IP ranges that effectively permit access from the full public internet or other overly broad ranges that bypass network-based access controls.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "Profile"
+      },
+      "task_title_template": "Remove unrestricted IP ranges from profile: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-AUTH-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-AUTH-004",
+      "category": "AUTH",
+      "title": "Enforce Strong Multi-Factor Authentication for External Users with Substantial Access to Sensitive Data",
+      "control_statement": "All Salesforce interactive authentication flows for external human users with substantial access to sensitive data must enforce multi-factor authentication that includes at least one strong authentication factor.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "User"
+      },
+      "task_title_template": "Enable 'Multi-Factor Authentication for User Interface Logins' for external users with substantial access to sensitive data",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-AUTH-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-CODE-001",
+      "category": "CODE",
+      "title": "Mandatory Peer Review for Salesforce Code Changes",
+      "control_statement": "All Salesforce code changes must undergo peer review and receive approval before merging into any production-bound branch.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement mandatory peer review for Salesforce code changes",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-CODE-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-CODE-002",
+      "category": "CODE",
+      "title": "Pre-Merge Static Code Analysis for Apex and LWC",
+      "control_statement": "Static code analysis with security checks for Apex and Lightning Web Components must execute successfully before any code change is merged into a production-bound branch.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement pre-merge static code analysis for Apex and LWC",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-CODE-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-CODE-003",
+      "category": "CODE",
+      "title": "Implement Persistent Apex Application Logging",
+      "control_statement": "Organizations must implement an Apex-based logging framework that writes application log events to durable Salesforce storage and must not rely on transient Salesforce debug logs for operational or security investigations.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement persistent Apex application logging framework",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-CODE-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-CODE-004",
+      "category": "CODE",
+      "title": "Prevent Sensitive Data in Application Logs",
+      "control_statement": "Custom application logging frameworks and Salesforce system logging mechanisms must not capture, store, or transmit credentials, authentication tokens, personally identifiable information (PII), regulated data, or other sensitive values in log messages or structured log fields.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "Logging Statement"
+      },
+      "task_title_template": "Sanitize sensitive data in {{entity.name}} logging call",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-CODE-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-CPORTAL-001",
+      "category": "CPORTAL",
+      "title": "Prevent Parameter-Based Record Access in Portal Apex",
+      "control_statement": "All Apex methods exposed to customer portal users must not accept user-provided parameters that determine which records are accessed, and must instead derive record access exclusively from the authenticated user's context.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "AuraEnabled Method"
+      },
+      "task_title_template": "Refactor {{entity.name}} to use user context instead of parameters",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-CPORTAL-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-CPORTAL-002",
+      "category": "CPORTAL",
+      "title": "Restrict Guest User Record Access",
+      "control_statement": "Unauthenticated guest users in customer portals must be restricted to authentication and registration flows only, with no direct access to business objects or custom Apex methods that query organizational data.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Remove guest user object permissions and method access",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-CPORTAL-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DATA-001",
+      "category": "DATA",
+      "title": "Implement Mechanisms to Detect Regulated Data in Long Text Area Fields",
+      "control_statement": "The organization must implement a mechanism that continuously or periodically analyzes the contents of all Long Text Area fields to identify the presence of regulated or personal data.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement regulated data detection for Long Text Area fields",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DATA-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DATA-002",
+      "category": "DATA",
+      "title": "Maintain an Inventory of Long Text Area Fields Containing Regulated Data",
+      "control_statement": "The organization must maintain an up-to-date inventory of all Long Text Area fields that are known or detected to contain regulated or personal data.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "inventory"
+      },
+      "task_title_template": "Establish and maintain Long Text Area field inventory",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DATA-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DATA-003",
+      "category": "DATA",
+      "title": "Maintain Tested Backup and Recovery for Salesforce Data and Metadata",
+      "control_statement": "Salesforce production orgs must maintain a documented backup and recovery capability for Salesforce data and metadata, and must test restoration on a defined schedule.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement and test Salesforce backup and recovery capability",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DATA-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DATA-004",
+      "category": "DATA",
+      "title": "Require Field History Tracking for Sensitive Fields",
+      "control_statement": "The organization must maintain a documented list of sensitive fields and ensure Field History Tracking is enabled for each listed field on all in-scope objects.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "FieldDefinition"
+      },
+      "task_title_template": "Enable field history tracking for sensitive field: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DATA-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DEP-001",
+      "category": "DEP",
+      "title": "Require a Designated Deployment Identity for Metadata Changes",
+      "control_statement": "Salesforce production orgs must designate a single deployment identity that is exclusively used for all metadata deployments and high-risk configuration changes performed through automated or scripted release processes.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Designate and configure a single deployment identity for all metadata deployments",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DEP-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DEP-002",
+      "category": "DEP",
+      "title": "Establish and Maintain a List of High-Risk Metadata Types Prohibited from Direct Production Editing",
+      "control_statement": "Salesforce production orgs must maintain an explicit list of high-risk metadata types that must never be edited directly in production by human users, defaulting at minimum to the SBS baseline list while allowing organizations to extend or refine it as needed.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "inventory"
+      },
+      "task_title_template": "Establish and maintain list of high-risk metadata types prohibited from direct production editing",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DEP-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DEP-003",
+      "category": "DEP",
+      "title": "Monitor and Alert on Unauthorized Modifications to High-Risk Metadata",
+      "control_statement": "Salesforce production orgs must implement a monitoring capability that detects and reports any modification to high-risk metadata performed by a user other than the designated deployment identity.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement monitoring capability to detect unauthorized modifications to high-risk metadata",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DEP-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DEP-004",
+      "category": "DEP",
+      "title": "[TODO: title for SBS-DEP-004]",
+      "control_statement": "[TODO: control statement for SBS-DEP-004]",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Establish source-driven deployment process with version control and automated deployments",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DEP-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DEP-005",
+      "category": "DEP",
+      "title": "Implement Secret Scanning for Salesforce Source Repositories",
+      "control_statement": "Organizations using source-driven development for Salesforce must implement automated secret scanning on all repositories containing Salesforce metadata, configuration, or deployment scripts to detect and prevent the exposure of credentials, access tokens, and other sensitive authentication material.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement secret scanning for Salesforce source repositories",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DEP-005.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-DEP-006",
+      "category": "DEP",
+      "title": "Configure Salesforce CLI Connected App with Token Expiration Policies",
+      "control_statement": "Organizations must configure the Connected App used for Salesforce CLI authentication with refresh token expiration of 90 days or less and access token timeout of 15 minutes or less.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Configure Salesforce CLI Connected App with token expiration policies",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-DEP-006.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-INT-001",
+      "category": "INT",
+      "title": "Enforce Governance of Browser Extensions Accessing Salesforce",
+      "control_statement": "Organizations must enforce a centrally managed mechanism that restricts which browser extensions are permitted to access Salesforce, and must not allow the use of unmanaged or uncontrolled extensions.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement centralized browser extension governance",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-INT-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-INT-002",
+      "category": "INT",
+      "title": "Inventory and Justification of Remote Site Settings",
+      "control_statement": "Organizations must maintain an authoritative inventory of all Remote Site Settings and document a business justification for each endpoint approved for Apex HTTP callouts.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "RemoteSiteSetting"
+      },
+      "task_title_template": "Review and justify Remote Site Setting: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-INT-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-INT-003",
+      "category": "INT",
+      "title": "Inventory and Justification of Named Credentials",
+      "control_statement": "Organizations must maintain an authoritative inventory of all Named Credentials and document a business justification for each external endpoint and authentication configuration approved for use in Salesforce.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "NamedCredential"
+      },
+      "task_title_template": "Review and justify Named Credential: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-INT-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-INT-004",
+      "category": "INT",
+      "title": "Retain API Total Usage Event Logs for 30 Days",
+      "control_statement": "The organization must retain API Total Usage event log data (EventLogFile EventType=ApiTotalUsage) for at least the immediately preceding 30 days using Salesforce-native retention or automated external export and storage.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement 30-day API Total Usage log retention",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-INT-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-OAUTH-001",
+      "category": "OAUTH",
+      "title": "Require Formal Installation of Connected Apps",
+      "control_statement": "Organizations must formally install all connected apps used for OAuth authentication rather than relying on user-authorized OAuth connections.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "ConnectedApp"
+      },
+      "task_title_template": "Formally install Connected App: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-OAUTH-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-OAUTH-002",
+      "category": "OAUTH",
+      "title": "Require Profile or Permission Set Access Control for Connected Apps",
+      "control_statement": "Organizations must control access to each formally installed connected app exclusively through assigned profiles or permission sets.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Critical",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "ConnectedApp"
+      },
+      "task_title_template": "Configure profile or permission set access for Connected App: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-OAUTH-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-OAUTH-003",
+      "category": "OAUTH",
+      "title": "Add Criticality Classification of OAuth-Enabled Connected Apps",
+      "control_statement": "All OAuth-enabled Connected Apps must be recorded in an authoritative system of record and assigned a documented vendor criticality rating reflecting integration importance and data sensitivity.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "ConnectedApp"
+      },
+      "task_title_template": "Add criticality classification for Connected App: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-OAUTH-003.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-OAUTH-004",
+      "category": "OAUTH",
+      "title": "Due Diligence Documentation for High-Risk Connected App Vendors",
+      "control_statement": "Organizations must review and retain available security documentation for all high-risk Connected App vendors and explicitly record any missing documentation as part of the vendor assessment.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "Moderate",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "Vendor"
+      },
+      "task_title_template": "Collect security documentation for vendor: {{entity.name}}",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-OAUTH-004.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-SECCONF-001",
+      "category": "SECCONF",
+      "title": "Establish a Salesforce Health Check Baseline",
+      "control_statement": "Salesforce production orgs must define and maintain a Salesforce Health Check baseline—including Salesforce's native baseline XML or an equivalent customized baseline—and ensure it reflects the organization's intentional security configuration posture.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Define and upload a Salesforce Health Check baseline",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-SECCONF-001.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    },
+    {
+      "id": "SBS-SECCONF-002",
+      "category": "SECCONF",
+      "title": "Review and Remediate Salesforce Health Check Deviations",
+      "control_statement": "Salesforce production orgs must periodically review Health Check results against the defined baseline and remediate deviations or formally document approved exceptions.",
+      "description": "[TODO: full description from upstream markdown — Phase 3]",
+      "risk_level": "High",
+      "risk_narrative": "[TODO: risk narrative from upstream markdown — Phase 3]",
+      "audit_procedure": ["[TODO: audit procedure from upstream markdown — Phase 3]"],
+      "remediation_steps": ["[TODO: remediation steps from upstream markdown — Phase 3]"],
+      "default_value": "[TODO: default value from upstream markdown — Phase 3]",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Establish periodic Health Check review process with deviation remediation or exception tracking",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "control-metadata/SBS-SECCONF-002.yaml"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [],
+        "regulations": {}
+      }
+    }
+  ]
+}
