@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: MIT
+# CODEOWNERS for sbs-audit-engine. Order matters: later rules override earlier ones.
+
+* @hellomavens/maintainers
+
+# Upstream sync + license-sensitive paths require additional review
+/upstream-sources.toml @hellomavens/maintainers
+/REUSE.toml @hellomavens/maintainers
+/LICENSE @hellomavens/maintainers
+/LICENSES/ @hellomavens/maintainers
+/NOTICE @hellomavens/maintainers
+/ATTRIBUTION.md @hellomavens/maintainers
+/packages/sbs-engine/data/ @hellomavens/maintainers

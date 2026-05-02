@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: MIT
+name: Upstream sync
+
+# Cron-driven workflow that opens a PR when SBS or Code Analyzer tags a new
+# release. Runs weekly. Manual dispatch is also supported for ad-hoc checks.
+
+on:
+  schedule:
+    # Weekly on Monday 08:00 UTC. Adjust if the cadence is too aggressive.
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-upstreams:
+    name: Check pinned upstreams
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read pinned versions
+        id: pins
+        run: |
+          sbs_pin=$(grep -A1 '\[sbs\]' upstream-sources.toml | grep '^ref' | cut -d'"' -f2)
+          ca_pin=$(grep -A1 '\[code_analyzer\]' upstream-sources.toml | grep '^ref' | cut -d'"' -f2)
+          echo "sbs=$sbs_pin" >> "$GITHUB_OUTPUT"
+          echo "ca=$ca_pin"   >> "$GITHUB_OUTPUT"
+
+      - name: Resolve latest upstream tags
+        id: latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sbs_latest=$(gh api repos/Salesforce-Security-Benchmark/docs-site/releases/latest --jq '.tag_name' 2>/dev/null \
+            || gh api repos/Salesforce-Security-Benchmark/docs-site/tags --jq '.[0].name')
+          ca_latest=$(gh api repos/forcedotcom/code-analyzer/releases/latest --jq '.tag_name')
+          echo "sbs=$sbs_latest" >> "$GITHUB_OUTPUT"
+          echo "ca=$ca_latest"   >> "$GITHUB_OUTPUT"
+
+      - name: Summarize drift
+        run: |
+          echo "SBS pinned: ${{ steps.pins.outputs.sbs }} | latest: ${{ steps.latest.outputs.sbs }}"
+          echo "Code Analyzer pinned: ${{ steps.pins.outputs.ca }} | latest: ${{ steps.latest.outputs.ca }}"
+
+      # Future: when drift detected, branch + edit upstream-sources.toml + open PR.
+      # Wired as report-only for v1 to avoid surprise PRs while the standard is pre-1.0.

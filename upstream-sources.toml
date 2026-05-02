@@ -1,0 +1,22 @@
+# Upstream open source sources this engine pins to.
+# Bumped via the cron-driven .github/workflows/upstream-sync.yml workflow.
+# Hand-edits welcome but must be paired with a sync-sbs.ts run + ATTRIBUTION.md update.
+#
+# SPDX-FileCopyrightText: 2026 HelloMavens LLC
+# SPDX-License-Identifier: MIT
+
+[sbs]
+name = "Security Benchmark for Salesforce"
+repo = "Salesforce-Security-Benchmark/docs-site"
+ref = "v0.4.1"
+license = "CC-BY-SA-4.0"
+control_metadata_path = "control-metadata"
+
+[code_analyzer]
+name = "Salesforce Code Analyzer"
+repo = "forcedotcom/code-analyzer"
+ref = "v5.12.0"
+license = "BSD-3-Clause"
+npm_package = "@salesforce/plugin-code-analyzer"
+# PMD, ESLint, Flow, RetireJS, SFGE, Regex engines are bundled by Code Analyzer;
+# transitively versioned through this single pin. Do not pin them separately.

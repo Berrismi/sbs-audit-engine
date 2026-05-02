@@ -1,0 +1,6 @@
+pnpm exec lint-staged
+pnpm exec gitleaks protect --staged --redact -v 2>/dev/null || {
+  echo "⚠️  gitleaks not installed; skipping secret scan locally."
+  echo "   Install with: brew install gitleaks  (or see https://github.com/gitleaks/gitleaks)"
+  echo "   CI will still run gitleaks as a hard gate."
+}

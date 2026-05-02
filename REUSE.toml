@@ -1,0 +1,56 @@
+version = 1
+
+# REUSE.toml declares per-path SPDX licenses for this repo.
+# https://reuse.software/
+
+# Default: all source code is HelloMavens MIT-licensed.
+[[annotations]]
+path = ["packages/**/src/**", "packages/**/tests/**", "packages/**/scripts/**"]
+SPDX-FileCopyrightText = "2026 HelloMavens LLC"
+SPDX-License-Identifier = "MIT"
+
+# Control library data is derived from the open Security Benchmark for Salesforce
+# (CC BY-SA 4.0). Per the ShareAlike clause, our derivative carries the same license.
+[[annotations]]
+path = "packages/sbs-engine/data/controls.json"
+SPDX-FileCopyrightText = [
+  "2026 HelloMavens LLC (additions)",
+  "Security Benchmark for Salesforce contributors (source content)"
+]
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# Config files
+[[annotations]]
+path = [
+  "package.json",
+  "pnpm-workspace.yaml",
+  "tsconfig*.json",
+  "eslint.config.js",
+  ".prettierrc",
+  ".prettierignore",
+  "commitlint.config.js",
+  ".gitignore",
+  ".gitleaksignore",
+  ".nvmrc",
+  ".husky/**",
+  ".github/**",
+  "upstream-sources.toml",
+  "REUSE.toml",
+  "packages/**/package.json",
+  "packages/**/tsconfig.json",
+  "packages/**/vitest.config.ts"
+]
+SPDX-FileCopyrightText = "2026 HelloMavens LLC"
+SPDX-License-Identifier = "MIT"
+
+# Documentation
+[[annotations]]
+path = ["README.md", "CONTRIBUTING.md", "ATTRIBUTION.md", "NOTICE", "packages/**/README.md", "packages/**/TODO.md"]
+SPDX-FileCopyrightText = "2026 HelloMavens LLC"
+SPDX-License-Identifier = "MIT"
+
+# Placeholder PMD ruleset — empty stub, treated as docs
+[[annotations]]
+path = "packages/sbs-engine/rulesets/**"
+SPDX-FileCopyrightText = "2026 HelloMavens LLC"
+SPDX-License-Identifier = "MIT"

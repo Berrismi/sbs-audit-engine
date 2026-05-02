@@ -1,0 +1,35 @@
+{
+  "name": "@hellomavens/sbs-engine",
+  "version": "0.0.0-dev",
+  "description": "Open source scoring engine implementing the Security Benchmark for Salesforce (SBS) standard.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./controls": "./data/controls.json",
+    "./types": "./src/types.ts"
+  },
+  "files": [
+    "src",
+    "data",
+    "rulesets",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "sync:sbs": "tsx scripts/sync-sbs.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

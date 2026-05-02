@@ -1,0 +1,7 @@
+packages:
+  - 'packages/*'
+
+# pnpm 11+ requires explicit approval for postinstall scripts.
+# esbuild downloads its platform binary in a postinstall — needed for vitest + tsx.
+allowBuilds:
+  esbuild: true
