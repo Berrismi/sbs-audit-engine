@@ -7,7 +7,7 @@
 // Pure: same input → same output. Never throws. Degrades to inconclusive
 // when no relevant evidence is present.
 
-import type { Evaluator, Evidence } from '../types.ts';
+import type { Evaluator, Evidence } from '../types';
 
 const QUESTION_ID = 'Q-ACS-004';
 const JUSTIFICATION_FIELD = 'JustificationDoc__c';

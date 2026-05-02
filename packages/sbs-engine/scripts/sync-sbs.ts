@@ -30,7 +30,7 @@ import type {
   ControlLibrary,
   RemediationScope,
   RiskLevel,
-} from '../src/types.ts';
+} from '../src/types';
 
 // -----------------------------------------------------------------------------
 // Path helpers

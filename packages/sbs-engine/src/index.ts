@@ -33,6 +33,6 @@ export type {
   EvaluatorInput,
   EvaluatorResult,
   EvaluatorStatus,
-} from './types.ts';
+} from './types';
 
-export { evaluate as evaluateAcs004 } from './evaluators/acs-004.ts';
+export { evaluate as evaluateAcs004 } from './evaluators/acs-004';

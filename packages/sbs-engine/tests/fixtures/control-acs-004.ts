@@ -5,7 +5,7 @@
 // This is intentionally minimal — full fixtures live in data/controls.json
 // once sync-sbs.ts has been run.
 
-import type { Control } from '../../src/types.ts';
+import type { Control } from '../../src/types';
 
 export const ACS_004: Control = {
   id: 'SBS-ACS-004',

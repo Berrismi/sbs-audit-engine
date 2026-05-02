@@ -11,9 +11,9 @@
 //   3. evaluator never throws; degrades to inconclusive when evidence is absent
 
 import { describe, expect, it } from 'vitest';
-import { evaluate as evaluateAcs004 } from '../../src/evaluators/acs-004.ts';
-import type { Evidence, EvaluatorInput } from '../../src/types.ts';
-import { ACS_004 } from '../fixtures/control-acs-004.ts';
+import { evaluate as evaluateAcs004 } from '../../src/evaluators/acs-004';
+import type { Evidence, EvaluatorInput } from '../../src/types';
+import { ACS_004 } from '../fixtures/control-acs-004';
 
 const inputWith = (evidence: Evidence[]): EvaluatorInput => ({
   control: ACS_004,
