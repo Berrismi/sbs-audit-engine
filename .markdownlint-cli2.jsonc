@@ -5,5 +5,14 @@
     "MD033": false,
     "MD041": false,
   },
-  "ignores": ["node_modules/**", "**/CHANGELOG.md", "LICENSES/**"],
+  "ignores": [
+    "node_modules/**",
+    "**/CHANGELOG.md",
+    "LICENSES/**",
+    // Test fixtures mirror upstream SBS markdown structure verbatim (h3
+    // control headings, no h2 between them and the file's h1) so the
+    // parser tests assert against realistic input shapes. Markdownlint
+    // rules don't apply to test inputs.
+    "**/tests/**/fixtures/**",
+  ],
 }

@@ -1,6 +1,6 @@
 {
   "name": "@hellomavens/sbs-engine",
-  "version": "0.0.0-alpha.3",
+  "version": "0.0.0-alpha.4",
   "description": "Open source scoring engine implementing the Security Benchmark for Salesforce (SBS) standard.",
   "license": "MIT",
   "type": "module",

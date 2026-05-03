@@ -48,18 +48,19 @@ export interface Control {
   title: string;
   /** Upstream control statement (one or two sentences). */
   control_statement: string;
-  /** Upstream long-form description. */
+  /** Upstream long-form description. Verbatim markdown — render with react-markdown. */
   description: string;
   /** Upstream risk badge. */
   risk_level: RiskLevel;
-  /** Upstream risk narrative paragraph (the **Risk:** body). */
+  /** Upstream risk narrative paragraph (the **Risk:** body). Verbatim markdown. */
   risk_narrative: string;
-  /** Upstream audit procedure as a list of numbered steps. */
-  audit_procedure: string[];
-  /** Upstream remediation as a list of numbered steps. */
-  remediation_steps: string[];
-  /** Upstream "Default Value" paragraph. */
-  default_value: string;
+  /** Upstream audit procedure. Verbatim markdown — typically a numbered list. */
+  audit_procedure: string;
+  /** Upstream remediation. Verbatim markdown — typically a numbered list. */
+  remediation_steps: string;
+  /** Upstream "Default Value" paragraph. Verbatim markdown. May be null when the
+   * upstream control omits the section. */
+  default_value: string | null;
   /** Upstream remediation metadata. */
   remediation: {
     scope: RemediationScope;

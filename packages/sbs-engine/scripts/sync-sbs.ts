@@ -31,6 +31,7 @@ import type {
   RemediationScope,
   RiskLevel,
 } from '../src/types';
+import { parseMarkdown, type MarkdownExtract } from './lib/parse-sbs-markdown';
 
 // -----------------------------------------------------------------------------
 // Path helpers
@@ -166,76 +167,37 @@ function readEnrichments(): ControlEnrichmentsFile {
  * Resolve a control's risk_level. Preference order:
  *   1. control-overrides.json (HelloMavens-authored editorial fix).
  *   2. Upstream YAML.
- *   3. Default to 'High' and warn — better than crashing on a null.
+ *   3. Upstream markdown <Badge> in the **Risk:** section.
+ *   4. Default to 'High' and warn — better than crashing on a null.
+ *
+ * The badge fallback (step 3) was added once the upstream markdown
+ * parser landed in alpha.4. It covers cases like SBS-AUTH-004 where the
+ * YAML omits risk_level but the markdown badge declares it. Editorial
+ * overrides still win so HelloMavens can correct upstream when needed.
  */
-function resolveRiskLevel(yaml: SbsYaml, overrides: ControlOverridesFile): RiskLevel {
+function resolveRiskLevel(
+  yaml: SbsYaml,
+  overrides: ControlOverridesFile,
+  markdown: MarkdownExtract | undefined,
+): RiskLevel {
   const override = overrides.overrides[yaml.control_id]?.risk_level;
   if (override) {
     console.log(
-      `  [override] ${yaml.control_id} risk_level = ${override} (was ${yaml.risk_level ?? 'null'})`,
+      `  [override] ${yaml.control_id} risk_level = ${override} (was ${yaml.risk_level ?? markdown?.risk_level ?? 'null'})`,
     );
     return override;
   }
   if (yaml.risk_level) return yaml.risk_level;
+  if (markdown?.risk_level) {
+    console.log(
+      `  [badge] ${yaml.control_id} risk_level = ${markdown.risk_level} (from markdown badge — YAML omits the field)`,
+    );
+    return markdown.risk_level;
+  }
   console.warn(
     `  [warn] ${yaml.control_id} has no risk_level upstream and no override; defaulting to 'High'.`,
   );
   return 'High';
-}
-
-// -----------------------------------------------------------------------------
-// Markdown title + control-statement extraction
-// -----------------------------------------------------------------------------
-
-interface MarkdownExtract {
-  title: string;
-  control_statement: string;
-}
-
-function parseMarkdown(md: string): Map<string, MarkdownExtract> {
-  const out = new Map<string, MarkdownExtract>();
-  const lines = md.split('\n');
-  let currentId: string | null = null;
-  let currentTitle: string | null = null;
-  let collectingStatement = false;
-  let statementBuf: string[] = [];
-
-  const flush = (): void => {
-    if (currentId && currentTitle) {
-      out.set(currentId, {
-        title: currentTitle,
-        control_statement: statementBuf.join(' ').replace(/\s+/g, ' ').trim(),
-      });
-    }
-    statementBuf = [];
-    collectingStatement = false;
-  };
-
-  for (const line of lines) {
-    const headingMatch = /^###\s+(SBS-[A-Z]+-\d+):\s+(.+?)\s*$/.exec(line);
-    if (headingMatch) {
-      flush();
-      currentId = headingMatch[1] ?? null;
-      currentTitle = headingMatch[2] ?? null;
-      continue;
-    }
-
-    if (line.startsWith('**Control Statement:**')) {
-      collectingStatement = true;
-      statementBuf.push(line.replace('**Control Statement:**', '').trim());
-      continue;
-    }
-
-    if (collectingStatement) {
-      if (line.trim() === '' || line.startsWith('**')) {
-        collectingStatement = false;
-      } else {
-        statementBuf.push(line.trim());
-      }
-    }
-  }
-  flush();
-  return out;
 }
 
 // -----------------------------------------------------------------------------
@@ -379,21 +341,30 @@ function buildControl(
 ): Control {
   const category = categoryFromId(yaml.control_id);
   const markdown = markdownByCategory.get(category)?.get(yaml.control_id);
-  const riskLevel = resolveRiskLevel(yaml, overrides);
+  const riskLevel = resolveRiskLevel(yaml, overrides, markdown);
   const enrichment = enrichments.enrichments[yaml.control_id];
+
+  if (!markdown) {
+    console.warn(
+      `  [warn] ${yaml.control_id} has no matching markdown section in ${CATEGORY_TO_MARKDOWN[category]} — prose fields will be placeholder strings.`,
+    );
+  }
 
   return {
     id: yaml.control_id,
     category,
-    title: markdown?.title ?? `[TODO: title for ${yaml.control_id}]`,
+    title: markdown?.title ?? `[upstream missing: title for ${yaml.control_id}]`,
     control_statement:
-      markdown?.control_statement ?? `[TODO: control statement for ${yaml.control_id}]`,
-    description: '[TODO: full description from upstream markdown — Phase 3]',
+      markdown?.control_statement ?? `[upstream missing: control statement for ${yaml.control_id}]`,
+    description: markdown?.description || `[upstream missing: description for ${yaml.control_id}]`,
     risk_level: riskLevel,
-    risk_narrative: '[TODO: risk narrative from upstream markdown — Phase 3]',
-    audit_procedure: ['[TODO: audit procedure from upstream markdown — Phase 3]'],
-    remediation_steps: ['[TODO: remediation steps from upstream markdown — Phase 3]'],
-    default_value: '[TODO: default value from upstream markdown — Phase 3]',
+    risk_narrative:
+      markdown?.risk_narrative || `[upstream missing: risk narrative for ${yaml.control_id}]`,
+    audit_procedure:
+      markdown?.audit_procedure || `[upstream missing: audit procedure for ${yaml.control_id}]`,
+    remediation_steps:
+      markdown?.remediation_steps || `[upstream missing: remediation for ${yaml.control_id}]`,
+    default_value: markdown?.default_value ?? null,
     remediation: yaml.remediation,
     task_title_template: yaml.task.title_template,
     sources: [

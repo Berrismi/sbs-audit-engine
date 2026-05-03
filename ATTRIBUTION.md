@@ -16,8 +16,12 @@ The current pinned versions are also machine-readable in [`upstream-sources.toml
 - **Source:** [github.com/Salesforce-Security-Benchmark/docs-site](https://github.com/Salesforce-Security-Benchmark/docs-site)
 - **License:** [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
 - **Pinned version:** v0.4.1
-- **What we use:** the 54 control definitions in `control-metadata/SBS-*.yaml`,
-  normalized into [`packages/sbs-engine/data/controls.json`](./packages/sbs-engine/data/controls.json).
+- **What we use:** the 42 controls' structured metadata from
+  `control-metadata/SBS-*.yaml` (id, category, remediation scope, task title)
+  AND the prose body of each control (description, risk narrative, audit
+  procedure, remediation, default value) extracted from
+  `benchmark/{category}.md`, normalized into
+  [`packages/sbs-engine/data/controls.json`](./packages/sbs-engine/data/controls.json).
 - **Per the ShareAlike clause:** our derived `controls.json` is itself licensed
   under CC BY-SA 4.0. See [`REUSE.toml`](./REUSE.toml).
 - **Naming:** per SBS license naming guidance, this project uses the phrasing

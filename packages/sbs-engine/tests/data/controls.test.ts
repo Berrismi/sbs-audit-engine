@@ -58,6 +58,44 @@ describe('controls.json integrity', () => {
     const ids = library.controls.map((c) => c.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it('every control has non-empty upstream prose for description, risk_narrative, audit_procedure, remediation_steps', () => {
+    const offenders: string[] = [];
+    for (const c of library.controls) {
+      const blanks: string[] = [];
+      if (!c.description || c.description.startsWith('[upstream missing'))
+        blanks.push('description');
+      if (!c.risk_narrative || c.risk_narrative.startsWith('[upstream missing'))
+        blanks.push('risk_narrative');
+      if (!c.audit_procedure || c.audit_procedure.startsWith('[upstream missing'))
+        blanks.push('audit_procedure');
+      if (!c.remediation_steps || c.remediation_steps.startsWith('[upstream missing'))
+        blanks.push('remediation_steps');
+      if (blanks.length > 0) offenders.push(`${c.id} (${blanks.join(', ')})`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('no control still carries Phase-3 [TODO:...] placeholder strings', () => {
+    const todoFields: string[] = [];
+    for (const c of library.controls) {
+      const fields: { name: string; value: string | null | undefined }[] = [
+        { name: 'title', value: c.title },
+        { name: 'control_statement', value: c.control_statement },
+        { name: 'description', value: c.description },
+        { name: 'risk_narrative', value: c.risk_narrative },
+        { name: 'audit_procedure', value: c.audit_procedure },
+        { name: 'remediation_steps', value: c.remediation_steps },
+        { name: 'default_value', value: c.default_value },
+      ];
+      for (const f of fields) {
+        if (typeof f.value === 'string' && f.value.includes('[TODO:')) {
+          todoFields.push(`${c.id}.${f.name}`);
+        }
+      }
+    }
+    expect(todoFields).toEqual([]);
+  });
 });
 
 describe('control-overrides.json', () => {
@@ -85,8 +123,8 @@ describe('control-overrides.json', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('AUTH-004 is overridden to Critical (upstream YAML omits the field)', () => {
-    expect(overrides.overrides['SBS-AUTH-004']?.risk_level).toBe('Critical');
+  it('AUTH-004 resolves to Critical via the markdown <Badge> (YAML omits the field; alpha.4 retired the override)', () => {
+    expect(overrides.overrides['SBS-AUTH-004']).toBeUndefined();
     const auth004 = library.controls.find((c) => c.id === 'SBS-AUTH-004');
     expect(auth004?.risk_level).toBe('Critical');
     expect(auth004?.hellomavens_enrichments.weight).toBe(5);
