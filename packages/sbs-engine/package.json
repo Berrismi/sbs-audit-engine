@@ -55,9 +55,9 @@
     "prepublishOnly": "pnpm clean && pnpm build && pnpm test"
   },
   "devDependencies": {
-    "smol-toml": "^1.4.2",
-    "tsx": "^4.19.2",
-    "yaml": "^2.7.0"
+    "smol-toml": "^1.6.1",
+    "tsx": "^4.21.0",
+    "yaml": "^2.8.3"
   },
   "publishConfig": {
     "access": "public"
