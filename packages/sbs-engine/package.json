@@ -1,30 +1,58 @@
 {
   "name": "@hellomavens/sbs-engine",
-  "version": "0.0.0-dev",
+  "version": "0.0.0-alpha.0",
   "description": "Open source scoring engine implementing the Security Benchmark for Salesforce (SBS) standard.",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
     "./controls": "./data/controls.json",
-    "./types": "./src/types.ts"
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "default": "./dist/types.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
-    "src",
+    "dist",
     "data",
     "rulesets",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "ATTRIBUTION.md",
+    "NOTICE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Berrismi/sbs-audit-engine.git",
+    "directory": "packages/sbs-engine"
+  },
+  "homepage": "https://github.com/Berrismi/sbs-audit-engine#readme",
+  "bugs": "https://github.com/Berrismi/sbs-audit-engine/issues",
+  "keywords": [
+    "salesforce",
+    "security",
+    "audit",
+    "sbs",
+    "security-benchmark-for-salesforce",
+    "scoring-engine"
   ],
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist .tsbuildinfo",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "sync:sbs": "tsx scripts/sync-sbs.ts"
+    "sync:sbs": "tsx scripts/sync-sbs.ts",
+    "prepublishOnly": "pnpm clean && pnpm build && pnpm test"
   },
   "devDependencies": {
     "smol-toml": "^1.4.2",
