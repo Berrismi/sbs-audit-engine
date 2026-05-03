@@ -55,29 +55,42 @@ readable pin manifest.
 
 ## Status
 
-**Phase 1 complete.** Published to npm as `@hellomavens/sbs-engine@0.0.0-alpha.1`
-under the `alpha` dist-tag. What's shipping today:
+**Phases 1–3 complete.** Published to npm as
+`@hellomavens/sbs-engine@0.0.0-alpha.3` under the `alpha` dist-tag. (alpha.2
+was published broken — Node ESM relative-import resolution issue — and is
+now deprecated. Use alpha.3+.)
 
+What's shipping today:
+
+- All 42 control evaluators (questionnaire-evidence path), each backed by
+  ≥4 unit tests covering pass/fail/idk/no-evidence.
+- `score(EvidenceBundle): ScoredReport` top-level entrypoint with category
+  - overall scoring per spec §8 (weighted by each category's Critical+High
+    control share) and risk grade A–F with the critical-fail-caps-at-C rule.
+- Three integration fixtures (perfect-org, disaster-org, mixed-with-idk)
+  proving the math end-to-end. 242 tests total.
+- OWASP Top 10 2021 + HIPAA Security Rule + SOC 2 TSC + ISO 27001:2022
+  Annex A + GDPR + CCPA mappings on every control via
+  `data/control-enrichments.json` (HelloMavens-authored, MIT, with per-
+  category rationale in `control-enrichments.RATIONALE.md`).
+- HelloMavens-authored editorial overrides for upstream YAML gaps
+  (`data/control-overrides.json` — currently pins SBS-AUTH-004 to Critical).
 - Workspace scaffolding (pnpm workspaces, Node 24.15 LTS, TypeScript strict).
-- Quality gates wired up + verified green in CI (Husky, lint-staged,
-  commitlint, gitleaks, ESLint, Prettier, Vitest with coverage thresholds,
-  Semgrep, REUSE-lint, license-checker, markdownlint, actionlint, Dependabot).
-- `main` branch is protected: PRs required, all 6 status checks must pass,
+- Quality gates verified green in CI (Husky, lint-staged, commitlint,
+  gitleaks, ESLint, Prettier, Vitest with coverage thresholds, Semgrep,
+  REUSE-lint, license-checker, markdownlint, actionlint, Dependabot).
+- `main` branch is protected: PRs required, all status checks must pass,
   branches must be up to date, no force-push, no deletion, conversations
   must resolve.
-- Reference evaluator for SBS-ACS-004 (test-first per TDD, 9 cases at 93%
-  line coverage) — establishes the pattern for the other 41 evaluators
-  landing in Phase 3.
 - `sync-sbs.ts` fetcher pulls the 42 control YAMLs from the pinned SBS
-  upstream tag (v0.4.1) and normalizes them into `controls.json` with
-  provenance metadata.
-- Cron-driven `upstream-sync.yml` reports drift weekly when SBS or
-  Salesforce Code Analyzer publish new versions.
+  upstream tag (v0.4.1), merges in HM overrides + enrichments, and
+  normalizes them into `controls.json`. Cron-driven `upstream-sync.yml`
+  reports drift weekly.
 
 What's stubbed:
 
-- The other 41 evaluators + scoring algorithm + risk-grade calculation
-  (Phase 3).
+- SOQL / Code Analyzer / Health Check evidence paths in individual
+  evaluators (Phase 5 with the consultant CLI).
 - The CLI (Phase 5; current `@hellomavens/sbs-scan` binary prints a help
   message pointing to the build plan).
 - The custom HelloMavens PMD ruleset (placeholder + `rulesets/TODO.md`
