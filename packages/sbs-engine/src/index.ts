@@ -33,6 +33,17 @@ export type {
   EvaluatorInput,
   EvaluatorResult,
   EvaluatorStatus,
+  ControlScoreResult,
+  CategoryScoreOutput,
+  RiskGrade,
+  ScoredReport,
 } from './types';
 
 export { evaluate as evaluateAcs004 } from './evaluators/acs-004';
+export {
+  categoryScore,
+  overallScore,
+  riskGrade,
+  inconclusivePercent,
+  type CategoryWeightInput,
+} from './scoring';

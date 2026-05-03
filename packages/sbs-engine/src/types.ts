@@ -201,3 +201,73 @@ export interface EvaluatorResult {
  * Function signature for any control evaluator. Pure: same input → same output.
  */
 export type Evaluator = (input: EvaluatorInput) => EvaluatorResult;
+
+// ---------------------------------------------------------------------------
+// Scoring types — Phase 3
+// ---------------------------------------------------------------------------
+
+/**
+ * Per-control scoring outcome. Carries enough metadata for the report viewer
+ * to render the control row + the category aggregation logic to weight it.
+ */
+export interface ControlScoreResult {
+  control_id: string;
+  category: CategoryPrefix;
+  risk_level: RiskLevel;
+  /** Risk-tier weight: Critical=5, High=3, Moderate=2. */
+  weight: number;
+  status: EvaluatorStatus;
+  confidence: EvidenceConfidence;
+  evidence_used: EvidenceSource[];
+  findings: string[];
+}
+
+/**
+ * Aggregate score for a single SBS category.
+ *
+ * `score` is in 0..100. `passed_weight` and `total_weight` exclude controls
+ * whose status is `inconclusive` or `na` — those don't count toward the
+ * denominator (spec §8). When no in-scope controls exist (everything skipped
+ * or inconclusive), `score` is `0` and the report viewer treats the category
+ * as "not enough evidence to grade."
+ */
+export interface CategoryScoreOutput {
+  category: CategoryPrefix;
+  score: number;
+  passed_weight: number;
+  total_weight: number;
+  pass_count: number;
+  fail_count: number;
+  inconclusive_count: number;
+  na_count: number;
+  /** True when every in-scope control in the category returned `inconclusive`. */
+  is_all_inconclusive: boolean;
+}
+
+/** Letter grade displayed at the top of the report (spec §8). */
+export type RiskGrade = 'A' | 'B' | 'C' | 'D' | 'F';
+
+/**
+ * Top-level scored report — the shape `score(EvidenceBundle)` returns and the
+ * shape the app's `/audit/report/[id]` viewer renders.
+ */
+export interface ScoredReport {
+  /** Overall 0..100, weighted across categories per spec §8. */
+  overall_score: number;
+  risk_grade: RiskGrade;
+  /** Number of Critical-tier controls returning `fail` (drives the C-cap). */
+  critical_fail_count: number;
+  /**
+   * Percentage of evaluated controls that returned `inconclusive`. Drives
+   * the "X% of controls could not be evaluated" banner per spec §8.
+   * Always shown when > 0.
+   */
+  inconclusive_percent: number;
+  /** Per-category aggregates. */
+  by_category: CategoryScoreOutput[];
+  /** Per-control results, ordered by control_id. */
+  control_results: ControlScoreResult[];
+  /** SBS version + engine version snapshot, for report provenance. */
+  sbs_version: string;
+  engine_version: string;
+}
