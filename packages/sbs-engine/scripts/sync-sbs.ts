@@ -344,6 +344,11 @@ async function main(): Promise<void> {
     controls,
   };
 
+  // REUSE-IgnoreStart
+  // The string literals below build the SPDX header that gets written to
+  // controls.LICENSE.txt. fsfe/reuse-action v6 parses source files for
+  // SPDX expressions and would otherwise read the literal as a malformed
+  // expression on this file (the trailing `',` breaks the parser).
   const header = [
     '// SPDX-FileCopyrightText: 2026 HelloMavens LLC (additions)',
     '// SPDX-FileCopyrightText: Security Benchmark for Salesforce contributors (source content)',
@@ -354,6 +359,7 @@ async function main(): Promise<void> {
     `// Pinned to ${sbs.ref} (${commit.sha}).`,
     '',
   ].join('\n');
+  // REUSE-IgnoreEnd
 
   // controls.json must be valid JSON, so the SPDX header lives in a sibling
   // companion file. JSON cannot carry comments.
