@@ -55,8 +55,19 @@ To be clear about what is _our_ contribution on top of the above:
   tier with a critical-fail-caps-at-C rule).
 - The evaluator pattern in `packages/sbs-engine/src/evaluators/` that maps a
   control + evidence input to `{status, findings, confidence}`.
-- The OWASP Top 10 + HIPAA + SOC 2 + ISO 27001 mappings layered onto each
-  control beyond what SBS itself provides.
+- The OWASP Top 10 2021, HIPAA Security Rule, SOC 2 Trust Services Criteria,
+  ISO 27001:2022 Annex A, GDPR, and CCPA mappings layered onto each control in
+  [`packages/sbs-engine/data/control-enrichments.json`](./packages/sbs-engine/data/control-enrichments.json).
+  The editorial reasoning per category is in
+  [`control-enrichments.RATIONALE.md`](./packages/sbs-engine/data/control-enrichments.RATIONALE.md).
+  These mappings are derived from authoritative sources cited in the
+  enrichments file's `sources` field; the cross-walk itself is HelloMavens
+  editorial work and is MIT-licensed.
+- Editorial overrides for SBS controls whose upstream YAML is missing a
+  required field, captured in
+  [`packages/sbs-engine/data/control-overrides.json`](./packages/sbs-engine/data/control-overrides.json).
+  Currently overrides `SBS-AUTH-004` (upstream YAML omits `risk_level`; we
+  pin to `Critical` based on the control's narrative).
 - The questionnaire question text, "I don't know" inconclusive handling, and
   skip logic.
 - The CLI orchestration (Salesforce auth, SOQL bundle, evidence-bundle

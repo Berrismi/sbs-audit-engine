@@ -41,6 +41,8 @@ const ENGINE_ROOT = resolve(__dirname, '..');
 const REPO_ROOT = resolve(ENGINE_ROOT, '..', '..');
 const UPSTREAM_SOURCES = resolve(REPO_ROOT, 'upstream-sources.toml');
 const OUTPUT_PATH = resolve(ENGINE_ROOT, 'data', 'controls.json');
+const OVERRIDES_PATH = resolve(ENGINE_ROOT, 'data', 'control-overrides.json');
+const ENRICHMENTS_PATH = resolve(ENGINE_ROOT, 'data', 'control-enrichments.json');
 
 // -----------------------------------------------------------------------------
 // Upstream pin
@@ -114,9 +116,71 @@ interface GhCommit {
 
 interface SbsYaml {
   control_id: string;
-  risk_level: RiskLevel;
+  /** Optional because some upstream YAMLs (e.g., SBS-AUTH-004 @ v0.4.1)
+   * omit the field. Override via `control-overrides.json`. */
+  risk_level?: RiskLevel;
   remediation: { scope: RemediationScope; entity_type?: string };
   task: { title_template: string };
+}
+
+// -----------------------------------------------------------------------------
+// HelloMavens overrides + enrichments
+// -----------------------------------------------------------------------------
+
+interface ControlOverridesFile {
+  schema_version: string;
+  description?: string;
+  overrides: Record<string, { risk_level?: RiskLevel; rationale: string }>;
+}
+
+interface ControlEnrichmentsFile {
+  schema_version: string;
+  description?: string;
+  sources?: Record<string, string>;
+  enrichments: Record<
+    string,
+    {
+      owasp: string[];
+      regulations: {
+        hipaa?: string[];
+        soc2?: string[];
+        iso27001?: string[];
+        gdpr?: string[];
+        ccpa?: string[];
+      };
+    }
+  >;
+}
+
+function readOverrides(): ControlOverridesFile {
+  const raw = readFileSync(OVERRIDES_PATH, 'utf-8');
+  return JSON.parse(raw) as ControlOverridesFile;
+}
+
+function readEnrichments(): ControlEnrichmentsFile {
+  const raw = readFileSync(ENRICHMENTS_PATH, 'utf-8');
+  return JSON.parse(raw) as ControlEnrichmentsFile;
+}
+
+/**
+ * Resolve a control's risk_level. Preference order:
+ *   1. control-overrides.json (HelloMavens-authored editorial fix).
+ *   2. Upstream YAML.
+ *   3. Default to 'High' and warn — better than crashing on a null.
+ */
+function resolveRiskLevel(yaml: SbsYaml, overrides: ControlOverridesFile): RiskLevel {
+  const override = overrides.overrides[yaml.control_id]?.risk_level;
+  if (override) {
+    console.log(
+      `  [override] ${yaml.control_id} risk_level = ${override} (was ${yaml.risk_level ?? 'null'})`,
+    );
+    return override;
+  }
+  if (yaml.risk_level) return yaml.risk_level;
+  console.warn(
+    `  [warn] ${yaml.control_id} has no risk_level upstream and no override; defaulting to 'High'.`,
+  );
+  return 'High';
 }
 
 // -----------------------------------------------------------------------------
@@ -219,7 +283,13 @@ function weightFromRiskLevel(risk: RiskLevel): number {
 
 async function main(): Promise<void> {
   const sbs = readUpstreamPin();
+  const overrides = readOverrides();
+  const enrichments = readEnrichments();
   console.log(`Syncing SBS from ${sbs.repo} @ ${sbs.ref}`);
+  console.log(
+    `Loaded ${Object.keys(overrides.overrides).length} override(s), ` +
+      `${Object.keys(enrichments.enrichments).length} enrichment entries.`,
+  );
 
   // Resolve the actual commit SHA the tag points to (so the snapshot is exact).
   const commit = await ghJson<GhCommit>(`/repos/${sbs.repo}/commits/${sbs.ref}`);
@@ -252,8 +322,18 @@ async function main(): Promise<void> {
 
   // Build controls.
   const controls: Control[] = yamls
-    .map(({ file, parsed }) => buildControl(file, parsed, markdownByCategory, sbs))
+    .map(({ file, parsed }) =>
+      buildControl(file, parsed, markdownByCategory, sbs, overrides, enrichments),
+    )
     .sort((a, b) => a.id.localeCompare(b.id));
+
+  // Warn (don't fail) on controls without enrichment entries.
+  const missingEnrichments = controls.map((c) => c.id).filter((id) => !enrichments.enrichments[id]);
+  if (missingEnrichments.length > 0) {
+    console.warn(
+      `[warn] ${missingEnrichments.length} control(s) have no enrichment entry: ${missingEnrichments.join(', ')}.`,
+    );
+  }
 
   const library: ControlLibrary = {
     sbs_version: sbs.ref.replace(/^v/, ''),
@@ -288,9 +368,13 @@ function buildControl(
   yaml: SbsYaml,
   markdownByCategory: Map<CategoryPrefix, Map<string, MarkdownExtract>>,
   sbs: UpstreamSources['sbs'],
+  overrides: ControlOverridesFile,
+  enrichments: ControlEnrichmentsFile,
 ): Control {
   const category = categoryFromId(yaml.control_id);
   const markdown = markdownByCategory.get(category)?.get(yaml.control_id);
+  const riskLevel = resolveRiskLevel(yaml, overrides);
+  const enrichment = enrichments.enrichments[yaml.control_id];
 
   return {
     id: yaml.control_id,
@@ -299,7 +383,7 @@ function buildControl(
     control_statement:
       markdown?.control_statement ?? `[TODO: control statement for ${yaml.control_id}]`,
     description: '[TODO: full description from upstream markdown — Phase 3]',
-    risk_level: yaml.risk_level,
+    risk_level: riskLevel,
     risk_narrative: '[TODO: risk narrative from upstream markdown — Phase 3]',
     audit_procedure: ['[TODO: audit procedure from upstream markdown — Phase 3]'],
     remediation_steps: ['[TODO: remediation steps from upstream markdown — Phase 3]'],
@@ -315,9 +399,9 @@ function buildControl(
       },
     ],
     hellomavens_enrichments: {
-      weight: weightFromRiskLevel(yaml.risk_level),
-      owasp: [],
-      regulations: {},
+      weight: weightFromRiskLevel(riskLevel),
+      owasp: enrichment?.owasp ?? [],
+      regulations: enrichment?.regulations ?? {},
     },
   };
 }
