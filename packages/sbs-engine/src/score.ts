@@ -35,7 +35,7 @@ import type {
 
 const library = controlsJson as unknown as ControlLibrary;
 
-export const ENGINE_VERSION = '0.0.0-alpha.2';
+export const ENGINE_VERSION = '0.0.0-alpha.3';
 
 /** Drop the `SBS-` prefix and replace `-` so SBS-ACS-004 → Q-ACS-004. */
 function questionIdFor(controlId: string): string {
