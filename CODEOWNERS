@@ -1,13 +1,15 @@
 # SPDX-License-Identifier: MIT
 # CODEOWNERS for sbs-audit-engine. Order matters: later rules override earlier ones.
 
-* @hellomavens/maintainers
+# Repo lives under personal account @Berrismi for now; will switch to
+# @hellomavens/maintainers team once the org migration in Phase B lands.
+* @Berrismi
 
 # Upstream sync + license-sensitive paths require additional review
-/upstream-sources.toml @hellomavens/maintainers
-/REUSE.toml @hellomavens/maintainers
-/LICENSE @hellomavens/maintainers
-/LICENSES/ @hellomavens/maintainers
-/NOTICE @hellomavens/maintainers
-/ATTRIBUTION.md @hellomavens/maintainers
-/packages/sbs-engine/data/ @hellomavens/maintainers
+/upstream-sources.toml @Berrismi
+/REUSE.toml @Berrismi
+/LICENSE @Berrismi
+/LICENSES/ @Berrismi
+/NOTICE @Berrismi
+/ATTRIBUTION.md @Berrismi
+/packages/sbs-engine/data/ @Berrismi
