@@ -1,10 +1,5 @@
 {
   "schema_version": "1",
-  "description": "HelloMavens-authored editorial overrides for SBS controls whose upstream YAML is missing a required field. Applied by scripts/sync-sbs.ts before the YAML is normalized into controls.json. See control-overrides.LICENSE.txt for the full rationale per entry.",
-  "overrides": {
-    "SBS-AUTH-004": {
-      "risk_level": "Critical",
-      "rationale": "Upstream YAML omits the risk_level field (verified at v0.4.1). The control mandates strong MFA for external users with substantial access to sensitive data; the title's 'Substantial Access to Sensitive Data' scope and the SBS narrative's MUST language put it firmly in the Critical tier. Default would otherwise be 'High' which would understate the data-exposure risk."
-    }
-  }
+  "description": "HelloMavens-authored editorial overrides for SBS controls. The override is the editorial escape hatch — sync-sbs prefers upstream sources (YAML risk_level > markdown <Badge>) before falling back to overrides. See control-overrides.LICENSE.txt for the rationale per entry. (alpha.4 emptied: SBS-AUTH-004 was the sole entry, retired once the markdown-badge fallback landed in resolveRiskLevel — the badge declares Critical and is the canonical upstream source.)",
+  "overrides": {}
 }
