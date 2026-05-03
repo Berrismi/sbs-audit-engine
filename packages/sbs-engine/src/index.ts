@@ -3,16 +3,18 @@
 //
 // Public entrypoint for @hellomavens/sbs-engine.
 //
-// Phase 1 ships:
-//   - Type definitions for the control library, evidence bundles, and evaluator results
-//   - Reference evaluator for SBS-ACS-004
+// Phase 3 ships:
+//   - All 42 control evaluators (questionnaire-evidence path)
+//   - score() — top-level scoring entrypoint (EvidenceBundle → ScoredReport)
+//   - Category + overall scoring math; risk-grade A/B/C/D/F with the
+//     "any critical fail caps grade at C" rule
+//   - OWASP Top 10 + HIPAA + SOC 2 + ISO 27001 enrichments per control
 //
-// Phase 3 will add:
-//   - The other 41 evaluators
-//   - score() — the top-level scoring entrypoint
-//   - Risk-grade calculation (A/B/C/D/F + critical-fail-caps-at-C rule)
+// Phase 5 will add SOQL / Code Analyzer / Health Check evidence paths
+// to individual evaluators alongside the consultant CLI.
 
-export const ENGINE_VERSION = '0.0.0-dev';
+export { ENGINE_VERSION, score } from './score';
+export { EVALUATOR_REGISTRY } from './evaluator-registry';
 
 export type {
   Control,
