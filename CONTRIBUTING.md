@@ -89,7 +89,7 @@ Same shape:
 Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org).
 The `commit-msg` git hook enforces this via commitlint. Allowed types:
 
-```
+```text
 feat | fix | docs | chore | refactor | test | perf | ci | build | revert
 ```
 

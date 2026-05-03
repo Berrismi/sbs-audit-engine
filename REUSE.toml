@@ -19,25 +19,28 @@ SPDX-FileCopyrightText = [
 ]
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 
-# Config files
+# Config files (formats that don't support comments — declare here)
 [[annotations]]
 path = [
   "package.json",
   "pnpm-workspace.yaml",
+  "pnpm-lock.yaml",
   "tsconfig*.json",
   "eslint.config.js",
   ".prettierrc",
   ".prettierignore",
+  ".markdownlint-cli2.jsonc",
   "commitlint.config.js",
   ".gitignore",
   ".gitleaksignore",
   ".nvmrc",
+  "CODEOWNERS",
   ".husky/**",
   ".github/**",
   "upstream-sources.toml",
   "REUSE.toml",
   "packages/**/package.json",
-  "packages/**/tsconfig.json",
+  "packages/**/tsconfig*.json",
   "packages/**/vitest.config.ts"
 ]
 SPDX-FileCopyrightText = "2026 HelloMavens LLC"
@@ -45,7 +48,17 @@ SPDX-License-Identifier = "MIT"
 
 # Documentation
 [[annotations]]
-path = ["README.md", "CONTRIBUTING.md", "ATTRIBUTION.md", "NOTICE", "packages/**/README.md", "packages/**/TODO.md"]
+path = [
+  "README.md",
+  "CONTRIBUTING.md",
+  "ATTRIBUTION.md",
+  "NOTICE",
+  "packages/**/README.md",
+  "packages/**/TODO.md",
+  "packages/**/ATTRIBUTION.md",
+  "packages/**/NOTICE",
+  "packages/**/LICENSE"
+]
 SPDX-FileCopyrightText = "2026 HelloMavens LLC"
 SPDX-License-Identifier = "MIT"
 

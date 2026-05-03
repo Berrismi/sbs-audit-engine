@@ -12,9 +12,9 @@
 // IMPORTANT
 // - Reads the SBS pin from ../../upstream-sources.toml (the engine repo root).
 // - Re-fetches everything from scratch; controls.json is fully regenerated.
-// - The output carries SPDX-License-Identifier: CC-BY-SA-4.0 because the
-//   control text is derived from SBS (CC BY-SA 4.0). Per ShareAlike, our
-//   derivative carries the same license.
+// - The output carries the same Creative Commons Attribution-ShareAlike
+//   4.0 International license as SBS itself (since the control text is
+//   derived from SBS). The SPDX identifier is set in data/controls.LICENSE.txt.
 // - Phase 1 scope: extract structured YAML metadata + control title from the
 //   benchmark markdown. Full description / audit_procedure / remediation_steps
 //   parsing is deferred to Phase 3 when we implement evaluators that need them.

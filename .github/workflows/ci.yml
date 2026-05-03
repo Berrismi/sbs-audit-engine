@@ -34,6 +34,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # The CLI package imports from @hellomavens/sbs-engine via its package
+      # exports map, which points at dist/. Build the engine first so the
+      # CLI's typecheck can resolve those types.
+      - name: Build engine
+        run: pnpm --filter @hellomavens/sbs-engine build
+
       - name: Type check
         run: pnpm typecheck
 
@@ -63,9 +69,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Use the gitleaks CLI directly rather than gitleaks-action@v2 — the
+      # action tries to scan a commit RANGE that's broken on first-push to
+      # main (no previous commit). Direct full-repo scan is bulletproof.
+      - name: Install gitleaks
+        run: |
+          set -euxo pipefail
+          VERSION=8.21.2
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+
+      - name: Scan repo
+        run: gitleaks detect --source . --no-banner --redact -v --exit-code 1
 
   semgrep:
     name: Semgrep SAST
