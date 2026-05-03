@@ -13,10 +13,10 @@
 import { describe, expect, it } from 'vitest';
 import { evaluate as evaluateAcs004 } from '../../src/evaluators/acs-004';
 import type { Evidence, EvaluatorInput } from '../../src/types';
-import { ACS_004 } from '../fixtures/control-acs-004';
+import { makeControlFixture } from '../fixtures/control';
 
 const inputWith = (evidence: Evidence[]): EvaluatorInput => ({
-  control: ACS_004,
+  control: makeControlFixture('SBS-ACS-004'),
   evidence,
 });
 
