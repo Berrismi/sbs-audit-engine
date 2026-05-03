@@ -57,7 +57,7 @@
   "devDependencies": {
     "smol-toml": "^1.4.2",
     "tsx": "^4.19.2",
-    "yaml": "^2.7.0"
+    "yaml": "^2.8.4"
   },
   "publishConfig": {
     "access": "public"
