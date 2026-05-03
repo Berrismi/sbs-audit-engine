@@ -12,12 +12,24 @@ SPDX-License-Identifier = "MIT"
 # Control library data is derived from the open Security Benchmark for Salesforce
 # (CC BY-SA 4.0). Per the ShareAlike clause, our derivative carries the same license.
 [[annotations]]
-path = "packages/sbs-engine/data/controls.json"
+path = ["packages/sbs-engine/data/controls.json", "packages/sbs-engine/data/controls.LICENSE.txt"]
 SPDX-FileCopyrightText = [
   "2026 HelloMavens LLC (additions)",
   "Security Benchmark for Salesforce contributors (source content)"
 ]
 SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# HelloMavens-authored editorial overrides + enrichments. NOT derived from SBS;
+# they are the cross-walk we add on top. MIT-licensed.
+[[annotations]]
+path = [
+  "packages/sbs-engine/data/control-overrides.json",
+  "packages/sbs-engine/data/control-overrides.LICENSE.txt",
+  "packages/sbs-engine/data/control-enrichments.json",
+  "packages/sbs-engine/data/control-enrichments.RATIONALE.md"
+]
+SPDX-FileCopyrightText = "2026 HelloMavens LLC"
+SPDX-License-Identifier = "MIT"
 
 # Config files (formats that don't support comments — declare here)
 [[annotations]]

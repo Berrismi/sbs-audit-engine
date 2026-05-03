@@ -1,0 +1,11 @@
+SPDX-FileCopyrightText: 2026 HelloMavens LLC
+SPDX-License-Identifier: MIT
+
+control-overrides.json holds HelloMavens-authored editorial overrides for SBS
+controls whose upstream YAML is missing a required field. This file is NOT
+derived from the SBS standard; it is original HelloMavens content licensed
+under MIT.
+
+Each override carries a rationale string explaining the editorial choice.
+Reviewers updating this file must include a rationale; the controls test
+suite asserts every override entry has one.
