@@ -1,0 +1,28 @@
+sbs-audit-engine
+Copyright 2026 HelloMavens LLC
+
+This product implements and incorporates work from the following open
+sources. See ATTRIBUTION.md for the full list with versions.
+
+----------------------------------------------------------------------
+Security Benchmark for Salesforce (SBS)
+----------------------------------------------------------------------
+Source: https://github.com/Salesforce-Security-Benchmark/docs-site
+License: Creative Commons Attribution-ShareAlike 4.0 International
+        (CC BY-SA 4.0) — see LICENSES/CC-BY-SA-4.0.txt
+
+The control library at packages/sbs-engine/data/controls.json is a
+derivative work of the SBS standard. Per the CC BY-SA 4.0 ShareAlike
+clause, that file is itself licensed under CC BY-SA 4.0.
+
+This software is not endorsed by the Security Benchmark for Salesforce
+authors. We implement the standard; we did not author it.
+
+----------------------------------------------------------------------
+Salesforce Code Analyzer
+----------------------------------------------------------------------
+Source: https://github.com/forcedotcom/code-analyzer
+License: BSD-3-Clause
+
+Salesforce Code Analyzer bundles PMD, ESLint, Flow Engine, RetireJS,
+SFGE, and Regex engines, each carrying its own upstream license.
