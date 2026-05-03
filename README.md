@@ -55,25 +55,35 @@ readable pin manifest.
 
 ## Status
 
-**Phase 1 of the build plan.** What's running today:
+**Phase 1 complete.** Published to npm as `@hellomavens/sbs-engine@0.0.0-alpha.1`
+under the `alpha` dist-tag. What's shipping today:
 
 - Workspace scaffolding (pnpm workspaces, Node 24.15 LTS, TypeScript strict).
-- Quality gates wired up (Husky, lint-staged, commitlint, gitleaks, ESLint,
-  Prettier, Vitest with coverage thresholds, Semgrep, REUSE-lint, license-
-  checker, markdownlint, actionlint, Dependabot).
-- Reference evaluator for SBS-ACS-004 (test-first per TDD) — established the
-  pattern for the other 53 evaluators landing in Phase 3.
-- `sync-sbs.ts` fetcher script that pulls control YAML from the pinned SBS
-  upstream tag.
-- CI green on all gates.
+- Quality gates wired up + verified green in CI (Husky, lint-staged,
+  commitlint, gitleaks, ESLint, Prettier, Vitest with coverage thresholds,
+  Semgrep, REUSE-lint, license-checker, markdownlint, actionlint, Dependabot).
+- `main` branch is protected: PRs required, all 6 status checks must pass,
+  branches must be up to date, no force-push, no deletion, conversations
+  must resolve.
+- Reference evaluator for SBS-ACS-004 (test-first per TDD, 9 cases at 93%
+  line coverage) — establishes the pattern for the other 41 evaluators
+  landing in Phase 3.
+- `sync-sbs.ts` fetcher pulls the 42 control YAMLs from the pinned SBS
+  upstream tag (v0.4.1) and normalizes them into `controls.json` with
+  provenance metadata.
+- Cron-driven `upstream-sync.yml` reports drift weekly when SBS or
+  Salesforce Code Analyzer publish new versions.
 
 What's stubbed:
 
-- The other 53 evaluators (Phase 3).
-- The CLI (Phase 5; current `sbs-scan` binary prints a help message pointing
-  to the build plan).
-- The custom HelloMavens PMD ruleset (placeholder file +
-  `rulesets/TODO.md` describe how to swap in a real ruleset later).
+- The other 41 evaluators + scoring algorithm + risk-grade calculation
+  (Phase 3).
+- The CLI (Phase 5; current `@hellomavens/sbs-scan` binary prints a help
+  message pointing to the build plan).
+- The custom HelloMavens PMD ruleset (placeholder + `rulesets/TODO.md`
+  documents how to swap one in later via Salesforce Code Analyzer).
+- Note: 42 controls today, not 54. Spec assumed SBS 1.0; current upstream
+  is v0.4.1. Count grows as SBS approaches 1.0.
 
 ## Local development
 
