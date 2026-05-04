@@ -1,0 +1,55 @@
+{
+  "name": "@hellomavens/plugin-security-review",
+  "version": "0.0.0-dev",
+  "description": "Salesforce CLI plugin that runs the HelloMavens security review against a target Salesforce org. Wraps @hellomavens/security-review-for-salesforce-engine + scan-core in an `sf` plugin shell.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "messages",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Berrismi/sbs-audit-engine.git",
+    "directory": "packages/plugin-security-review"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist .tsbuildinfo",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hellomavens/security-review-for-salesforce-engine": "workspace:*",
+    "@oclif/core": "^4",
+    "@salesforce/core": "^8",
+    "@salesforce/sf-plugins-core": "^11",
+    "execa": "^9"
+  },
+  "oclif": {
+    "bin": "sf",
+    "commands": "./dist/commands",
+    "topicSeparator": " ",
+    "topics": {
+      "security": {
+        "description": "Manage HelloMavens security review scans against Salesforce orgs."
+      },
+      "security review": {
+        "description": "Run, upload, and authenticate evidence-based security reviews."
+      }
+    }
+  }
+}
