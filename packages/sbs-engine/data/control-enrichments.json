@@ -57,7 +57,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "cli_primary"
     },
     "SBS-ACS-006": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -120,7 +120,7 @@
         "soc2": ["CC6.1"],
         "iso27001": ["A.5.15", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "cli_primary"
     },
     "SBS-AUTH-001": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -413,7 +413,7 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.5.19", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "cli_primary"
     },
     "SBS-OAUTH-002": {
       "owasp": [

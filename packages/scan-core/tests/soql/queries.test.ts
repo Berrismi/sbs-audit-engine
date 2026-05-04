@@ -37,10 +37,15 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     }
   });
 
-  it('the verified set includes the three Block E.1 baseline queries', () => {
+  it('the verified set includes the Block E baseline queries', () => {
     const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
+    // Block E.1 baseline (3 controls):
     expect(ids.has('acs-004-super-admin-equivalents')).toBe(true);
     expect(ids.has('int-002-remote-site-settings-inventory')).toBe(true);
     expect(ids.has('int-003-named-credentials-inventory')).toBe(true);
+    // Block E.4 additions (3 more controls):
+    expect(ids.has('acs-005-active-users-on-standard-profiles')).toBe(true);
+    expect(ids.has('acs-012-profiles-with-login-hours')).toBe(true);
+    expect(ids.has('oauth-001-ad-hoc-connected-apps')).toBe(true);
   });
 });
