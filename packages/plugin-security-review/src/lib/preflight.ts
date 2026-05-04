@@ -35,22 +35,39 @@ export async function checkSfInstalled(runner: SfRunner): Promise<PreflightResul
 
 interface SfOrgListResponse {
   result?: {
-    nonScratchOrgs?: ReadonlyArray<{ alias?: string; connectedStatus?: string }>;
-    scratchOrgs?: ReadonlyArray<{ alias?: string; connectedStatus?: string }>;
+    nonScratchOrgs?: ReadonlyArray<{
+      alias?: string;
+      username?: string;
+      connectedStatus?: string;
+    }>;
+    scratchOrgs?: ReadonlyArray<{
+      alias?: string;
+      username?: string;
+      connectedStatus?: string;
+    }>;
   };
 }
 
-export async function checkOrgAuth(runner: SfRunner, alias: string): Promise<PreflightResult> {
+/**
+ * Confirm `aliasOrUsername` is in `sf org list` with Connected status.
+ * Accepts either the consultant's chosen alias (e.g. "hm-de") or the
+ * resolved username (e.g. "mike@example.com") because Flags.requiredOrg()
+ * returns an Org whose getUsername() yields the username, not the alias.
+ */
+export async function checkOrgAuth(
+  runner: SfRunner,
+  aliasOrUsername: string,
+): Promise<PreflightResult> {
   const result = await runner(['org', 'list', '--json']);
   const parsed = JSON.parse(result.stdout) as SfOrgListResponse;
   const allOrgs = [...(parsed.result?.nonScratchOrgs ?? []), ...(parsed.result?.scratchOrgs ?? [])];
-  const match = allOrgs.find((o) => o.alias === alias);
+  const match = allOrgs.find((o) => o.alias === aliasOrUsername || o.username === aliasOrUsername);
   if (match?.connectedStatus === 'Connected') return { ok: true };
   return {
     ok: false,
     code: 'org_not_authed',
-    message: `No active Salesforce auth for org alias "${alias}".`,
-    remediation: `Run: sf org login web --alias ${alias}`,
+    message: `No active Salesforce auth for org "${aliasOrUsername}".`,
+    remediation: `Run: sf org login web --alias ${aliasOrUsername}`,
   };
 }
 

@@ -46,8 +46,11 @@ export async function uploadBundle(input: UploadInput): Promise<UploadResult> {
 
   let errorMessage = `Upload failed with status ${res.status}.`;
   try {
-    const body = (await res.json()) as { error?: string };
+    const body = (await res.json()) as { error?: string; details?: unknown };
     if (body.error) errorMessage = body.error;
+    // Backend's Zod errors come back as { error, details: { fieldErrors, formErrors } }.
+    // Surface the details so consultants can see which field failed validation.
+    if (body.details) errorMessage += `\nDetails: ${JSON.stringify(body.details, null, 2)}`;
   } catch {
     // body wasn't JSON; keep the status-only message.
   }

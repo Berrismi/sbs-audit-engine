@@ -38,8 +38,13 @@ export function assembleEvidenceBundle(opts: AssembleOptions): EvidenceBundle {
           {
             source: 'health_check_api',
             risk_score: opts.healthCheck.riskScore,
+            // Engine's wire-format `name` is the human-readable setting label
+            // (e.g., "Session timeout value"). scan-core's HealthCheckSetting
+            // tracks the risk category in `name` (HIGH_RISK / MEDIUM_RISK /
+            // MEETS_STANDARD) and the actual label in `setting`. Map so the
+            // wire format gets the label.
             high_risk: opts.healthCheck.highRiskSettings.map((s) => ({
-              name: s.name,
+              name: s.setting || s.name,
               value: s.orgValue,
               recommended: s.recommended,
             })),
