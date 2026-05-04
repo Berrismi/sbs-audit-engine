@@ -7,7 +7,8 @@
 // github.com/Salesforce-Security-Benchmark/docs-site and write a normalized
 // controls.json snapshot.
 //
-// Run with:  pnpm --filter @hellomavens/sbs-engine sync:sbs
+// Run with:  pnpm --filter @hellomavens/security-review-for-salesforce-engine sync:sbs
+//   (or via the workspace root: pnpm sync:sbs)
 //
 // IMPORTANT
 // - Reads the SBS pin from ../../upstream-sources.toml (the engine repo root).

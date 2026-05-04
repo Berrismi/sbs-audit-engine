@@ -34,11 +34,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # The CLI package imports from @hellomavens/sbs-engine via its package
-      # exports map, which points at dist/. Build the engine first so the
-      # CLI's typecheck can resolve those types.
+      # Engine consumers (currently only the deleted CLI stub; in Phase 5 the
+      # plugin + scan-core packages) import from
+      # @hellomavens/security-review-for-salesforce-engine via its package
+      # exports map, which points at dist/. Build the engine first so any
+      # consumer's typecheck can resolve those types.
       - name: Build engine
-        run: pnpm --filter @hellomavens/sbs-engine build
+        run: pnpm --filter @hellomavens/security-review-for-salesforce-engine build
 
       - name: Type check
         run: pnpm typecheck

@@ -51,12 +51,6 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.17)
 
-  packages/cli:
-    dependencies:
-      '@hellomavens/sbs-engine':
-        specifier: workspace:*
-        version: link:../sbs-engine
-
   packages/sbs-engine:
     devDependencies:
       smol-toml:

@@ -24,7 +24,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "reuse:lint": "pipx run reuse lint",
-    "sync:sbs": "pnpm --filter @hellomavens/sbs-engine run sync:sbs",
+    "sync:sbs": "pnpm --filter @hellomavens/security-review-for-salesforce-engine run sync:sbs",
     "prepare": "husky"
   },
   "devDependencies": {
