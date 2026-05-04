@@ -118,6 +118,19 @@ describe('checkOrgAuth', () => {
 
     expect(result.ok).toBe(true);
   });
+
+  it('treats malformed `sf org list --json` (missing result key) as no orgs found', async () => {
+    const runner: SfRunner = async () => ({
+      stdout: JSON.stringify({}),
+      stderr: '',
+      exitCode: 0,
+    });
+
+    const result = await checkOrgAuth(runner, 'any-alias');
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.code).toBe('org_not_authed');
+  });
 });
 
 describe('checkUserPerms', () => {
