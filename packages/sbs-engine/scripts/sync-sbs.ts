@@ -240,6 +240,48 @@ function weightFromRiskLevel(risk: RiskLevel): number {
 }
 
 // -----------------------------------------------------------------------------
+// Provenance — record both upstream files a control derives from
+// -----------------------------------------------------------------------------
+
+/**
+ * A control's data comes from two upstream files at the pinned ref:
+ *   1. control-metadata/SBS-{CAT}-{NUM}.yaml (structured metadata)
+ *   2. benchmark/{category}.md (prose: title, description, risk narrative,
+ *      audit procedure, remediation, default value)
+ *
+ * Record both so downstream consumers can attribute every field correctly
+ * under CC-BY-SA-4.0 and so a future audit of controls.json can trace
+ * provenance back to the exact upstream paths. The markdown source is
+ * omitted when the parser found no matching `### SBS-...` section in the
+ * category file (rare; covered by the [upstream missing: ...] fallback
+ * in the prose fields).
+ */
+function buildSources(
+  sbs: UpstreamSources['sbs'],
+  yamlPath: string,
+  category: CategoryPrefix,
+  hasMarkdown: boolean,
+): Control['sources'] {
+  const sources: Control['sources'] = [
+    {
+      type: 'sbs',
+      upstream_repo: sbs.repo,
+      upstream_ref: sbs.ref,
+      upstream_path: yamlPath,
+    },
+  ];
+  if (hasMarkdown) {
+    sources.push({
+      type: 'sbs',
+      upstream_repo: sbs.repo,
+      upstream_ref: sbs.ref,
+      upstream_path: `benchmark/${CATEGORY_TO_MARKDOWN[category]}`,
+    });
+  }
+  return sources;
+}
+
+// -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
 
@@ -367,14 +409,7 @@ function buildControl(
     default_value: markdown?.default_value ?? null,
     remediation: yaml.remediation,
     task_title_template: yaml.task.title_template,
-    sources: [
-      {
-        type: 'sbs',
-        upstream_repo: sbs.repo,
-        upstream_ref: sbs.ref,
-        upstream_path: file.path,
-      },
-    ],
+    sources: buildSources(sbs, file.path, category, markdown !== undefined),
     hellomavens_enrichments: {
       weight: weightFromRiskLevel(riskLevel),
       owasp: enrichment?.owasp ?? [],

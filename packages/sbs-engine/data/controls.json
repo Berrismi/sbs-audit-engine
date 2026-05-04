@@ -2,7 +2,7 @@
   "sbs_version": "0.4.1",
   "upstream_ref": "v0.4.1",
   "upstream_sha": "850f3cb2f0da28a9b025e4ad2f89092a4933ae9d",
-  "fetched_at": "2026-05-03T21:35:49.350Z",
+  "fetched_at": "2026-05-04T00:01:32.619Z",
   "engine_version": "0.0.0-dev",
   "controls": [
     {
@@ -26,6 +26,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -60,6 +66,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -94,6 +106,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -132,6 +150,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -166,6 +190,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-005.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -199,6 +229,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-006.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -232,6 +268,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-007.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -266,6 +308,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-008.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -300,6 +348,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-009.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -333,6 +387,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-010.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -366,6 +426,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-011.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -399,6 +465,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-ACS-012.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/access-controls.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -432,6 +504,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-AUTH-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/authentication.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -466,6 +544,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-AUTH-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/authentication.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -503,6 +587,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-AUTH-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/authentication.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -540,6 +630,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-AUTH-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/authentication.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -574,6 +670,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-CODE-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/code-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -610,6 +712,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-CODE-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/code-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -647,6 +755,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-CODE-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/code-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -681,6 +795,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-CODE-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/code-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -720,6 +840,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-CPORTAL-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/customer-portals.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -757,6 +883,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-CPORTAL-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/customer-portals.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -794,6 +926,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DATA-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/data-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -829,6 +967,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DATA-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/data-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -863,6 +1007,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DATA-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/data-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -898,6 +1048,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DATA-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/data-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -935,6 +1091,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DEP-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/deployments.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -972,6 +1134,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DEP-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/deployments.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1009,6 +1177,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DEP-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/deployments.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1045,6 +1219,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DEP-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/deployments.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1081,6 +1261,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DEP-005.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/deployments.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1119,6 +1305,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-DEP-006.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/deployments.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1152,6 +1344,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-INT-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/integrations.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1190,6 +1388,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-INT-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/integrations.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1226,6 +1430,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-INT-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/integrations.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1263,6 +1473,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-INT-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/integrations.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1297,6 +1513,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-OAUTH-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/oauth-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1335,6 +1557,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-OAUTH-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/oauth-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1372,6 +1600,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-OAUTH-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/oauth-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1405,6 +1639,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-OAUTH-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/oauth-security.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1440,6 +1680,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-SECCONF-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/security-configuration.md"
         }
       ],
       "hellomavens_enrichments": {
@@ -1473,6 +1719,12 @@
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
           "upstream_ref": "v0.4.1",
           "upstream_path": "control-metadata/SBS-SECCONF-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "v0.4.1",
+          "upstream_path": "benchmark/security-configuration.md"
         }
       ],
       "hellomavens_enrichments": {

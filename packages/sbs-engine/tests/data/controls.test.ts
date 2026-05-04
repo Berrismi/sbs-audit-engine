@@ -76,6 +76,17 @@ describe('controls.json integrity', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('every control records both upstream provenance paths (YAML metadata + markdown prose)', () => {
+    const offenders: string[] = [];
+    for (const c of library.controls) {
+      const yamlPath = c.sources.find((s) => s.upstream_path.includes('control-metadata/'));
+      const mdPath = c.sources.find((s) => s.upstream_path.startsWith('benchmark/'));
+      if (!yamlPath) offenders.push(`${c.id} (missing YAML source)`);
+      if (!mdPath) offenders.push(`${c.id} (missing markdown source)`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('no control still carries Phase-3 [TODO:...] placeholder strings', () => {
     const todoFields: string[] = [];
     for (const c of library.controls) {
