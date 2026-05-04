@@ -12,10 +12,14 @@
 // landed this comment removed the unverified queries and is the new
 // foundation.
 //
-// Today's verified set (3 queries, three categories):
+// Today's verified set (6 queries, three categories):
 //   - SBS-ACS-004   Super-admin equivalent users (the spec §5 example)
+//   - SBS-ACS-005   Active users on standard profiles (custom-profile policy)
+//   - SBS-ACS-012   Profiles with Login Hours configured
 //   - SBS-INT-002   Remote Site Settings inventory
 //   - SBS-INT-003   Named Credentials inventory
+//   - SBS-OAUTH-001 Connected Apps without a managed-package namespace
+//                   (i.e., ad-hoc connected apps)
 //
 // All three queries enumerate the population a control measures (super-
 // admin equivalents, outbound endpoints, integration credentials).
@@ -64,5 +68,52 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     controlIds: ['SBS-INT-003'],
     label: 'Named credentials inventory',
     soql: 'SELECT Id, MasterLabel, Endpoint FROM NamedCredential',
+  },
+
+  // SBS-ACS-005 — Only Use Custom Profiles for Active Users. Active users
+  // assigned to well-known standard (non-custom) profiles. Pass = 0 rows
+  // (every active user is on a custom profile). Standard profile names
+  // are stable across orgs (Salesforce ships these by name); the named
+  // list excludes 'System Administrator' because keeping the standard
+  // sysadmin profile for break-glass + cofig is widely accepted practice
+  // even in shops that otherwise enforce custom-profile-only.
+  {
+    id: 'acs-005-active-users-on-standard-profiles',
+    controlIds: ['SBS-ACS-005'],
+    label: 'Active users assigned to standard (non-custom) profiles',
+    soql:
+      'SELECT Id, Username, Profile.Name FROM User WHERE IsActive = true ' +
+      "AND Profile.Name IN ('Standard User', 'Marketing User', 'Solution Manager', 'Contract Manager', 'Read Only')",
+  },
+
+  // SBS-ACS-012 — Classify Users for Login Hours Restrictions. Profiles
+  // with at least one Login Hours window configured. The presence of any
+  // login-hours configuration suggests the org has implemented
+  // classification-driven restrictions; absence suggests the policy is
+  // not in use anywhere. The evaluator pairs this with the questionnaire
+  // attestation about classification correctness.
+  {
+    id: 'acs-012-profiles-with-login-hours',
+    controlIds: ['SBS-ACS-012'],
+    label: 'Profiles with Login Hours restrictions configured',
+    soql:
+      'SELECT Id, Name FROM Profile ' +
+      'WHERE LoginHoursMondayStart != null OR LoginHoursTuesdayStart != null ' +
+      'OR LoginHoursWednesdayStart != null OR LoginHoursThursdayStart != null ' +
+      'OR LoginHoursFridayStart != null OR LoginHoursSaturdayStart != null ' +
+      'OR LoginHoursSundayStart != null',
+  },
+
+  // SBS-OAUTH-001 — Require Formal Installation of Connected Apps.
+  // Connected apps without a managed-package namespace are org-local
+  // (ad-hoc), not formally installed via a managed/unmanaged package.
+  // Pass = 0 rows; fail = N rows of ad-hoc connected apps. The
+  // ConnectedApplication.NamespacePrefix field is null for org-local apps
+  // and non-null for apps that came from a packaged install.
+  {
+    id: 'oauth-001-ad-hoc-connected-apps',
+    controlIds: ['SBS-OAUTH-001'],
+    label: 'Connected applications without a managed-package namespace (ad-hoc)',
+    soql: 'SELECT Id, Name, NamespacePrefix FROM ConnectedApplication WHERE NamespacePrefix = null',
   },
 ];
