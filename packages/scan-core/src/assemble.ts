@@ -28,6 +28,7 @@ export function assembleEvidenceBundle(opts: AssembleOptions): EvidenceBundle {
     .map((r) => ({
       source: 'soql',
       query: r.query.soql,
+      query_id: r.query.id,
       rows: r.rows,
     }));
 

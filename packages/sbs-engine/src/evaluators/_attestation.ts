@@ -97,3 +97,54 @@ function unexpectedShape(questionId: string): EvaluatorResult {
     findings: [`Unexpected answer shape for ${questionId}; cannot score.`],
   };
 }
+
+// ---------------------------------------------------------------------------
+// CLI-aware variant of attestationEvaluator (Phase 5 Block E).
+//
+// Same questionnaire fallback as attestationEvaluator, but checks for SOQL
+// evidence first (matched by query_id). When SOQL is present, calls the
+// caller-provided evaluator function with the rows; SOQL is ground-truth so
+// confidence is `high` regardless of result.
+// ---------------------------------------------------------------------------
+
+export interface SoqlEvaluation {
+  status: 'pass' | 'fail' | 'inconclusive';
+  /** Plain-English findings to surface in the report. */
+  findings: string[];
+}
+
+export interface CliAttestationConfig extends AttestationConfig {
+  /** scan-core query id this evaluator consumes (e.g., 'acs-002-frozen-but-active-users'). */
+  soqlQueryId: string;
+  /** Pure function: rows → SoqlEvaluation. Never throws; degrade to inconclusive on bad data. */
+  evaluateSoql: (rows: Record<string, unknown>[]) => SoqlEvaluation;
+}
+
+/**
+ * Build an evaluator that prefers SOQL evidence (high confidence) and falls
+ * back to questionnaire attestation (low confidence) when no matching SOQL
+ * is present. Pure: same input → same output. Never throws.
+ */
+export function cliAttestationEvaluator(config: CliAttestationConfig): Evaluator {
+  const baseAttestation = attestationEvaluator(config);
+  return (input) => {
+    const { evidence } = input;
+
+    const soql = evidence.find(
+      (e): e is Extract<Evidence, { source: 'soql' }> =>
+        e.source === 'soql' && e.query_id === config.soqlQueryId,
+    );
+
+    if (soql) {
+      const r = config.evaluateSoql(soql.rows);
+      return {
+        status: r.status,
+        confidence: 'high',
+        evidence_used: ['soql'],
+        findings: r.findings,
+      };
+    }
+
+    return baseAttestation(input);
+  };
+}

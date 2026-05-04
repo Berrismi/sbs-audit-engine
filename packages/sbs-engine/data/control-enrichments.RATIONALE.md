@@ -180,3 +180,82 @@ When SBS bumps version (e.g., to 0.5.0 or 1.0):
 4. For controls that change semantics, verify the existing mappings
    still hold; demote / re-source as needed and document the change in
    the per-category outliers list above.
+
+---
+
+## CLI evidence classification (Phase 5 Block E)
+
+Each control carries a `cli_evidence_class` flag in its enrichment:
+
+- **`cli_primary`**: scan-core SOQL / Health Check / Code Analyzer
+  evidence is ground-truth for this control. Evaluator returns
+  `confidence: 'high'` when the CLI evidence is present, with a
+  deterministic verdict from the evidence rows.
+- **`cli_corroborating`**: CLI evidence informs but doesn't fully
+  decide the verdict; questionnaire attestation still adjudicates the
+  process layer. Evaluator may still return `inconclusive` even with
+  CLI evidence present, falling back to questionnaire when needed.
+- **`questionnaire_only`**: process-attestation control. CLI cannot
+  verify; the questionnaire is the only evidence source.
+
+### Authoring rule (post-correction baseline)
+
+Block E.1 is the **conservative reset** of an earlier speculative
+mapping. Block B + B.1 added 16 SOQL queries authored by control id
+without per-control validation against `audit_procedure`; auditing
+those mappings during Block E revealed 13 of 16 were tied to the
+wrong control (e.g., a frozen-user query mapped to ACS-002, which is
+actually about API-Enabled justification). Those queries were removed.
+
+The new authoring rule for any cli_primary or cli_corroborating
+classification:
+
+1. **Read the control's `audit_procedure`** in
+   `data/controls.json` before authoring a query.
+2. The query must enumerate (or directly verify) what the audit
+   procedure asks the consultant to inspect.
+3. The query lands in `packages/scan-core/src/soql/queries.ts` in the
+   same PR as the evaluator extension that consumes it. No bulk
+   query additions ahead of evaluator wiring.
+
+### Block E.1 verified set
+
+Three controls are classified `cli_primary` today:
+
+- **SBS-ACS-004** (Documented Justification for Super Admin–Equivalent
+  Users) — query `acs-004-super-admin-equivalents` enumerates the
+  population; evaluator inspects each row's `JustificationDoc__c`
+  custom field for a non-empty value.
+- **SBS-INT-002** (Inventory and Justification of Remote Site
+  Settings) — query `int-002-remote-site-settings-inventory` returns
+  the active RSS list; evaluator confirms the inventory exists,
+  reports its size, and falls back to questionnaire for "all entries
+  justified."
+- **SBS-INT-003** (Inventory and Justification of Named Credentials)
+  — same pattern as INT-002 with `int-003-named-credentials-inventory`.
+
+All other 39 controls are `questionnaire_only` until a per-control PR
+adds a validated query + evaluator extension. The expected expansion
+order:
+
+1. **OAUTH** — connected-app-installation governance (OAUTH-001),
+   profile/permset access (OAUTH-002), criticality (OAUTH-003), vendor
+   review (OAUTH-004). OAUTH-001 + 002 are SOQL-evidenceable; 003 + 004
+   stay questionnaire-led.
+2. **CPORTAL** — both controls require code-level inspection (Apex
+   parameter handling, guest user record access). Move from
+   questionnaire_only to cli_corroborating once Block D's Code
+   Analyzer findings cover the relevant rules.
+3. **AUTH / DATA / DEP** — most are process-flavored; check Tooling
+   API surfaces for SecuritySettings + EncryptionKey + InstalledPackage.
+4. **SECCONF** — already has Block C's Health Check API integration
+   wired; reclassify both SECCONF controls to cli_primary in the PR
+   that wires their evaluators to the health_check_api Evidence
+   variant.
+5. **CODE** — Code Analyzer findings (Block D) are the evidence
+   source. Reclassify each CODE-\* control to cli_primary in the PR
+   that maps Code Analyzer rule families to the control.
+
+The discipline from this PR onward: every promotion from
+questionnaire_only to cli_primary or cli_corroborating ships in a
+single PR alongside its query + evaluator extension + tests.

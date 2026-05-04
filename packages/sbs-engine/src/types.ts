@@ -85,6 +85,24 @@ export interface ControlSource {
   upstream_path: string;
 }
 
+/**
+ * Classification of how the consultant CLI provides evidence for a control.
+ * Phase 5 Block E. See control-enrichments.RATIONALE.md for the editorial
+ * reasoning per category.
+ *
+ * - `cli_primary`: scan-core SOQL/Health-Check/Code-Analyzer evidence is
+ *   ground-truth for this control. Evaluator returns `confidence: 'high'`
+ *   when the CLI evidence is present, with a deterministic pass/fail/
+ *   inconclusive verdict from the evidence rows.
+ * - `cli_corroborating`: CLI evidence informs but doesn't fully decide
+ *   the verdict; questionnaire attestation still adjudicates the
+ *   process layer. Evaluator may return `inconclusive` even with CLI
+ *   evidence present, falling back to questionnaire when needed.
+ * - `questionnaire_only`: process-attestation control. CLI cannot
+ *   verify; the questionnaire is the only evidence source.
+ */
+export type CliEvidenceClass = 'cli_primary' | 'cli_corroborating' | 'questionnaire_only';
+
 export interface ControlEnrichments {
   /** Risk-tier weight used by our scoring algorithm. Derived from risk_level. */
   weight: number;
@@ -98,6 +116,8 @@ export interface ControlEnrichments {
     gdpr?: readonly string[];
     ccpa?: readonly string[];
   };
+  /** Phase 5 Block E classification of CLI evidence availability. */
+  cli_evidence_class?: CliEvidenceClass;
   /** Path to the evaluator function file (relative to packages/sbs-engine/src). */
   evaluator?: string;
   /** Path to the remediation playbook markdown (relative to packages/sbs-engine). */
@@ -139,7 +159,15 @@ export type EvidenceSource =
  */
 export type Evidence =
   | { source: 'questionnaire'; question_id: string; answer: QuestionnaireAnswer }
-  | { source: 'soql'; query: string; rows: Record<string, unknown>[] }
+  | {
+      source: 'soql';
+      query: string;
+      rows: Record<string, unknown>[];
+      /** Stable id of the query in the scan-core bundle (e.g., 'acs-004-super-admin-equivalents').
+       * Optional for backwards-compat with bundles produced before Phase 5 Block E;
+       * Block E evaluators match by this id when present. */
+      query_id?: string;
+    }
   | { source: 'code_analyzer'; engine: string; findings: CodeAnalyzerFinding[] }
   | { source: 'health_check_api'; risk_score: number; high_risk: HealthCheckSetting[] }
   | { source: 'metadata_api'; type: string; records: Record<string, unknown>[] };
