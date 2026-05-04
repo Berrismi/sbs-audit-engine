@@ -188,7 +188,7 @@
         "soc2": ["CC7.1", "CC8.1"],
         "iso27001": ["A.8.25", "A.8.28", "A.8.29"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "cli_corroborating"
     },
     "SBS-CODE-003": {
       "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
