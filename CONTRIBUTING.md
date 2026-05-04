@@ -14,9 +14,19 @@ Audit product. It implements the [Security Benchmark for Salesforce (SBS)](https
 standard and ships:
 
 - `packages/sbs-engine` — the scoring engine, control library, and evaluator
-  functions.
-- `packages/cli` — the consultant CLI (`@hellomavens/sbs-scan`) for running
-  evidence-based scans against a real Salesforce org.
+  functions. Published as `@hellomavens/security-review-for-salesforce-engine`.
+  _(Directory name is historical; see the engine package's README for the
+  rename note. The directory name will follow the package name in a future
+  housekeeping PR.)_
+- `packages/scan-core` _(Phase 5)_ — the side-effecting evidence collector:
+  SOQL bundle, Health Check API, Code Analyzer subprocess. Published as
+  `@hellomavens/security-review-for-salesforce-scan-core`.
+- `packages/plugin-security-review` _(Phase 5)_ — the Salesforce CLI plugin
+  shell. Installed via `sf plugins install @hellomavens/plugin-security-review`,
+  invoked as `sf security review run --target-org <alias>`.
+
+The previous `packages/cli` stub (`@hellomavens/sbs-scan`, never published) has
+been removed; Phase 5's `packages/plugin-security-review` replaces it.
 
 The branded report templates, hosted questionnaire UI, and remediation
 playbooks are NOT in this repo; they live in the closed `HelloMavens-SbsAudit`
@@ -79,7 +89,8 @@ when a new SBS tag drops.
 Same shape:
 
 1. Update `[code_analyzer] ref` in `upstream-sources.toml`.
-2. Update the npm dep range in `packages/cli/package.json`.
+2. Update the npm dep range in `packages/scan-core/package.json` and any
+   matching pin in `packages/plugin-security-review/package.json` _(Phase 5+)_.
 3. Re-run integration tests against a real org if any rule output shape
    changed.
 4. PR titled `chore(code-analyzer): bump to v{X.Y.Z}`.

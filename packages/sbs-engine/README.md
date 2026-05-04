@@ -3,26 +3,30 @@ SPDX-FileCopyrightText: 2026 HelloMavens LLC
 SPDX-License-Identifier: MIT
 -->
 
-# @hellomavens/sbs-engine
+# @hellomavens/security-review-for-salesforce-engine
 
 > Open source scoring engine implementing the
 > [Security Benchmark for Salesforce (SBS)](https://docs.securitybenchmark.org)
 > standard, with HelloMavens-developed evaluators, evidence framework, and
 > scoring algorithm.
 
-[![npm version](https://img.shields.io/npm/v/@hellomavens/sbs-engine?label=npm)](https://www.npmjs.com/package/@hellomavens/sbs-engine)
+[![npm version](https://img.shields.io/npm/v/@hellomavens/security-review-for-salesforce-engine?label=npm)](https://www.npmjs.com/package/@hellomavens/security-review-for-salesforce-engine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> **Renamed from `@hellomavens/sbs-engine`** as of `0.0.0-alpha.5`. See the
+> [Migration section in the repo README](https://github.com/Berrismi/sbs-audit-engine#migration-from-hellomavenssbs-engine)
+> for details. The old package is deprecated; this package supersedes it.
 
 ## Install
 
 ```sh
-pnpm add @hellomavens/sbs-engine
+pnpm add @hellomavens/security-review-for-salesforce-engine
 # or
-npm i @hellomavens/sbs-engine
+npm i @hellomavens/security-review-for-salesforce-engine
 ```
 
 > Phase 1 alpha. The API will change before 0.1.0. Pin exactly:
-> `"@hellomavens/sbs-engine": "0.0.0-alpha.0"`.
+> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.5"`.
 
 ## What this is
 
@@ -37,16 +41,20 @@ an official SBS project.
 ## Usage (current alpha)
 
 ```ts
-import { ENGINE_VERSION, evaluateAcs004, type EvaluatorInput } from '@hellomavens/sbs-engine';
-import controls from '@hellomavens/sbs-engine/controls';
+import {
+  ENGINE_VERSION,
+  evaluateAcs004,
+  type EvaluatorInput,
+} from '@hellomavens/security-review-for-salesforce-engine';
+import controls from '@hellomavens/security-review-for-salesforce-engine/controls';
 
 console.log(`engine v${ENGINE_VERSION}, SBS v${controls.sbs_version}`);
 console.log(`${controls.controls.length} controls loaded`);
 ```
 
-The full evaluator surface (other 41 evaluators + the `score()` entry point
-
-- category/risk-grade scoring) lands in Phase 3.
+The full evaluator surface plus the `score()` entry point ship in Phase 3 (already
+shipped); CLI evidence paths (SOQL / Code Analyzer / Health Check) ship alongside
+the consultant CLI in Phase 5.
 
 ## What HelloMavens added
 
@@ -61,11 +69,11 @@ To be transparent about what is built vs. borrowed:
 
 ## Exports
 
-| Path                               | Contents                                                              |
-| ---------------------------------- | --------------------------------------------------------------------- |
-| `@hellomavens/sbs-engine`          | `ENGINE_VERSION`, types, evaluators (currently just `evaluateAcs004`) |
-| `@hellomavens/sbs-engine/controls` | The full normalized control library JSON (CC BY-SA 4.0)               |
-| `@hellomavens/sbs-engine/types`    | TypeScript types only                                                 |
+| Path                                                          | Contents                                                |
+| ------------------------------------------------------------- | ------------------------------------------------------- |
+| `@hellomavens/security-review-for-salesforce-engine`          | `ENGINE_VERSION`, `score()`, types, evaluators          |
+| `@hellomavens/security-review-for-salesforce-engine/controls` | The full normalized control library JSON (CC BY-SA 4.0) |
+| `@hellomavens/security-review-for-salesforce-engine/types`    | TypeScript types only                                   |
 
 ## License
 

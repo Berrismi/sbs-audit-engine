@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 //
-// Public entrypoint for @hellomavens/sbs-engine.
+// Public entrypoint for @hellomavens/security-review-for-salesforce-engine.
 //
 // Phase 3 ships:
 //   - All 42 control evaluators (questionnaire-evidence path)
