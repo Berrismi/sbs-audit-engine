@@ -65,4 +65,52 @@ describe('collectEvidence', () => {
     // With at least one query in the default bundle, queryResults should be non-empty.
     expect(result.queryResults.length).toBeGreaterThan(0);
   });
+
+  it('fetches Health Check evidence when the connection has a tooling namespace', async () => {
+    const connectionWithTooling: ConnectionLike = {
+      query: async () => ({ records: [], totalSize: 0, done: true }),
+      tooling: {
+        query: async (soql) => {
+          if (soql.includes('SecurityHealthCheck ')) {
+            return { records: [{ Score: 80 }], totalSize: 1, done: true };
+          }
+          return { records: [], totalSize: 0, done: true };
+        },
+      },
+    };
+
+    const result = await collectEvidence({
+      connection: connectionWithTooling,
+      subjectId: 'subj-1',
+      soqlQueries: [],
+    });
+
+    const healthEvidence = result.bundle.evidence.find((e) => e.source === 'health_check_api');
+    expect(healthEvidence).toBeDefined();
+    if (healthEvidence?.source === 'health_check_api') {
+      expect(healthEvidence.risk_score).toBe(80);
+    }
+  });
+
+  it('skips Health Check fetch when onlySources excludes health_check_api', async () => {
+    let toolingCalled = false;
+    const connectionWithTooling: ConnectionLike = {
+      query: async () => ({ records: [], totalSize: 0, done: true }),
+      tooling: {
+        query: async () => {
+          toolingCalled = true;
+          return { records: [], totalSize: 0, done: true };
+        },
+      },
+    };
+
+    await collectEvidence({
+      connection: connectionWithTooling,
+      subjectId: 'subj-1',
+      soqlQueries: [],
+      onlySources: ['soql'],
+    });
+
+    expect(toolingCalled).toBe(false);
+  });
 });
