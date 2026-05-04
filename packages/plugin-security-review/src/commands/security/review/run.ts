@@ -2,12 +2,26 @@
 // SPDX-License-Identifier: MIT
 
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import {
+  collectEvidence,
+  makeExecaCodeAnalyzerSpawner,
+  makeNodeTmpdirManager,
+  type CollectEvidenceOptions,
+  type ConnectionLike,
+  type ProgressEvent,
+} from '@hellomavens/security-review-for-salesforce-scan-core';
 import { runPreflight } from '../../../lib/preflight';
 import { makeExecaSfRunner } from '../../../lib/sf-runner';
+import { loadCredentials } from '../../../lib/consultant-key';
+import { uploadBundle } from '../../../lib/upload-client';
 
 export type SecurityReviewRunResult = {
   preflightOk: boolean;
   alias: string;
+  reportUrl?: string;
+  bundlePath?: string;
 };
 
 export default class SecurityReviewRun extends SfCommand<SecurityReviewRunResult> {
@@ -15,22 +29,40 @@ export default class SecurityReviewRun extends SfCommand<SecurityReviewRunResult
     'Run a HelloMavens security review against a target Salesforce org.';
 
   public static override readonly description = `
-Phase 5 in flight — Block A ships preflight only. The full evidence-collection
-flow (SOQL bundle, Health Check API, Code Analyzer subprocess, evidence
-upload) lands in Blocks B–F.
+Runs preflight checks, collects evidence (SOQL bundle + Health Check API by
+default; --include-code-analyzer adds the slow Code Analyzer subprocess),
+then either uploads the resulting EvidenceBundle to the HelloMavens scoring
+backend (default) or writes it to a local file (--no-upload).
 
-Today this command verifies that:
-  - The Salesforce CLI (\`sf\`) is on $PATH
-  - Your target org alias has an active auth
-  - (TODO Block B) Your user has the required permissions
-
-It then prints a "preflight passed; scan stub" message and exits 0.
+Run \`sf security review login\` once before the first scan to store your
+consultant credentials.
 `.trim();
 
-  public static override readonly examples = ['$ sf security review run --target-org client-prod'];
+  public static override readonly examples = [
+    '$ sf security review run --target-org client-prod --client-email contact@client.com',
+    '$ sf security review run --target-org client-prod --client-email contact@client.com --include-code-analyzer',
+    '$ sf security review run --target-org client-prod --no-upload --output ./bundle.json',
+  ];
 
   public static override readonly flags = {
     'target-org': Flags.requiredOrg(),
+    'client-email': Flags.string({
+      summary: 'Customer email the report will be issued to. Required unless --no-upload is set.',
+      required: false,
+    }),
+    'no-upload': Flags.boolean({
+      summary: 'Skip upload; write the assembled bundle to --output as JSON instead.',
+      default: false,
+    }),
+    output: Flags.file({
+      summary:
+        'Path to write the bundle when --no-upload is set. Defaults to ./hm-bundle-<alias>-<ts>.json.',
+      required: false,
+    }),
+    'include-code-analyzer': Flags.boolean({
+      summary: 'Opt in to running Salesforce Code Analyzer (slow — 5–30 min on real orgs).',
+      default: false,
+    }),
   };
 
   public async run(): Promise<SecurityReviewRunResult> {
@@ -38,26 +70,78 @@ It then prints a "preflight passed; scan stub" message and exits 0.
     const org = flags['target-org'];
     const alias = org.getUsername() ?? 'unknown';
 
-    const runner = makeExecaSfRunner();
-    const preflightResult = await runPreflight({
-      runner,
-      alias,
-      // Block A stub: real Connection-driven perms fetch lands in Block B when
-      // the SOQL bundle wires Connection.tooling.query into scan-core.
-      fetchPerms: async () => ({ ApiEnabled: true, ViewSetup: true, ViewAllData: true }),
-    });
-
-    if (!preflightResult.ok) {
-      this.error(`${preflightResult.message}\n\nRemediation: ${preflightResult.remediation}`, {
-        exit: 1,
-      });
+    if (!flags['no-upload'] && !flags['client-email']) {
+      throw new Error('--client-email is required unless --no-upload is set.');
     }
 
+    // 1. Preflight (existing).
+    const runner = makeExecaSfRunner();
+    const preflight = await runPreflight({
+      runner,
+      alias,
+      // Block A's stub fetchPerms — Block B classified it as sufficient
+      // until a real perms query lands.
+      fetchPerms: async () => ({ ApiEnabled: true, ViewSetup: true, ViewAllData: true }),
+    });
+    if (!preflight.ok) {
+      throw new Error(`${preflight.message}\n\nRemediation: ${preflight.remediation}`);
+    }
     this.log('✓ Preflight passed.');
-    this.log(
-      'Block A scaffold complete — actual scan logic ships in Blocks B (SOQL), C (Health Check), D (Code Analyzer), E (per-evaluator extensions), F (upload).',
-    );
 
-    return { preflightOk: true, alias };
+    // 2. Collect evidence.
+    const connection = (await org.getConnection()) as unknown as ConnectionLike;
+    const subjectInput = flags['client-email'] ?? alias;
+    const subjectId = createHash('sha256').update(subjectInput).digest('hex').slice(0, 32);
+
+    const onlySources: ('soql' | 'health_check_api' | 'code_analyzer')[] = [
+      'soql',
+      'health_check_api',
+    ];
+    if (flags['include-code-analyzer']) onlySources.push('code_analyzer');
+
+    const collectOpts: CollectEvidenceOptions = {
+      connection,
+      subjectId,
+      onlySources,
+      onProgress: (event: ProgressEvent) => this.log(`  · ${event.type}`),
+    };
+    if (flags['include-code-analyzer']) {
+      collectOpts.codeAnalyzer = {
+        alias,
+        spawner: makeExecaCodeAnalyzerSpawner(),
+        tmpdir: makeNodeTmpdirManager(),
+      };
+    }
+
+    this.log('· Collecting evidence...');
+    const { bundle } = await collectEvidence(collectOpts);
+
+    // 3. Upload OR write to disk.
+    if (flags['no-upload']) {
+      const path =
+        flags.output ??
+        `./hm-bundle-${alias}-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+      await writeFile(path, JSON.stringify(bundle, null, 2));
+      this.log(`✓ Bundle written to ${path}.`);
+      return { preflightOk: true, alias, bundlePath: path };
+    }
+
+    const creds = await loadCredentials();
+    if (!creds) {
+      throw new Error('No consultant credentials found. Run `sf security review login` first.');
+    }
+
+    const result = await uploadBundle({
+      bundle,
+      clientEmail: flags['client-email']!,
+      consultantConsent: creds.consultantConsent,
+      apiKey: creds.apiKey,
+      apiBaseUrl: creds.apiBaseUrl,
+    });
+    if (!result.ok) {
+      throw new Error(`Upload failed (${result.status}): ${result.error}`);
+    }
+    this.log(`✓ Report ready: ${result.reportUrl}`);
+    return { preflightOk: true, alias, reportUrl: result.reportUrl };
   }
 }
