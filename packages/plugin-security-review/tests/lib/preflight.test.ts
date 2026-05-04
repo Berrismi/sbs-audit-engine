@@ -119,6 +119,31 @@ describe('checkOrgAuth', () => {
     expect(result.ok).toBe(true);
   });
 
+  it('matches by username when Flags.requiredOrg returns the username (not the alias)', async () => {
+    // Flags.requiredOrg's getUsername() returns 'mike@example.com', not 'hm-de'.
+    // The org list still has both fields populated.
+    const runner: SfRunner = async () => ({
+      stdout: JSON.stringify({
+        result: {
+          nonScratchOrgs: [
+            {
+              alias: 'hm-de',
+              username: 'mike@example.com',
+              connectedStatus: 'Connected',
+            },
+          ],
+          scratchOrgs: [],
+        },
+      }),
+      stderr: '',
+      exitCode: 0,
+    });
+
+    const result = await checkOrgAuth(runner, 'mike@example.com');
+
+    expect(result.ok).toBe(true);
+  });
+
   it('treats malformed `sf org list --json` (missing result key) as no orgs found', async () => {
     const runner: SfRunner = async () => ({
       stdout: JSON.stringify({}),
