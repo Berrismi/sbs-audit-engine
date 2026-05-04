@@ -87,3 +87,92 @@ describe('attestationEvaluator', () => {
     expect(result.findings).toEqual(['FAIL_MSG']);
   });
 });
+
+import { corroboratingHealthCheckEvaluator } from '../../src/evaluators/_attestation';
+
+describe('corroboratingHealthCheckEvaluator', () => {
+  const evaluateCorr = corroboratingHealthCheckEvaluator({
+    questionId: 'Q-SECCONF-001',
+    passFinding: 'PASS_MSG',
+    failFinding: 'FAIL_MSG',
+    observe: (hc) => [
+      `Health Check observed: score ${hc.risk_score}, ${hc.high_risk.length} high-risk setting(s).`,
+    ],
+  });
+
+  const inputCorr = (evidence: Evidence[]): EvaluatorInput => ({
+    control: makeControlFixture('SBS-SECCONF-001'),
+    evidence,
+  });
+
+  it('returns questionnaire pass with HIGH confidence + HC observations when both are present', () => {
+    const result = evaluateCorr(
+      inputCorr([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-SECCONF-001',
+          answer: { kind: 'boolean', value: true },
+        },
+        { source: 'health_check_api', risk_score: 90, high_risk: [] },
+      ]),
+    );
+    expect(result.status).toBe('pass');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['questionnaire', 'health_check_api']);
+    expect(result.findings[0]).toBe('PASS_MSG');
+    expect(result.findings[1]).toContain('score 90');
+  });
+
+  it('returns questionnaire fail with HIGH confidence + HC observations when both are present', () => {
+    const result = evaluateCorr(
+      inputCorr([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-SECCONF-001',
+          answer: { kind: 'boolean', value: false },
+        },
+        {
+          source: 'health_check_api',
+          risk_score: 60,
+          high_risk: [{ name: 'Session', value: '8h', recommended: '15m' }],
+        },
+      ]),
+    );
+    expect(result.status).toBe('fail');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['questionnaire', 'health_check_api']);
+  });
+
+  it('returns inconclusive+high with HC observations when only HC evidence is present', () => {
+    const result = evaluateCorr(
+      inputCorr([{ source: 'health_check_api', risk_score: 75, high_risk: [] }]),
+    );
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['health_check_api']);
+    expect(result.findings.some((f) => f.includes('score 75'))).toBe(true);
+    expect(result.findings.some((f) => f.includes('questionnaire'))).toBe(true);
+  });
+
+  it('returns questionnaire-only verdict (low confidence) when HC evidence is absent', () => {
+    const result = evaluateCorr(
+      inputCorr([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-SECCONF-001',
+          answer: { kind: 'boolean', value: true },
+        },
+      ]),
+    );
+    expect(result.status).toBe('pass');
+    expect(result.confidence).toBe('low');
+    expect(result.evidence_used).toEqual(['questionnaire']);
+  });
+
+  it('returns inconclusive+low when no evidence is provided at all', () => {
+    const result = evaluateCorr(inputCorr([]));
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('low');
+    expect(result.evidence_used).toEqual([]);
+  });
+});

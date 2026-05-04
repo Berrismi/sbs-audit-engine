@@ -148,3 +148,73 @@ export function cliAttestationEvaluator(config: CliAttestationConfig): Evaluator
     return baseAttestation(input);
   };
 }
+
+// ---------------------------------------------------------------------------
+// Corroborating evaluator (Phase 5 Block E.2).
+//
+// For controls classified `cli_corroborating`: questionnaire decides the
+// pass/fail verdict, but Health Check evidence raises confidence + surfaces
+// observations alongside. Used by SECCONF-001 and SECCONF-002 where the
+// underlying control is process-shaped (deliberate baseline selection,
+// repeatable review cadence) and Health Check API data corroborates without
+// being decisive.
+// ---------------------------------------------------------------------------
+
+export interface CorroboratingHealthCheckConfig extends AttestationConfig {
+  /** Pure function: given the health_check_api Evidence, return human-readable
+   * observation strings to append to findings. Never throws. */
+  observe: (evidence: Extract<Evidence, { source: 'health_check_api' }>) => readonly string[];
+}
+
+/**
+ * Build an evaluator where Health Check evidence corroborates (not overrides)
+ * the questionnaire verdict.
+ *
+ * Behavior:
+ * - Both questionnaire + HC present: questionnaire decides verdict, confidence
+ *   bumps to 'high' (HC corroborates), findings include both.
+ * - HC only: returns inconclusive+high with observations, prompting the
+ *   consultant to gather questionnaire input.
+ * - Questionnaire only: standard low-confidence attestation result.
+ * - Neither: standard no-evidence inconclusive.
+ */
+export function corroboratingHealthCheckEvaluator(
+  config: CorroboratingHealthCheckConfig,
+): Evaluator {
+  return (input) => {
+    const { evidence } = input;
+    const hc = evidence.find(
+      (e): e is Extract<Evidence, { source: 'health_check_api' }> =>
+        e.source === 'health_check_api',
+    );
+
+    if (hc) {
+      const observations = config.observe(hc);
+      const baseResult = attestationEvaluator(config)(input);
+
+      if (baseResult.evidence_used.includes('questionnaire')) {
+        // Both present: questionnaire verdict, high confidence, combined findings.
+        return {
+          status: baseResult.status,
+          confidence: 'high',
+          evidence_used: ['questionnaire', 'health_check_api'],
+          findings: [...baseResult.findings, ...observations],
+        };
+      }
+
+      // HC only: inconclusive verdict but high confidence in the observation.
+      return {
+        status: 'inconclusive',
+        confidence: 'high',
+        evidence_used: ['health_check_api'],
+        findings: [
+          ...observations,
+          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
+        ],
+      };
+    }
+
+    // No HC: fall through to standard attestation behavior.
+    return attestationEvaluator(config)(input);
+  };
+}
