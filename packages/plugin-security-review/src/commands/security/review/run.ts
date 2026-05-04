@@ -103,7 +103,19 @@ consultant credentials.
       connection,
       subjectId,
       onlySources,
-      onProgress: (event: ProgressEvent) => this.log(`  · ${event.type}`),
+      onProgress: (event: ProgressEvent) => {
+        if (event.type === 'query_ok') {
+          this.log(
+            `  ✓ ${event.query.id} (${event.rowCount} row${event.rowCount === 1 ? '' : 's'})`,
+          );
+        } else if (event.type === 'query_failed') {
+          this.log(`  ✗ ${event.query.id}: ${event.error.message}`);
+        } else if (event.type === 'query_skipped') {
+          this.log(`  · ${event.query.id} skipped (${event.reason})`);
+        } else {
+          this.log(`  · ${event.query.id}`);
+        }
+      },
     };
     if (flags['include-code-analyzer']) {
       collectOpts.codeAnalyzer = {
