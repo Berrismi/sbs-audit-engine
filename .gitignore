@@ -27,3 +27,7 @@ yarn-debug.log*
 
 # pnpm
 .pnpm-store/
+
+# Local scan bundles dumped via sf security review run --no-upload
+bundle.json
+hm-bundle-*.json
