@@ -7,7 +7,11 @@
 // evidence ignored, evidence_used contract).
 
 import { describe, expect, it } from 'vitest';
-import { attestationEvaluator } from '../../src/evaluators/_attestation';
+import {
+  attestationEvaluator,
+  corroboratingCodeAnalyzerEvaluator,
+  corroboratingHealthCheckEvaluator,
+} from '../../src/evaluators/_attestation';
 import { makeControlFixture } from '../fixtures/control';
 import type { Evidence, EvaluatorInput } from '../../src/types';
 
@@ -87,8 +91,6 @@ describe('attestationEvaluator', () => {
     expect(result.findings).toEqual(['FAIL_MSG']);
   });
 });
-
-import { corroboratingHealthCheckEvaluator } from '../../src/evaluators/_attestation';
 
 describe('corroboratingHealthCheckEvaluator', () => {
   const evaluateCorr = corroboratingHealthCheckEvaluator({
@@ -171,6 +173,85 @@ describe('corroboratingHealthCheckEvaluator', () => {
 
   it('returns inconclusive+low when no evidence is provided at all', () => {
     const result = evaluateCorr(inputCorr([]));
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('low');
+    expect(result.evidence_used).toEqual([]);
+  });
+});
+
+describe('corroboratingCodeAnalyzerEvaluator', () => {
+  const evaluateCorr = corroboratingCodeAnalyzerEvaluator({
+    questionId: 'Q-CODE-002',
+    passFinding: 'PASS_CODE_MSG',
+    failFinding: 'FAIL_CODE_MSG',
+    observe: (ca) => [
+      `Code Analyzer (engine: ${ca.engine}) reported ${ca.findings.length} finding(s).`,
+    ],
+  });
+
+  const inputCa = (evidence: Evidence[]): EvaluatorInput => ({
+    control: makeControlFixture('SBS-CODE-002'),
+    evidence,
+  });
+
+  it('returns questionnaire pass with HIGH confidence + CA observations when both are present', () => {
+    const result = evaluateCorr(
+      inputCa([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-CODE-002',
+          answer: { kind: 'boolean', value: true },
+        },
+        {
+          source: 'code_analyzer',
+          engine: 'pmd',
+          findings: [
+            {
+              rule: 'ApexCSRF',
+              severity: 'High',
+              file: '/a.cls',
+              line: 10,
+              message: 'm',
+            },
+          ],
+        },
+      ]),
+    );
+    expect(result.status).toBe('pass');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['questionnaire', 'code_analyzer']);
+    expect(result.findings[0]).toBe('PASS_CODE_MSG');
+    expect(result.findings[1]).toContain('1 finding');
+  });
+
+  it('returns inconclusive+high with CA observations when only CA evidence is present', () => {
+    const result = evaluateCorr(
+      inputCa([{ source: 'code_analyzer', engine: 'pmd', findings: [] }]),
+    );
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['code_analyzer']);
+    expect(result.findings.some((f) => f.includes('engine: pmd'))).toBe(true);
+    expect(result.findings.some((f) => f.includes('questionnaire'))).toBe(true);
+  });
+
+  it('returns standard low-confidence questionnaire result when CA evidence is absent', () => {
+    const result = evaluateCorr(
+      inputCa([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-CODE-002',
+          answer: { kind: 'boolean', value: false },
+        },
+      ]),
+    );
+    expect(result.status).toBe('fail');
+    expect(result.confidence).toBe('low');
+    expect(result.evidence_used).toEqual(['questionnaire']);
+  });
+
+  it('returns inconclusive+low when no evidence is provided at all', () => {
+    const result = evaluateCorr(inputCa([]));
     expect(result.status).toBe('inconclusive');
     expect(result.confidence).toBe('low');
     expect(result.evidence_used).toEqual([]);

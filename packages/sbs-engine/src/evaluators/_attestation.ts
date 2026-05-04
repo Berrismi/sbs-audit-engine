@@ -150,7 +150,7 @@ export function cliAttestationEvaluator(config: CliAttestationConfig): Evaluator
 }
 
 // ---------------------------------------------------------------------------
-// Corroborating evaluator (Phase 5 Block E.2).
+// Corroborating Health Check evaluator (Phase 5 Block E.2).
 //
 // For controls classified `cli_corroborating`: questionnaire decides the
 // pass/fail verdict, but Health Check evidence raises confidence + surfaces
@@ -215,6 +215,79 @@ export function corroboratingHealthCheckEvaluator(
     }
 
     // No HC: fall through to standard attestation behavior.
+    return attestationEvaluator(config)(input);
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Corroborating Code Analyzer evaluator (Phase 5 Block E.3).
+//
+// For controls where Code Analyzer findings INFORM but don't DECIDE the
+// verdict (e.g., CODE-002 — the audit asks about CI pipeline configuration
+// but Code Analyzer findings are circumstantial: many high-severity findings
+// imply CI scanning isn't catching them, but absence of findings doesn't
+// prove CI scanning IS in place). Same shape as corroboratingHealthCheckEvaluator
+// above: questionnaire adjudicates the verdict, Code Analyzer findings
+// raise confidence and add observations.
+//
+// Note: this helper is intentionally parallel to corroboratingHealthCheckEvaluator.
+// Both share the same pattern (find evidence by source, fall back to
+// attestation, surface observations when only CLI is present). Future refactor
+// may unify them into a generic corroborating helper parameterized by source +
+// evidence-finder + observe; deferred until a third source needs the pattern.
+// ---------------------------------------------------------------------------
+
+export interface CorroboratingCodeAnalyzerConfig extends AttestationConfig {
+  /** Pure function: given the code_analyzer Evidence, return human-readable
+   * observation strings to append to findings. Never throws. */
+  observe: (evidence: Extract<Evidence, { source: 'code_analyzer' }>) => readonly string[];
+}
+
+/**
+ * Build an evaluator where Code Analyzer evidence corroborates (not overrides)
+ * the questionnaire verdict.
+ *
+ * Behavior:
+ * - Both questionnaire + Code Analyzer present: questionnaire decides verdict,
+ *   confidence bumps to 'high', findings include both.
+ * - Code Analyzer only: returns inconclusive+high with observations + a
+ *   prompt to gather questionnaire input.
+ * - Questionnaire only: standard low-confidence attestation result.
+ * - Neither: standard no-evidence inconclusive.
+ */
+export function corroboratingCodeAnalyzerEvaluator(
+  config: CorroboratingCodeAnalyzerConfig,
+): Evaluator {
+  return (input) => {
+    const { evidence } = input;
+    const ca = evidence.find(
+      (e): e is Extract<Evidence, { source: 'code_analyzer' }> => e.source === 'code_analyzer',
+    );
+
+    if (ca) {
+      const observations = config.observe(ca);
+      const baseResult = attestationEvaluator(config)(input);
+
+      if (baseResult.evidence_used.includes('questionnaire')) {
+        return {
+          status: baseResult.status,
+          confidence: 'high',
+          evidence_used: ['questionnaire', 'code_analyzer'],
+          findings: [...baseResult.findings, ...observations],
+        };
+      }
+
+      return {
+        status: 'inconclusive',
+        confidence: 'high',
+        evidence_used: ['code_analyzer'],
+        findings: [
+          ...observations,
+          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
+        ],
+      };
+    }
+
     return attestationEvaluator(config)(input);
   };
 }
