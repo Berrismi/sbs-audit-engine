@@ -29,10 +29,13 @@ export default class SecurityReviewLogin extends SfCommand<SecurityReviewLoginRe
     const { flags } = await this.parse(SecurityReviewLogin);
 
     // 1. Display the engagement disclaimer + require explicit accept.
+    //    sf-plugins-core's confirm defaults to a 10s timeout, which isn't
+    //    enough to read this carefully; allow 10 minutes.
     this.log('\n' + CONSULTANT_DISCLAIMER_TEXT + '\n');
     const accepted = await this.confirm({
       message: 'Accept the HelloMavens consultant engagement disclaimer',
       defaultAnswer: false,
+      ms: 600_000,
     });
     if (!accepted) {
       // Throw rather than this.error() so command-test runs don't trip
@@ -41,9 +44,11 @@ export default class SecurityReviewLogin extends SfCommand<SecurityReviewLoginRe
     }
     const signedAt = new Date().toISOString();
 
-    // 2. Capture API key (masked).
+    // 2. Capture API key (masked). secretPrompt defaults to 60s; allow 2
+    //    minutes for a password-manager round trip.
     const apiKey = await this.secretPrompt({
       message: 'HelloMavens consultant API key',
+      ms: 120_000,
     });
     if (!apiKey || apiKey.trim().length === 0) {
       throw new Error('API key is required. Aborting login.');

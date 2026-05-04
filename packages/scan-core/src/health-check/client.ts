@@ -29,7 +29,9 @@ export type HealthCheckResult =
   | { kind: 'failed'; error: { message: string } };
 
 interface OverallRow {
-  Score?: number;
+  // Salesforce returns Score as a string in some org configurations
+  // (e.g. "66"). Coerce on read.
+  Score?: number | string;
 }
 
 interface RiskRow {
@@ -53,7 +55,13 @@ export async function fetchHealthCheck(connection: ConnectionLike): Promise<Heal
     );
 
     const overall = overallResp.records[0] as OverallRow | undefined;
-    const riskScore = overall?.Score ?? 0;
+    const rawScore = overall?.Score;
+    const riskScore =
+      typeof rawScore === 'number'
+        ? rawScore
+        : typeof rawScore === 'string'
+          ? Number.parseFloat(rawScore) || 0
+          : 0;
 
     const highRiskSettings: HealthCheckSetting[] = (risksResp.records as RiskRow[]).map((r) => ({
       name: r.RiskType ?? '',
