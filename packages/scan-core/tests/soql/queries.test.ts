@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 //
-// These tests act as a guard rail for the SOQL query bundle. New queries
-// added in Block B.1 (and beyond) must satisfy the same invariants.
+// Guard rails for the SOQL query bundle. Authoring rule: every query MUST
+// be validated against its control's audit_procedure before being added
+// (see queries.ts header).
 
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_SOQL_QUERIES } from '../../src/soql/queries';
@@ -36,28 +37,10 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     }
   });
 
-  it('Block B starter set covers ACS, OAUTH, INT, and CPORTAL categories', () => {
-    const allControlIds = new Set(DEFAULT_SOQL_QUERIES.flatMap((q) => q.controlIds));
-    const categories = new Set(
-      [...allControlIds].map((id) => id.split('-')[1]).filter((cat): cat is string => Boolean(cat)),
-    );
-    expect(categories).toContain('ACS');
-    expect(categories).toContain('OAUTH');
-    expect(categories).toContain('INT');
-    expect(categories).toContain('CPORTAL');
-  });
-
-  it('cportal appliesWhen returns false when the Network SObject query throws (org without Communities)', async () => {
-    const cportalQuery = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'cportal-001-networks');
-    expect(cportalQuery?.appliesWhen).toBeDefined();
-    const throwingConn = {
-      query: async () => {
-        throw new Error("INVALID_TYPE: sObject type 'Network' is not supported");
-      },
-    };
-
-    const applies = await cportalQuery?.appliesWhen?.(throwingConn);
-
-    expect(applies).toBe(false);
+  it('the verified set includes the three Block E.1 baseline queries', () => {
+    const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
+    expect(ids.has('acs-004-super-admin-equivalents')).toBe(true);
+    expect(ids.has('int-002-remote-site-settings-inventory')).toBe(true);
+    expect(ids.has('int-003-named-credentials-inventory')).toBe(true);
   });
 });

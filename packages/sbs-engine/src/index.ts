@@ -21,6 +21,7 @@ export type {
   ControlLibrary,
   ControlSource,
   ControlEnrichments,
+  CliEvidenceClass,
   CategoryPrefix,
   RiskLevel,
   RemediationScope,

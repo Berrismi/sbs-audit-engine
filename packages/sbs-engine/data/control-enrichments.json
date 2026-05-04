@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "description": "HelloMavens-authored mappings from each SBS v0.4.1 control to OWASP Top 10 2021 categories and regulatory citations (HIPAA Security Rule, SOC 2 Trust Services Criteria 2017, ISO 27001:2022 Annex A, GDPR, CCPA). Merged into hellomavens_enrichments by scripts/sync-sbs.ts. See control-enrichments.RATIONALE.md for the editorial reasoning per category.",
+  "description": "HelloMavens-authored mappings from each SBS v0.4.1 control to OWASP Top 10 2021 categories, regulatory citations (HIPAA Security Rule, SOC 2 Trust Services Criteria 2017, ISO 27001:2022 Annex A, GDPR, CCPA), and a `cli_evidence_class` flag (Phase 5 Block E) tagging which controls have a verified CLI evidence path. Merged into hellomavens_enrichments by scripts/sync-sbs.ts. See control-enrichments.RATIONALE.md for the editorial reasoning per category.",
   "sources": {
     "owasp": "OWASP Top 10 2021 — https://owasp.org/Top10/",
     "hipaa": "HIPAA Security Rule, 45 CFR §§164.302-318 — https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
@@ -16,7 +16,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-002": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -24,7 +25,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-003": {
       "owasp": [
@@ -36,7 +38,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-004": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -44,7 +47,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "cli_primary"
     },
     "SBS-ACS-005": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -52,7 +56,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-006": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -60,7 +65,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-007": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -68,7 +74,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.9", "A.5.16", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-008": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -76,7 +83,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-009": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -84,7 +92,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-010": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -92,7 +101,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.2", "CC6.3"],
         "iso27001": ["A.5.18", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-011": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -100,7 +110,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.3", "CC8.1"],
         "iso27001": ["A.5.18", "A.8.3", "A.8.32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-ACS-012": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -108,7 +119,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1"],
         "iso27001": ["A.5.15", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-AUTH-001": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -116,7 +128,8 @@
         "hipaa": ["164.312(d)"],
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-AUTH-002": {
       "owasp": [
@@ -127,7 +140,8 @@
         "hipaa": ["164.308(a)(4)", "164.312(d)"],
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-AUTH-003": {
       "owasp": [
@@ -138,7 +152,8 @@
         "hipaa": ["164.312(d)"],
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.17", "A.8.5", "A.8.20"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-AUTH-004": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -147,7 +162,8 @@
         "soc2": ["CC6.1", "CC6.6", "CC6.7"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"],
         "gdpr": ["Article 32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-CODE-001": {
       "owasp": [
@@ -158,7 +174,8 @@
         "hipaa": ["164.308(a)(1)(ii)(A)"],
         "soc2": ["CC7.1", "CC8.1"],
         "iso27001": ["A.8.25", "A.8.28", "A.8.32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-CODE-002": {
       "owasp": [
@@ -170,7 +187,8 @@
         "hipaa": ["164.308(a)(1)(ii)(A)"],
         "soc2": ["CC7.1", "CC8.1"],
         "iso27001": ["A.8.25", "A.8.28", "A.8.29"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-CODE-003": {
       "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
@@ -178,7 +196,8 @@
         "hipaa": ["164.312(b)"],
         "soc2": ["CC7.1", "CC7.2"],
         "iso27001": ["A.8.15", "A.8.16"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-CODE-004": {
       "owasp": [
@@ -191,7 +210,8 @@
         "iso27001": ["A.5.34", "A.8.12", "A.8.15"],
         "gdpr": ["Article 32"],
         "ccpa": ["§1798.150"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-CPORTAL-001": {
       "owasp": [
@@ -203,7 +223,8 @@
         "hipaa": ["164.308(a)(4)", "164.312(a)"],
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.8.3", "A.8.26"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-CPORTAL-002": {
       "owasp": [
@@ -215,7 +236,8 @@
         "hipaa": ["164.308(a)(4)", "164.312(a)"],
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.8.3"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DATA-001": {
       "owasp": ["A02:2021-Cryptographic Failures", "A04:2021-Insecure Design"],
@@ -225,7 +247,8 @@
         "iso27001": ["A.5.12", "A.8.12"],
         "gdpr": ["Article 32"],
         "ccpa": ["§1798.100"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DATA-002": {
       "owasp": ["A04:2021-Insecure Design"],
@@ -234,7 +257,8 @@
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.9", "A.5.12", "A.8.10"],
         "gdpr": ["Article 30"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DATA-003": {
       "owasp": ["A04:2021-Insecure Design", "A08:2021-Software and Data Integrity Failures"],
@@ -243,7 +267,8 @@
         "soc2": ["A1.2", "A1.3"],
         "iso27001": ["A.5.30", "A.8.13", "A.8.14"],
         "gdpr": ["Article 32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DATA-004": {
       "owasp": [
@@ -255,7 +280,8 @@
         "soc2": ["CC7.2"],
         "iso27001": ["A.8.15"],
         "gdpr": ["Article 32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DEP-001": {
       "owasp": [
@@ -267,7 +293,8 @@
         "hipaa": ["164.308(a)(8)"],
         "soc2": ["CC8.1"],
         "iso27001": ["A.5.15", "A.8.32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DEP-002": {
       "owasp": [
@@ -279,7 +306,8 @@
         "hipaa": ["164.308(a)(8)"],
         "soc2": ["CC8.1"],
         "iso27001": ["A.8.32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DEP-003": {
       "owasp": [
@@ -290,7 +318,8 @@
         "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
         "soc2": ["CC7.2", "CC8.1"],
         "iso27001": ["A.8.15", "A.8.16", "A.8.32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DEP-004": {
       "owasp": [
@@ -301,7 +330,8 @@
         "hipaa": ["164.308(a)(8)"],
         "soc2": ["CC8.1"],
         "iso27001": ["A.8.32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DEP-005": {
       "owasp": [
@@ -314,7 +344,8 @@
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.17", "A.8.4", "A.8.28"],
         "gdpr": ["Article 32"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-DEP-006": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -322,7 +353,8 @@
         "hipaa": ["164.312(d)"],
         "soc2": ["CC6.1"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-INT-001": {
       "owasp": [
@@ -334,7 +366,8 @@
       "regulations": {
         "soc2": ["CC6.6", "CC6.7"],
         "iso27001": ["A.5.19", "A.8.20"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-INT-002": {
       "owasp": [
@@ -344,7 +377,8 @@
       "regulations": {
         "soc2": ["CC6.6"],
         "iso27001": ["A.5.19", "A.5.23", "A.8.20"]
-      }
+      },
+      "cli_evidence_class": "cli_primary"
     },
     "SBS-INT-003": {
       "owasp": [
@@ -356,7 +390,8 @@
         "hipaa": ["164.308(b)(1)"],
         "soc2": ["CC6.6", "CC6.7"],
         "iso27001": ["A.5.19", "A.5.20", "A.8.5", "A.8.20"]
-      }
+      },
+      "cli_evidence_class": "cli_primary"
     },
     "SBS-INT-004": {
       "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
@@ -364,7 +399,8 @@
         "hipaa": ["164.312(b)"],
         "soc2": ["CC7.2"],
         "iso27001": ["A.8.15", "A.8.16"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-OAUTH-001": {
       "owasp": [
@@ -376,7 +412,8 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.5.19", "A.8.5"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-OAUTH-002": {
       "owasp": [
@@ -387,14 +424,16 @@
         "hipaa": ["164.308(a)(4)"],
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.5.16", "A.8.5"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-OAUTH-003": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
       "regulations": {
         "soc2": ["CC3.2", "CC6.1"],
         "iso27001": ["A.5.9", "A.5.15", "A.5.19"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-OAUTH-004": {
       "owasp": [
@@ -404,7 +443,8 @@
       "regulations": {
         "soc2": ["CC9.2"],
         "iso27001": ["A.5.19", "A.5.20", "A.5.21", "A.5.22"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-SECCONF-001": {
       "owasp": ["A05:2021-Security Misconfiguration"],
@@ -412,7 +452,8 @@
         "hipaa": ["164.308(a)(8)"],
         "soc2": ["CC7.1"],
         "iso27001": ["A.5.36", "A.8.9"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     },
     "SBS-SECCONF-002": {
       "owasp": ["A05:2021-Security Misconfiguration"],
@@ -420,7 +461,8 @@
         "hipaa": ["164.308(a)(8)"],
         "soc2": ["CC4.1", "CC7.1"],
         "iso27001": ["A.5.36", "A.8.9"]
-      }
+      },
+      "cli_evidence_class": "questionnaire_only"
     }
   }
 }
