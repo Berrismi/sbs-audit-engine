@@ -453,7 +453,7 @@
         "soc2": ["CC7.1"],
         "iso27001": ["A.5.36", "A.8.9"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "cli_corroborating"
     },
     "SBS-SECCONF-002": {
       "owasp": ["A05:2021-Security Misconfiguration"],
@@ -462,7 +462,7 @@
         "soc2": ["CC4.1", "CC7.1"],
         "iso27001": ["A.5.36", "A.8.9"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "cli_corroborating"
     }
   }
 }
