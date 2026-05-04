@@ -8,12 +8,20 @@
  * Connection in unit tests) and lets the plugin pass either a real
  * Connection or a thin adapter.
  */
+export interface SoqlQueryResponse {
+  records: Record<string, unknown>[];
+  totalSize: number;
+  done: boolean;
+}
+
 export interface ConnectionLike {
-  query(soql: string): Promise<{
-    records: Record<string, unknown>[];
-    totalSize: number;
-    done: boolean;
-  }>;
+  query(soql: string): Promise<SoqlQueryResponse>;
+  /** Tooling API namespace. Optional in the structural type so tests don't
+   * have to provide it when they only exercise the regular query() path.
+   * The real @salesforce/core Connection always has it. */
+  tooling?: {
+    query(soql: string): Promise<SoqlQueryResponse>;
+  };
 }
 
 /**

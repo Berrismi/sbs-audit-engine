@@ -3,6 +3,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { assembleEvidenceBundle } from '../src/assemble';
+import type { HealthCheckResult } from '../src/health-check/client';
 import type { QueryResult, SoqlQueryDef } from '../src/types';
 
 const userQuery: SoqlQueryDef = {
@@ -82,5 +83,68 @@ describe('assembleEvidenceBundle', () => {
     expect(bundle.evidence).toHaveLength(2);
     expect(bundle.evidence[0]).toMatchObject({ query: userQuery.soql });
     expect(bundle.evidence[1]).toMatchObject({ query: profileQuery.soql });
+  });
+
+  it('appends a health_check_api Evidence variant when given an ok HealthCheckResult', () => {
+    const healthCheck: HealthCheckResult = {
+      kind: 'ok',
+      riskScore: 75,
+      highRiskSettings: [
+        { name: 'Session Settings', setting: 'timeout', orgValue: '8h', recommended: '15m' },
+      ],
+    };
+
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [],
+      healthCheck,
+    });
+
+    expect(bundle.evidence).toHaveLength(1);
+    expect(bundle.evidence[0]).toMatchObject({
+      source: 'health_check_api',
+      risk_score: 75,
+    });
+  });
+
+  it('omits health_check_api Evidence when HealthCheckResult is unsupported (no tooling namespace)', () => {
+    const healthCheck: HealthCheckResult = {
+      kind: 'unsupported',
+      reason: 'no_tooling_namespace',
+    };
+
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [],
+      healthCheck,
+    });
+
+    expect(bundle.evidence).toHaveLength(0);
+  });
+
+  it('omits health_check_api Evidence when HealthCheckResult is failed', () => {
+    const healthCheck: HealthCheckResult = {
+      kind: 'failed',
+      error: { message: 'INSUFFICIENT_ACCESS' },
+    };
+
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [],
+      healthCheck,
+    });
+
+    expect(bundle.evidence).toHaveLength(0);
+  });
+
+  it('combines SOQL Evidence + health_check_api Evidence in one bundle', () => {
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [{ kind: 'ok', query: userQuery, rows: [{ Id: 'u1' }] }],
+      healthCheck: { kind: 'ok', riskScore: 90, highRiskSettings: [] },
+    });
+
+    expect(bundle.evidence).toHaveLength(2);
+    expect(bundle.evidence.map((e) => e.source)).toEqual(['soql', 'health_check_api']);
   });
 });
