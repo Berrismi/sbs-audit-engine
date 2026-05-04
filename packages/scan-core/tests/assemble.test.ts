@@ -3,6 +3,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { assembleEvidenceBundle } from '../src/assemble';
+import type { CodeAnalyzerExecution } from '../src/code-analyzer/runner';
 import type { HealthCheckResult } from '../src/health-check/client';
 import type { QueryResult, SoqlQueryDef } from '../src/types';
 
@@ -146,5 +147,52 @@ describe('assembleEvidenceBundle', () => {
 
     expect(bundle.evidence).toHaveLength(2);
     expect(bundle.evidence.map((e) => e.source)).toEqual(['soql', 'health_check_api']);
+  });
+
+  it('appends a code_analyzer Evidence variant when given an ok CodeAnalyzerExecution', () => {
+    const codeAnalyzer: CodeAnalyzerExecution = {
+      kind: 'ok',
+      engine: 'pmd',
+      findings: [{ rule: 'ApexCSRF', severity: 'Critical', file: '/a.cls', line: 1, message: 'm' }],
+    };
+
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [],
+      codeAnalyzer,
+    });
+
+    expect(bundle.evidence).toHaveLength(1);
+    expect(bundle.evidence[0]).toMatchObject({
+      source: 'code_analyzer',
+      engine: 'pmd',
+      findings: codeAnalyzer.findings,
+    });
+  });
+
+  it('omits code_analyzer Evidence when CodeAnalyzerExecution is failed', () => {
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [],
+      codeAnalyzer: { kind: 'failed', phase: 'retrieve', error: { message: 'org not authed' } },
+    });
+
+    expect(bundle.evidence).toHaveLength(0);
+  });
+
+  it('combines all three sources (SOQL + health_check + code_analyzer) in one bundle', () => {
+    const bundle = assembleEvidenceBundle({
+      subjectId: 's',
+      queryResults: [{ kind: 'ok', query: userQuery, rows: [] }],
+      healthCheck: { kind: 'ok', riskScore: 80, highRiskSettings: [] },
+      codeAnalyzer: { kind: 'ok', engine: 'pmd', findings: [] },
+    });
+
+    expect(bundle.evidence).toHaveLength(3);
+    expect(bundle.evidence.map((e) => e.source)).toEqual([
+      'soql',
+      'health_check_api',
+      'code_analyzer',
+    ]);
   });
 });

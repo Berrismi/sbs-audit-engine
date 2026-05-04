@@ -113,4 +113,53 @@ describe('collectEvidence', () => {
 
     expect(toolingCalled).toBe(false);
   });
+
+  it('runs Code Analyzer and includes the findings in the bundle when codeAnalyzer option is set', async () => {
+    const okJsonOutput = JSON.stringify({
+      results: [
+        {
+          engine: 'pmd',
+          rule: 'ApexCSRF',
+          severity: 1,
+          primaryLocation: { file: '/abs/x.cls', startLine: 1 },
+          message: 'm',
+        },
+      ],
+    });
+
+    const result = await collectEvidence({
+      connection: okConnection,
+      subjectId: 'subj-1',
+      soqlQueries: [],
+      codeAnalyzer: {
+        alias: 'client-prod',
+        spawner: async () => ({ stdout: '', stderr: '', exitCode: 0 }),
+        tmpdir: {
+          create: async () => '/tmp/test',
+          cleanup: async () => {},
+          readFile: async () => okJsonOutput,
+        },
+      },
+    });
+
+    const codeEvidence = result.bundle.evidence.find((e) => e.source === 'code_analyzer');
+    expect(codeEvidence).toBeDefined();
+    if (codeEvidence?.source === 'code_analyzer') {
+      expect(codeEvidence.engine).toBe('pmd');
+      expect(codeEvidence.findings).toHaveLength(1);
+    }
+  });
+
+  it('skips Code Analyzer when codeAnalyzer option is omitted (even if onlySources includes code_analyzer)', async () => {
+    const result = await collectEvidence({
+      connection: okConnection,
+      subjectId: 'subj-1',
+      soqlQueries: [],
+      onlySources: ['code_analyzer'],
+      // no codeAnalyzer option set
+    });
+
+    expect(result.bundle.evidence).toEqual([]);
+    expect(result.codeAnalyzer).toBeUndefined();
+  });
 });

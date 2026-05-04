@@ -32,6 +32,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hellomavens/security-review-for-salesforce-engine": "workspace:*"
+    "@hellomavens/security-review-for-salesforce-engine": "workspace:*",
+    "execa": "^9"
   }
 }

@@ -86,6 +86,9 @@ importers:
       '@hellomavens/security-review-for-salesforce-engine':
         specifier: workspace:*
         version: link:../sbs-engine
+      execa:
+        specifier: ^9
+        version: 9.6.1
 
 packages:
 
