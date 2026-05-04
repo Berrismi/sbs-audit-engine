@@ -12,6 +12,7 @@
 
 import type { EvidenceBundle } from '@hellomavens/security-review-for-salesforce-engine';
 import { assembleEvidenceBundle } from './assemble';
+import { runCodeAnalyzer, type CodeAnalyzerExecution } from './code-analyzer/runner';
 import { fetchHealthCheck, type HealthCheckResult } from './health-check/client';
 import { executeSoqlBundle } from './soql/executor';
 import { DEFAULT_SOQL_QUERIES } from './soql/queries';
@@ -21,6 +22,7 @@ export interface ScanResult {
   bundle: EvidenceBundle;
   queryResults: readonly QueryResult[];
   healthCheck?: HealthCheckResult;
+  codeAnalyzer?: CodeAnalyzerExecution;
 }
 
 export async function collectEvidence(opts: CollectEvidenceOptions): Promise<ScanResult> {
@@ -39,18 +41,23 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     healthCheck = await fetchHealthCheck(opts.connection);
   }
 
-  // Code Analyzer (Block D) plugs in here.
+  let codeAnalyzer: CodeAnalyzerExecution | undefined;
+  if (sourceAllowed('code_analyzer') && opts.codeAnalyzer) {
+    codeAnalyzer = await runCodeAnalyzer(opts.codeAnalyzer);
+  }
 
   const bundle = assembleEvidenceBundle({
     subjectId: opts.subjectId,
     queryResults,
     ...(healthCheck && { healthCheck }),
+    ...(codeAnalyzer && { codeAnalyzer }),
   });
 
   return {
     bundle,
     queryResults,
     ...(healthCheck && { healthCheck }),
+    ...(codeAnalyzer && { codeAnalyzer }),
   };
 }
 
@@ -67,3 +74,14 @@ export type {
 
 export { DEFAULT_SOQL_QUERIES } from './soql/queries';
 export type { HealthCheckResult, HealthCheckSetting } from './health-check/client';
+export {
+  runCodeAnalyzer,
+  type CodeAnalyzerExecution,
+  type CodeAnalyzerSpawner,
+  type RunCodeAnalyzerOptions,
+  type SubprocessResult,
+  type TmpdirManager,
+} from './code-analyzer/runner';
+export { makeExecaCodeAnalyzerSpawner } from './code-analyzer/spawner';
+export { makeNodeTmpdirManager } from './code-analyzer/tmpdir';
+export { parseCodeAnalyzerOutput } from './code-analyzer/parse';

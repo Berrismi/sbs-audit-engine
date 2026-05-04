@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 
+import type { RunCodeAnalyzerOptions } from './code-analyzer/runner';
+
 /**
  * Structural subset of @salesforce/core's Connection that scan-core depends
  * on. Defining it here (rather than importing `Connection` from
@@ -87,10 +89,16 @@ export interface CollectEvidenceOptions {
   /** Subject id (audit subject) — copied through to the EvidenceBundle. */
   subjectId: string;
   /** Restrict which evidence sources to collect. Defaults to all available
-   * sources. SOQL is the only source available in Block B. */
+   * sources. SOQL + Health Check API run with just a Connection; Code
+   * Analyzer also requires the `codeAnalyzer` option to be set. */
   onlySources?: readonly ('soql' | 'health_check_api' | 'code_analyzer')[];
   /** Subscribe to per-query lifecycle events. */
   onProgress?: ProgressListener;
   /** Override the default SOQL query bundle (mainly for tests). */
   soqlQueries?: readonly SoqlQueryDef[];
+  /** Code Analyzer options (alias + spawner + tmpdir). When unset, the
+   * code_analyzer source is skipped even if it's in onlySources. The
+   * plugin (Block A's run command) wires the production execa spawner +
+   * node fs tmpdir here; tests pass fakes. */
+  codeAnalyzer?: RunCodeAnalyzerOptions;
 }
