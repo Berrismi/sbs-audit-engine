@@ -56,6 +56,9 @@ importers:
       '@hellomavens/security-review-for-salesforce-engine':
         specifier: workspace:*
         version: link:../sbs-engine
+      '@hellomavens/security-review-for-salesforce-scan-core':
+        specifier: workspace:*
+        version: link:../scan-core
       '@oclif/core':
         specifier: ^4
         version: 4.11.0
