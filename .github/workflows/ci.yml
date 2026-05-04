@@ -34,13 +34,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Engine consumers (currently only the deleted CLI stub; in Phase 5 the
-      # plugin + scan-core packages) import from
-      # @hellomavens/security-review-for-salesforce-engine via its package
-      # exports map, which points at dist/. Build the engine first so any
-      # consumer's typecheck can resolve those types.
+      # Engine + scan-core both publish their public types via dist/. The
+      # plugin imports both, so its typecheck can't resolve the packages
+      # until those dists exist. Build them first.
       - name: Build engine
         run: pnpm --filter @hellomavens/security-review-for-salesforce-engine build
+
+      - name: Build scan-core
+        run: pnpm --filter @hellomavens/security-review-for-salesforce-scan-core build
 
       - name: Type check
         run: pnpm typecheck

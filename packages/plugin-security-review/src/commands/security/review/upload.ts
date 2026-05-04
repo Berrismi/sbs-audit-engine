@@ -2,24 +2,19 @@
 // SPDX-License-Identifier: MIT
 
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { readFile } from 'node:fs/promises';
+import type { EvidenceBundle } from '@hellomavens/security-review-for-salesforce-engine';
+import { loadCredentials } from '../../../lib/consultant-key';
+import { uploadBundle } from '../../../lib/upload-client';
 
-export type SecurityReviewUploadResult = {
-  uploaded: false;
-  reason: 'block_f_not_implemented';
-};
+export type SecurityReviewUploadResult = { uploaded: boolean; reportUrl?: string };
 
 export default class SecurityReviewUpload extends SfCommand<SecurityReviewUploadResult> {
   public static override readonly summary =
     'Upload a previously-collected EvidenceBundle to the HelloMavens scoring backend.';
 
-  public static override readonly description = `
-Phase 5 stub — implemented in Block F when the backend /api/scan/upload
-endpoint and the consultant API-key flow land. For now, this command exits
-with a friendly message pointing at the plan file.
-`.trim();
-
   public static override readonly examples = [
-    '$ sf security review upload bundle.json --client-email contact@client.com',
+    '$ sf security review upload --bundle ./bundle.json --client-email contact@client.com',
   ];
 
   public static override readonly flags = {
@@ -36,13 +31,34 @@ with a friendly message pointing at the plan file.
   };
 
   public async run(): Promise<SecurityReviewUploadResult> {
-    await this.parse(SecurityReviewUpload);
-    this.warn(
-      'sf security review upload is a Block F stub. The backend endpoint, consultant key flow, and HM_API_BASE_URL wiring all land together in Block F.',
-    );
-    this.log(
-      'See the implementation plan at ~/.claude/plans/we-re-starting-phase-5-reactive-church.md (Block F) for status.',
-    );
-    return { uploaded: false, reason: 'block_f_not_implemented' };
+    const { flags } = await this.parse(SecurityReviewUpload);
+
+    const creds = await loadCredentials();
+    if (!creds) {
+      throw new Error('No consultant credentials found. Run `sf security review login` first.');
+    }
+
+    const raw = await readFile(flags.bundle, 'utf8');
+    let bundle: EvidenceBundle;
+    try {
+      bundle = JSON.parse(raw) as EvidenceBundle;
+    } catch (err) {
+      throw new Error(`Could not parse bundle file ${flags.bundle}: ${(err as Error).message}`);
+    }
+
+    const result = await uploadBundle({
+      bundle,
+      clientEmail: flags['client-email'],
+      consultantConsent: creds.consultantConsent,
+      apiKey: creds.apiKey,
+      apiBaseUrl: creds.apiBaseUrl,
+    });
+
+    if (!result.ok) {
+      throw new Error(`Upload failed (${result.status}): ${result.error}`);
+    }
+
+    this.log(`✓ Report ready: ${result.reportUrl}`);
+    return { uploaded: true, reportUrl: result.reportUrl };
   }
 }

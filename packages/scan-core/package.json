@@ -24,7 +24,7 @@
     "directory": "packages/scan-core"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -p tsconfig.build.json && node ../sbs-engine/scripts/postbuild-add-extensions.mjs ./dist",
     "clean": "rm -rf dist .tsbuildinfo",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

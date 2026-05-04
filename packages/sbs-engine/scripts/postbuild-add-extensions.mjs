@@ -20,7 +20,10 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DIST = resolve(__dirname, '..', 'dist');
+// Optional CLI arg: path to dist directory to rewrite. Defaults to the
+// engine's own dist for the existing engine build call. Other workspace
+// packages (e.g. scan-core) pass their own dist path.
+const DIST = process.argv[2] ? resolve(process.argv[2]) : resolve(__dirname, '..', 'dist');
 
 let rewriteCount = 0;
 let fileCount = 0;
