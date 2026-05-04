@@ -105,6 +105,28 @@ describe('fetchHealthCheck', () => {
     }
   });
 
+  it('coerces stringly-typed Score to a number (Salesforce returns "66" in some orgs)', async () => {
+    const stringScore: ConnectionLike = {
+      query: async () => ({ records: [], totalSize: 0, done: true }),
+      tooling: {
+        query: async (soql) => {
+          if (soql.includes('SecurityHealthCheck ')) {
+            return { records: [{ Score: '66' }], totalSize: 1, done: true };
+          }
+          return { records: [], totalSize: 0, done: true };
+        },
+      },
+    };
+
+    const result = await fetchHealthCheck(stringScore);
+
+    expect(result.kind).toBe('ok');
+    if (result.kind === 'ok') {
+      expect(result.riskScore).toBe(66);
+      expect(typeof result.riskScore).toBe('number');
+    }
+  });
+
   it('coerces missing risk-row fields to empty strings (defensive against API drift)', async () => {
     const partialFields: ConnectionLike = {
       query: async () => ({ records: [], totalSize: 0, done: true }),
