@@ -1,0 +1,37 @@
+{
+  "name": "@hellomavens/security-review-for-salesforce-scan-core",
+  "version": "0.0.0-dev",
+  "description": "Side-effecting evidence collector for the HelloMavens security review. Takes a Salesforce Connection + options, returns an EvidenceBundle (SOQL bundle, Health Check API, Code Analyzer subprocess output) the engine can score.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Berrismi/sbs-audit-engine.git",
+    "directory": "packages/scan-core"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist .tsbuildinfo",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hellomavens/security-review-for-salesforce-engine": "workspace:*"
+  }
+}
