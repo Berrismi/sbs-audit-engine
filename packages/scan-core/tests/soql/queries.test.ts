@@ -5,8 +5,16 @@
 // be validated against its control's audit_procedure before being added
 // (see queries.ts header).
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { DEFAULT_SOQL_QUERIES } from '../../src/soql/queries';
+import type { AppliesWhenContext, ConnectionLike } from '../../src/types';
+
+function makeCtx(): AppliesWhenContext {
+  return {
+    describeCache: new Map(),
+    toolingDescribeCache: new Map(),
+  };
+}
 
 describe('DEFAULT_SOQL_QUERIES', () => {
   it('every query has a non-empty unique id', () => {
@@ -37,7 +45,7 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     }
   });
 
-  it('int-002 query targets RemoteProxy via tooling source with object gating', () => {
+  it('int-002 query targets RemoteProxy via tooling source with field gating', () => {
     const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'int-002-remote-site-settings-inventory');
     expect(q).toBeDefined();
     expect(q!.source).toBe('tooling');
@@ -46,12 +54,67 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(q!.appliesWhen).toBeDefined();
   });
 
-  it('oauth-001 query targets ConnectedApplication via tooling source', () => {
+  it('int-002 appliesWhen returns field_unavailable when MasterLabel is missing on RemoteProxy', async () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'int-002-remote-site-settings-inventory')!;
+    // RemoteProxy exists but the MasterLabel field doesn't (simulating an org
+    // where the object is described but the column we select isn't present).
+    const conn: ConnectionLike = {
+      query: vi.fn(),
+      tooling: {
+        query: vi.fn(),
+        describeSObject: vi.fn().mockResolvedValue({
+          name: 'RemoteProxy',
+          fields: [{ name: 'Id' }, { name: 'EndpointUrl' }, { name: 'IsActive' }],
+        }),
+      },
+    };
+    const result = await q.appliesWhen!(conn, makeCtx());
+    expect(result).toEqual({ applies: false, reason: 'field_unavailable' });
+  });
+
+  it('int-002 appliesWhen returns applies:true when all selected fields exist', async () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'int-002-remote-site-settings-inventory')!;
+    const conn: ConnectionLike = {
+      query: vi.fn(),
+      tooling: {
+        query: vi.fn(),
+        describeSObject: vi.fn().mockResolvedValue({
+          name: 'RemoteProxy',
+          fields: [
+            { name: 'Id' },
+            { name: 'EndpointUrl' },
+            { name: 'IsActive' },
+            { name: 'MasterLabel' },
+          ],
+        }),
+      },
+    };
+    const result = await q.appliesWhen!(conn, makeCtx());
+    expect(result).toEqual({ applies: true });
+  });
+
+  it('oauth-001 query targets ConnectedApplication via tooling source with field gating', () => {
     const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'oauth-001-ad-hoc-connected-apps');
     expect(q).toBeDefined();
     expect(q!.source).toBe('tooling');
     expect(q!.soql).toContain('FROM ConnectedApplication');
     expect(q!.appliesWhen).toBeDefined();
+  });
+
+  it('oauth-001 appliesWhen returns field_unavailable when NamespacePrefix is missing', async () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'oauth-001-ad-hoc-connected-apps')!;
+    const conn: ConnectionLike = {
+      query: vi.fn(),
+      tooling: {
+        query: vi.fn(),
+        describeSObject: vi.fn().mockResolvedValue({
+          name: 'ConnectedApplication',
+          fields: [{ name: 'Id' }, { name: 'Name' }],
+        }),
+      },
+    };
+    const result = await q.appliesWhen!(conn, makeCtx());
+    expect(result).toEqual({ applies: false, reason: 'field_unavailable' });
   });
 
   it('acs-012 query gates on Profile login-hours field availability', () => {
@@ -61,18 +124,56 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(q!.appliesWhen).toBeDefined();
   });
 
-  it('acs-004 query enumerates super-admins via PermSet OR Profile and does NOT reference any __c custom field', () => {
-    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-004-super-admin-equivalents');
-    expect(q).toBeDefined();
-    expect(q!.soql).not.toMatch(/__c/);
-    expect(q!.soql).toContain('PermissionSetAssignment');
-    expect(q!.soql).toContain('Profile.PermissionsModifyAllData');
+  describe('acs-004 split into permset path + profile path (F.4 Bug C)', () => {
+    it('exposes acs-004-super-admin-via-permsets — no semi-joins, selects assignee + the 3 perm booleans', () => {
+      const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-004-super-admin-via-permsets');
+      expect(q).toBeDefined();
+      // No nested SELECT (semi-join) — just relationship traversal on
+      // PermissionSetAssignment.PermissionSet.* + Assignee.*. SOQL caps
+      // semi-joins at 2; this restructure stays within the limit by avoiding
+      // them entirely (one root SELECT, no parenthesized inner SELECT).
+      expect(q!.soql.match(/\bSELECT\b/gi)?.length).toBe(1);
+      expect(q!.soql).toContain('FROM PermissionSetAssignment');
+      expect(q!.soql).toContain('AssigneeId');
+      expect(q!.soql).toContain('Assignee.Username');
+      expect(q!.soql).toContain('PermissionSet.PermissionsViewAllData');
+      expect(q!.soql).toContain('PermissionSet.PermissionsModifyAllData');
+      expect(q!.soql).toContain('PermissionSet.PermissionsManageUsers');
+      expect(q!.soql).toContain('Assignee.IsActive');
+      expect(q!.soql).not.toMatch(/__c/);
+    });
+
+    it('exposes acs-004-super-admin-via-profile — no semi-joins, all three Profile booleans in WHERE', () => {
+      const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-004-super-admin-via-profile');
+      expect(q).toBeDefined();
+      expect(q!.soql.match(/\bSELECT\b/gi)?.length).toBe(1);
+      expect(q!.soql).toContain('FROM User');
+      expect(q!.soql).toContain('IsActive = true');
+      expect(q!.soql).toContain('Profile.PermissionsViewAllData');
+      expect(q!.soql).toContain('Profile.PermissionsModifyAllData');
+      expect(q!.soql).toContain('Profile.PermissionsManageUsers');
+      expect(q!.soql).not.toMatch(/__c/);
+    });
+
+    it('removes the legacy combined acs-004-super-admin-equivalents query id', () => {
+      const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
+      expect(ids.has('acs-004-super-admin-equivalents')).toBe(false);
+    });
+
+    it('both new acs-004 queries map to the SBS-ACS-004 control', () => {
+      const ids = ['acs-004-super-admin-via-permsets', 'acs-004-super-admin-via-profile'];
+      for (const id of ids) {
+        const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === id)!;
+        expect(q.controlIds).toContain('SBS-ACS-004');
+      }
+    });
   });
 
-  it('the verified set includes the Block E baseline queries', () => {
+  it('the verified set includes the Block E baseline queries (with acs-004 split)', () => {
     const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
-    // Block E.1 baseline (3 controls):
-    expect(ids.has('acs-004-super-admin-equivalents')).toBe(true);
+    // Block E.1 baseline (now with acs-004 split into two paths per F.4 Bug C):
+    expect(ids.has('acs-004-super-admin-via-permsets')).toBe(true);
+    expect(ids.has('acs-004-super-admin-via-profile')).toBe(true);
     expect(ids.has('int-002-remote-site-settings-inventory')).toBe(true);
     expect(ids.has('int-003-named-credentials-inventory')).toBe(true);
     // Block E.4 additions (3 more controls):
