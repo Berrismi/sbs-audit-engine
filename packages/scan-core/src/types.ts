@@ -18,12 +18,57 @@ export interface SoqlQueryResponse {
 
 export interface ConnectionLike {
   query(soql: string): Promise<SoqlQueryResponse>;
+  /** Describe a regular sObject. Used by `appliesWhen` predicates to gate on
+   *  field/object availability. Optional in the structural type so tests that
+   *  only exercise `query()` paths don't have to provide it. */
+  describeSObject?(name: string): Promise<DescribeSObjectResult>;
   /** Tooling API namespace. Optional in the structural type so tests don't
    * have to provide it when they only exercise the regular query() path.
    * The real @salesforce/core Connection always has it. */
   tooling?: {
     query(soql: string): Promise<SoqlQueryResponse>;
+    describeSObject?(name: string): Promise<DescribeSObjectResult>;
   };
+}
+
+/**
+ * Why a query was skipped at predicate time. Stays a string union (not enum)
+ * so it round-trips through JSON without coercion and can be widened later
+ * without forcing consumers to update.
+ */
+export type SkipReason = 'applies_when_false' | 'object_unavailable' | 'field_unavailable';
+
+/**
+ * Result of an `appliesWhen` predicate. Discriminated union: `applies: true`
+ * means run the query; `applies: false` carries the reason for telemetry +
+ * progress UI surfacing.
+ */
+export type AppliesWhenResult = { applies: true } | { applies: false; reason: SkipReason };
+
+export type AppliesWhenFn = (
+  connection: ConnectionLike,
+  ctx: AppliesWhenContext,
+) => Promise<AppliesWhenResult>;
+
+/**
+ * Per-bundle execution context passed to `appliesWhen` predicates. Carries
+ * the describe cache so a single object referenced by N queries is only
+ * described once per scan.
+ */
+export interface AppliesWhenContext {
+  describeCache: Map<string, Promise<DescribeSObjectResult>>;
+  toolingDescribeCache: Map<string, Promise<DescribeSObjectResult>>;
+}
+
+/**
+ * Minimal structural shape of a Salesforce describeSObject response. We only
+ * care about whether the object/field exists, not the full describe payload
+ * (which is large and noisy in tests). Real `Connection.describeSObject`
+ * returns a superset of this — structural typing accepts it.
+ */
+export interface DescribeSObjectResult {
+  name: string;
+  fields: ReadonlyArray<{ name: string }>;
 }
 
 /**
@@ -43,11 +88,15 @@ export interface SoqlQueryDef {
   soql: string;
   /** Human-readable label surfaced in progress events + report appendix. */
   label: string;
-  /** Optional predicate that, when present and returning false, marks the
-   * query as `skipped` (engine will treat as `na`, not `inconclusive`).
-   * Use for queries that depend on optional Salesforce features (e.g.,
-   * Communities, Event Monitoring). */
-  appliesWhen?: (connection: ConnectionLike) => Promise<boolean>;
+  /** 'regular' (default) routes through `connection.query`. 'tooling' routes
+   *  through `connection.tooling.query` for Tooling-API-only entities like
+   *  RemoteProxy, ConnectedApplication, ApexClass, etc. */
+  source?: 'regular' | 'tooling';
+  /** Optional predicate evaluated before the query runs. When it returns
+   *  `applies: false`, the query is reported as `kind: 'skipped'` with the
+   *  predicate's `reason`. Receives a context carrying a per-bundle describe
+   *  cache so multiple queries against the same object share one describe call. */
+  appliesWhen?: AppliesWhenFn;
 }
 
 /**
@@ -55,21 +104,9 @@ export interface SoqlQueryDef {
  * can branch cleanly without optional-field gymnastics.
  */
 export type QueryResult =
-  | {
-      kind: 'ok';
-      query: SoqlQueryDef;
-      rows: Record<string, unknown>[];
-    }
-  | {
-      kind: 'skipped';
-      query: SoqlQueryDef;
-      reason: 'applies_when_false';
-    }
-  | {
-      kind: 'failed';
-      query: SoqlQueryDef;
-      error: { message: string; cause?: string };
-    };
+  | { kind: 'ok'; query: SoqlQueryDef; rows: Record<string, unknown>[] }
+  | { kind: 'skipped'; query: SoqlQueryDef; reason: SkipReason }
+  | { kind: 'failed'; query: SoqlQueryDef; error: { message: string; cause?: string } };
 
 /**
  * Lifecycle events emitted by the scan executor. Subscribe via the
@@ -78,7 +115,7 @@ export type QueryResult =
 export type ProgressEvent =
   | { type: 'query_start'; query: SoqlQueryDef }
   | { type: 'query_ok'; query: SoqlQueryDef; rowCount: number }
-  | { type: 'query_skipped'; query: SoqlQueryDef; reason: 'applies_when_false' }
+  | { type: 'query_skipped'; query: SoqlQueryDef; reason: SkipReason }
   | { type: 'query_failed'; query: SoqlQueryDef; error: { message: string } };
 
 export type ProgressListener = (event: ProgressEvent) => void;

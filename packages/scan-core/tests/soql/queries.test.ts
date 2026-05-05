@@ -37,6 +37,38 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     }
   });
 
+  it('int-002 query targets RemoteProxy via tooling source with object gating', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'int-002-remote-site-settings-inventory');
+    expect(q).toBeDefined();
+    expect(q!.source).toBe('tooling');
+    expect(q!.soql).toContain('FROM RemoteProxy');
+    expect(q!.soql).not.toContain('RemoteSiteSetting');
+    expect(q!.appliesWhen).toBeDefined();
+  });
+
+  it('oauth-001 query targets ConnectedApplication via tooling source', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'oauth-001-ad-hoc-connected-apps');
+    expect(q).toBeDefined();
+    expect(q!.source).toBe('tooling');
+    expect(q!.soql).toContain('FROM ConnectedApplication');
+    expect(q!.appliesWhen).toBeDefined();
+  });
+
+  it('acs-012 query gates on Profile login-hours field availability', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-012-profiles-with-login-hours');
+    expect(q).toBeDefined();
+    expect(q!.source ?? 'regular').toBe('regular');
+    expect(q!.appliesWhen).toBeDefined();
+  });
+
+  it('acs-004 query enumerates super-admins via PermSet OR Profile and does NOT reference any __c custom field', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-004-super-admin-equivalents');
+    expect(q).toBeDefined();
+    expect(q!.soql).not.toMatch(/__c/);
+    expect(q!.soql).toContain('PermissionSetAssignment');
+    expect(q!.soql).toContain('Profile.PermissionsModifyAllData');
+  });
+
   it('the verified set includes the Block E baseline queries', () => {
     const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
     // Block E.1 baseline (3 controls):
