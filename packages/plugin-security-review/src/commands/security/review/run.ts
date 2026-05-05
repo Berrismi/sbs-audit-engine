@@ -16,6 +16,7 @@ import { runPreflight } from '../../../lib/preflight';
 import { makeExecaSfRunner } from '../../../lib/sf-runner';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
+import { clickableLink } from '../../../lib/clickable-link';
 
 export type SecurityReviewRunResult = {
   preflightOk: boolean;
@@ -154,10 +155,10 @@ consultant credentials.
     if (!result.ok) {
       throw new Error(`Upload failed (${result.status}): ${result.error}`);
     }
-    this.log(`✓ Customer report (auth required): ${result.reportUrl}`);
+    this.log(`✓ Customer report (auth required): ${clickableLink(result.reportUrl!)}`);
     if (result.consultantPreviewUrl) {
       this.log(`✓ Your consultant preview (no auth, expires in 30d):`);
-      this.log(`  ${result.consultantPreviewUrl}`);
+      this.log(`  ${clickableLink(result.consultantPreviewUrl)}`);
     }
     const out: SecurityReviewRunResult = {
       preflightOk: true,

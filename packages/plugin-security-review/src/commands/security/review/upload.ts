@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import type { EvidenceBundle } from '@hellomavens/security-review-for-salesforce-engine';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
+import { clickableLink } from '../../../lib/clickable-link';
 
 export type SecurityReviewUploadResult = {
   uploaded: boolean;
@@ -62,10 +63,10 @@ export default class SecurityReviewUpload extends SfCommand<SecurityReviewUpload
       throw new Error(`Upload failed (${result.status}): ${result.error}`);
     }
 
-    this.log(`✓ Customer report (auth required): ${result.reportUrl}`);
+    this.log(`✓ Customer report (auth required): ${clickableLink(result.reportUrl!)}`);
     if (result.consultantPreviewUrl) {
       this.log(`✓ Your consultant preview (no auth, expires in 30d):`);
-      this.log(`  ${result.consultantPreviewUrl}`);
+      this.log(`  ${clickableLink(result.consultantPreviewUrl)}`);
     }
     const out: SecurityReviewUploadResult = { uploaded: true, reportUrl: result.reportUrl };
     if (result.consultantPreviewUrl) out.consultantPreviewUrl = result.consultantPreviewUrl;
