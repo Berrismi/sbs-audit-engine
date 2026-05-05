@@ -37,6 +37,15 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     }
   });
 
+  it('int-002 query targets RemoteProxy via tooling source with object gating', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'int-002-remote-site-settings-inventory');
+    expect(q).toBeDefined();
+    expect(q!.source).toBe('tooling');
+    expect(q!.soql).toContain('FROM RemoteProxy');
+    expect(q!.soql).not.toContain('RemoteSiteSetting');
+    expect(q!.appliesWhen).toBeDefined();
+  });
+
   it('the verified set includes the Block E baseline queries', () => {
     const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
     // Block E.1 baseline (3 controls):

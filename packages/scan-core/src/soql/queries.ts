@@ -31,6 +31,7 @@
 // the audit_procedure it satisfies, plus the evaluator extension that
 // consumes it. No bulk additions.
 
+import { toolingObjectExists } from './applies-when';
 import type { SoqlQueryDef } from '../types';
 
 export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
@@ -50,14 +51,16 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   },
 
   // SBS-INT-002 — Inventory and Justification of Remote Site Settings.
-  // The active RemoteSiteSetting list is the inventory; the audit
-  // procedure asks the consultant to verify each is documented + justified.
-  // Evaluator returns inventory size; "all justified" is a process attest.
+  // RemoteSiteSetting is Tooling-API-only; its Tooling sObject equivalent is
+  // RemoteProxy. The active list is the inventory; the audit procedure asks
+  // the consultant to verify each is documented + justified (questionnaire).
   {
     id: 'int-002-remote-site-settings-inventory',
     controlIds: ['SBS-INT-002'],
     label: 'Active remote site settings (outbound endpoints from Apex)',
-    soql: 'SELECT Id, EndpointUrl, IsActive, SiteName FROM RemoteSiteSetting WHERE IsActive = true',
+    source: 'tooling',
+    soql: 'SELECT Id, EndpointUrl, IsActive, MasterLabel FROM RemoteProxy WHERE IsActive = true',
+    appliesWhen: toolingObjectExists('RemoteProxy'),
   },
 
   // SBS-INT-003 — Inventory and Justification of Named Credentials.
