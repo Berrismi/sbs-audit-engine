@@ -45,12 +45,13 @@ export async function uploadBundle(input: UploadInput): Promise<UploadResult> {
       report_url: string;
       consultant_preview_url?: string;
     };
-    return {
+    const result: UploadResult = {
       ok: true,
       reportId: body.report_id,
       reportUrl: body.report_url,
-      consultantPreviewUrl: body.consultant_preview_url,
     };
+    if (body.consultant_preview_url) result.consultantPreviewUrl = body.consultant_preview_url;
+    return result;
   }
 
   let errorMessage = `Upload failed with status ${res.status}.`;
