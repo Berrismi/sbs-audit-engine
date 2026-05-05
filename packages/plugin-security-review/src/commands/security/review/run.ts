@@ -28,9 +28,14 @@ export type SecurityReviewRunResult = {
 
 export default class SecurityReviewRun extends SfCommand<SecurityReviewRunResult> {
   public static override readonly summary =
-    'Run a HelloMavens security review against a target Salesforce org.';
+    '[CONSULTANT-ONLY] Run a HelloMavens security review against a target Salesforce org.';
 
   public static override readonly description = `
+Today this command is consultant-keyed: the upload step posts to
+HelloMavens' hosted scoring backend and requires credentials stored via
+\`sf security review login\`. A self-service mode that scores fully
+locally with no consultant key and no upload is planned for Phase 8.
+
 Runs preflight checks, collects evidence (SOQL bundle + Health Check API by
 default; --include-code-analyzer adds the slow Code Analyzer subprocess),
 then either uploads the resulting EvidenceBundle to the HelloMavens scoring

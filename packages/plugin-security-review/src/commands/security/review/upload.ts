@@ -16,7 +16,11 @@ export type SecurityReviewUploadResult = {
 
 export default class SecurityReviewUpload extends SfCommand<SecurityReviewUploadResult> {
   public static override readonly summary =
-    'Upload a previously-collected EvidenceBundle to the HelloMavens scoring backend.';
+    '[CONSULTANT-ONLY] Upload a previously-collected EvidenceBundle to the HelloMavens scoring backend.';
+
+  public static override readonly description = `Requires a HelloMavens consultant API key stored via
+\`sf security review login\`. A self-service mode that scores fully
+locally without uploading is planned for Phase 8.`;
 
   public static override readonly examples = [
     '$ sf security review upload --bundle ./bundle.json --client-email contact@client.com',

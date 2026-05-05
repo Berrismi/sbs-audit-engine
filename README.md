@@ -14,6 +14,31 @@ SPDX-License-Identifier: MIT
 [![CI](https://github.com/Berrismi/sbs-audit-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/Berrismi/sbs-audit-engine/actions/workflows/ci.yml)
 [![REUSE compliant](https://api.reuse.software/badge/github.com/Berrismi/sbs-audit-engine)](https://api.reuse.software/info/github.com/Berrismi/sbs-audit-engine)
 
+## Status — who this is for today
+
+This repo currently ships **consultant-mode tooling**: the
+`@hellomavens/plugin-security-review` Salesforce CLI plugin uploads scan
+results to HelloMavens' hosted scoring backend and requires a
+HelloMavens-issued consultant API key to use. If you're not a HelloMavens
+consultant, **`sf security review login` will not work for you yet**.
+
+A **self-service mode** that scores fully locally and produces an
+unbranded report — no consultant key, no upload, no HelloMavens hosted
+service involved — is planned for **Phase 8** per the project roadmap.
+Track [issue #1](https://github.com/Berrismi/sbs-audit-engine/issues) for
+progress; until then:
+
+- The **scoring engine** (`@hellomavens/security-review-for-salesforce-engine`)
+  works standalone today — pass it your own `EvidenceBundle` and call
+  `score()`. No backend involved. See the package's [README](./packages/sbs-engine/README.md).
+- The **plugin** is consultant-keyed today. `sf security review run` will
+  collect evidence successfully but the `upload` step expects a
+  HelloMavens API key obtained via `sf security review login`.
+
+If you'd benefit from the self-service mode landing sooner, open an issue
+or upvote one. Until then, please don't `sf plugins install` expecting
+a self-serve experience — you'll hit a credentials wall.
+
 ## What this is
 
 Two npm packages today, three on the roadmap, one repo:
