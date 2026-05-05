@@ -29,6 +29,7 @@ import type {
   ControlScoreResult,
   Evidence,
   EvidenceBundle,
+  EvidenceSufficiency,
   RiskLevel,
   ScoredReport,
 } from './types';
@@ -127,12 +128,21 @@ export function score(bundle: EvidenceBundle): ScoredReport {
   ).length;
   const grade = riskGrade(overall, critical_fail_count > 0);
   const inconclusive_pct = inconclusivePercent(controlResults);
+  // F.4 Bug D: when inconclusive dominates the in-scope set, the letter grade
+  // is meaningless to the customer (we computed "100/A" but most controls
+  // weren't evaluated). Threshold > 50% — strict greater-than so a 50/50
+  // split still gets a headline grade. Renderers branch on this to swap the
+  // chip from "A" to "Insufficient evidence" while keeping the by-category
+  // drill-down rendering normally below.
+  const evidence_sufficiency: EvidenceSufficiency =
+    inconclusive_pct > 50 ? 'insufficient' : 'sufficient';
 
   return {
     overall_score: overall,
     risk_grade: grade,
     critical_fail_count,
     inconclusive_percent: inconclusive_pct,
+    evidence_sufficiency,
     by_category,
     control_results: controlResults.sort((a, b) => a.control_id.localeCompare(b.control_id)),
     sbs_version: library.sbs_version,
