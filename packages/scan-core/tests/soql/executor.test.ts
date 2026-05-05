@@ -3,19 +3,9 @@
 
 import { describe, it, expect } from 'vitest';
 import { executeSoqlQuery, executeSoqlBundle } from '../../src/soql/executor';
-import type {
-  AppliesWhenContext,
-  ConnectionLike,
-  ProgressEvent,
-  SoqlQueryDef,
-} from '../../src/types';
+import type { ConnectionLike, ProgressEvent, SoqlQueryDef } from '../../src/types';
 
 describe('executeSoqlQuery', () => {
-  const ctx: AppliesWhenContext = {
-    describeCache: new Map(),
-    toolingDescribeCache: new Map(),
-  };
-
   const okConnection: ConnectionLike = {
     query: async () => ({
       records: [{ Id: '00540000XXX', Name: 'Test User' }],
@@ -32,7 +22,7 @@ describe('executeSoqlQuery', () => {
   };
 
   it('returns ok with rows when the query succeeds', async () => {
-    const result = await executeSoqlQuery(okConnection, baseQuery, ctx);
+    const result = await executeSoqlQuery(okConnection, baseQuery);
 
     expect(result.kind).toBe('ok');
     if (result.kind === 'ok') {
@@ -55,7 +45,7 @@ describe('executeSoqlQuery', () => {
       appliesWhen: async () => ({ applies: false, reason: 'applies_when_false' }),
     };
 
-    const result = await executeSoqlQuery(trackedConnection, queryWithPredicate, ctx);
+    const result = await executeSoqlQuery(trackedConnection, queryWithPredicate);
 
     expect(result.kind).toBe('skipped');
     if (result.kind === 'skipped') {
@@ -70,7 +60,7 @@ describe('executeSoqlQuery', () => {
       appliesWhen: async () => ({ applies: true }),
     };
 
-    const result = await executeSoqlQuery(okConnection, queryWithPredicate, ctx);
+    const result = await executeSoqlQuery(okConnection, queryWithPredicate);
 
     expect(result.kind).toBe('ok');
   });
@@ -82,7 +72,7 @@ describe('executeSoqlQuery', () => {
       },
     };
 
-    const result = await executeSoqlQuery(errConnection, baseQuery, ctx);
+    const result = await executeSoqlQuery(errConnection, baseQuery);
 
     expect(result.kind).toBe('failed');
     if (result.kind === 'failed') {
@@ -97,7 +87,7 @@ describe('executeSoqlQuery', () => {
       },
     };
 
-    const result = await executeSoqlQuery(errConnection, baseQuery, ctx);
+    const result = await executeSoqlQuery(errConnection, baseQuery);
 
     expect(result.kind).toBe('failed');
     if (result.kind === 'failed') {

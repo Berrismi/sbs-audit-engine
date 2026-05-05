@@ -9,10 +9,22 @@ import type {
   SoqlQueryDef,
 } from '../types';
 
+/**
+ * Build a fresh AppliesWhenContext. `executeSoqlBundle` creates one and
+ * threads it through every query so describes are shared across the bundle;
+ * ad-hoc single-query callers can rely on the default and skip the ceremony.
+ */
+export function createAppliesWhenContext(): AppliesWhenContext {
+  return {
+    describeCache: new Map(),
+    toolingDescribeCache: new Map(),
+  };
+}
+
 export async function executeSoqlQuery(
   connection: ConnectionLike,
   query: SoqlQueryDef,
-  ctx: AppliesWhenContext,
+  ctx: AppliesWhenContext = createAppliesWhenContext(),
 ): Promise<QueryResult> {
   if (query.appliesWhen) {
     const result = await query.appliesWhen(connection, ctx);
@@ -31,7 +43,9 @@ export async function executeSoqlQuery(
       return {
         kind: 'failed',
         query,
-        error: { message: 'Tooling API namespace unavailable on this connection.' },
+        error: {
+          message: `Tooling API namespace unavailable — query '${query.id}' requires source: 'tooling' but connection.tooling is absent.`,
+        },
       };
     }
 
@@ -48,10 +62,7 @@ export async function executeSoqlBundle(
   queries: readonly SoqlQueryDef[],
   onProgress?: ProgressListener,
 ): Promise<QueryResult[]> {
-  const ctx: AppliesWhenContext = {
-    describeCache: new Map(),
-    toolingDescribeCache: new Map(),
-  };
+  const ctx = createAppliesWhenContext();
 
   const results: QueryResult[] = [];
   for (const query of queries) {
