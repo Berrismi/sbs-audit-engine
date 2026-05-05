@@ -150,6 +150,8 @@ interface ControlEnrichmentsFile {
         gdpr?: string[];
         ccpa?: string[];
       };
+      cli_evidence_class?: string;
+      pass_narrative?: string;
     }
   >;
 }
@@ -415,6 +417,8 @@ function buildControl(
       weight: weightFromRiskLevel(riskLevel),
       owasp: enrichment?.owasp ?? [],
       regulations: enrichment?.regulations ?? {},
+      pass_narrative:
+        enrichment?.pass_narrative ?? `[unauthored: pass_narrative for ${yaml.control_id}]`,
     },
   };
 }
