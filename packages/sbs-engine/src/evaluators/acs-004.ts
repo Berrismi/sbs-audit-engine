@@ -27,6 +27,9 @@ export const evaluate = cliAttestationEvaluator({
         ],
       };
     }
+    // Cap the sample at 10 usernames: enough to give a consultant a real
+    // sense of who's on the list without bloating a single-line finding in
+    // the PDF report. Anything beyond is summarized as "+N more".
     const usernames = rows
       .map((row) => row['Username'])
       .filter((u): u is string => typeof u === 'string')

@@ -55,13 +55,16 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     id: 'acs-004-super-admin-equivalents',
     controlIds: ['SBS-ACS-004'],
     label: 'Active users with super-admin-equivalent permissions (PermSet or Profile)',
+    // Two paths combined with OR inside the WHERE:
+    //   Path A — permission-set-driven super-admin grants (assignee holds all
+    //            three perms via permission sets, possibly different sets).
+    //   Path B — profile-level super-admin grants (catches System Administrator
+    //            and any custom profile cloned from it).
     soql:
       'SELECT Id, Username, Profile.Name FROM User WHERE IsActive = true AND (' +
-      // Path A: permission-set-driven super-admin grants.
       '(Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.PermissionsViewAllData = true) ' +
       'AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.PermissionsModifyAllData = true) ' +
       'AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.PermissionsManageUsers = true)) ' +
-      // Path B: profile-level super-admin grants (catches the System Administrator profile + custom-cloned-from-sysadmin profiles).
       'OR (Profile.PermissionsViewAllData = true AND Profile.PermissionsModifyAllData = true AND Profile.PermissionsManageUsers = true))',
   },
 

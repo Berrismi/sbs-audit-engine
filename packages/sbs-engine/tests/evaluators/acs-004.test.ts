@@ -7,6 +7,12 @@
 // users via PermSet OR Profile-level grants); questionnaire adjudicates the
 // WHETHER-IT'S-JUSTIFIED. The evaluator is built on the standard
 // cliAttestationEvaluator pattern (mirrors int-002).
+//
+// Reference shape for any future evaluator that has both SOQL and
+// questionnaire evidence paths: one test per evidence path × outcome
+// (SOQL pass/inconclusive/edge-case, questionnaire pass/fail/idk,
+// no-evidence inconclusive). Evaluators must never throw and must degrade
+// to inconclusive when evidence is absent.
 
 import { describe, expect, it } from 'vitest';
 import { evaluate as evaluateAcs004 } from '../../src/evaluators/acs-004';
