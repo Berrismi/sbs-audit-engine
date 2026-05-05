@@ -7,7 +7,11 @@ import type { EvidenceBundle } from '@hellomavens/security-review-for-salesforce
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
 
-export type SecurityReviewUploadResult = { uploaded: boolean; reportUrl?: string };
+export type SecurityReviewUploadResult = {
+  uploaded: boolean;
+  reportUrl?: string;
+  consultantPreviewUrl?: string;
+};
 
 export default class SecurityReviewUpload extends SfCommand<SecurityReviewUploadResult> {
   public static override readonly summary =
@@ -58,7 +62,13 @@ export default class SecurityReviewUpload extends SfCommand<SecurityReviewUpload
       throw new Error(`Upload failed (${result.status}): ${result.error}`);
     }
 
-    this.log(`✓ Report ready: ${result.reportUrl}`);
-    return { uploaded: true, reportUrl: result.reportUrl };
+    this.log(`✓ Customer report (auth required): ${result.reportUrl}`);
+    if (result.consultantPreviewUrl) {
+      this.log(`✓ Your consultant preview (no auth, expires in 30d):`);
+      this.log(`  ${result.consultantPreviewUrl}`);
+    }
+    const out: SecurityReviewUploadResult = { uploaded: true, reportUrl: result.reportUrl };
+    if (result.consultantPreviewUrl) out.consultantPreviewUrl = result.consultantPreviewUrl;
+    return out;
   }
 }

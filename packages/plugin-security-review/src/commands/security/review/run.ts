@@ -21,6 +21,7 @@ export type SecurityReviewRunResult = {
   preflightOk: boolean;
   alias: string;
   reportUrl?: string;
+  consultantPreviewUrl?: string;
   bundlePath?: string;
 };
 
@@ -153,7 +154,17 @@ consultant credentials.
     if (!result.ok) {
       throw new Error(`Upload failed (${result.status}): ${result.error}`);
     }
-    this.log(`✓ Report ready: ${result.reportUrl}`);
-    return { preflightOk: true, alias, reportUrl: result.reportUrl };
+    this.log(`✓ Customer report (auth required): ${result.reportUrl}`);
+    if (result.consultantPreviewUrl) {
+      this.log(`✓ Your consultant preview (no auth, expires in 30d):`);
+      this.log(`  ${result.consultantPreviewUrl}`);
+    }
+    const out: SecurityReviewRunResult = {
+      preflightOk: true,
+      alias,
+      reportUrl: result.reportUrl,
+    };
+    if (result.consultantPreviewUrl) out.consultantPreviewUrl = result.consultantPreviewUrl;
+    return out;
   }
 }
