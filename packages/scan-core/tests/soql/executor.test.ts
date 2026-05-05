@@ -3,9 +3,19 @@
 
 import { describe, it, expect } from 'vitest';
 import { executeSoqlQuery, executeSoqlBundle } from '../../src/soql/executor';
-import type { ConnectionLike, ProgressEvent, SoqlQueryDef } from '../../src/types';
+import type {
+  AppliesWhenContext,
+  ConnectionLike,
+  ProgressEvent,
+  SoqlQueryDef,
+} from '../../src/types';
 
 describe('executeSoqlQuery', () => {
+  const ctx: AppliesWhenContext = {
+    describeCache: new Map(),
+    toolingDescribeCache: new Map(),
+  };
+
   const okConnection: ConnectionLike = {
     query: async () => ({
       records: [{ Id: '00540000XXX', Name: 'Test User' }],
@@ -22,7 +32,7 @@ describe('executeSoqlQuery', () => {
   };
 
   it('returns ok with rows when the query succeeds', async () => {
-    const result = await executeSoqlQuery(okConnection, baseQuery);
+    const result = await executeSoqlQuery(okConnection, baseQuery, ctx);
 
     expect(result.kind).toBe('ok');
     if (result.kind === 'ok') {
@@ -42,10 +52,10 @@ describe('executeSoqlQuery', () => {
     };
     const queryWithPredicate: SoqlQueryDef = {
       ...baseQuery,
-      appliesWhen: async () => false,
+      appliesWhen: async () => ({ applies: false, reason: 'applies_when_false' }),
     };
 
-    const result = await executeSoqlQuery(trackedConnection, queryWithPredicate);
+    const result = await executeSoqlQuery(trackedConnection, queryWithPredicate, ctx);
 
     expect(result.kind).toBe('skipped');
     if (result.kind === 'skipped') {
@@ -57,10 +67,10 @@ describe('executeSoqlQuery', () => {
   it('runs the query when appliesWhen predicate returns true', async () => {
     const queryWithPredicate: SoqlQueryDef = {
       ...baseQuery,
-      appliesWhen: async () => true,
+      appliesWhen: async () => ({ applies: true }),
     };
 
-    const result = await executeSoqlQuery(okConnection, queryWithPredicate);
+    const result = await executeSoqlQuery(okConnection, queryWithPredicate, ctx);
 
     expect(result.kind).toBe('ok');
   });
@@ -72,7 +82,7 @@ describe('executeSoqlQuery', () => {
       },
     };
 
-    const result = await executeSoqlQuery(errConnection, baseQuery);
+    const result = await executeSoqlQuery(errConnection, baseQuery, ctx);
 
     expect(result.kind).toBe('failed');
     if (result.kind === 'failed') {
@@ -87,7 +97,7 @@ describe('executeSoqlQuery', () => {
       },
     };
 
-    const result = await executeSoqlQuery(errConnection, baseQuery);
+    const result = await executeSoqlQuery(errConnection, baseQuery, ctx);
 
     expect(result.kind).toBe('failed');
     if (result.kind === 'failed') {
@@ -162,7 +172,7 @@ describe('executeSoqlBundle', () => {
   it('emits query_skipped when a query has appliesWhen=false', async () => {
     const skipQuery: SoqlQueryDef = {
       ...userQuery,
-      appliesWhen: async () => false,
+      appliesWhen: async () => ({ applies: false, reason: 'applies_when_false' }),
     };
     const conn: ConnectionLike = {
       query: async () => ({ records: [], totalSize: 0, done: true }),
