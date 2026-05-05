@@ -277,6 +277,25 @@ export interface CategoryScoreOutput {
 export type RiskGrade = 'A' | 'B' | 'C' | 'D' | 'F';
 
 /**
+ * Whether the scan gathered enough evidence to characterize the org.
+ *
+ * `sufficient`   — most in-scope controls produced a definitive verdict
+ *                  (`pass` or `fail`); the letter grade can be safely
+ *                  surfaced as the headline.
+ * `insufficient` — more than half of in-scope controls returned
+ *                  `inconclusive`; the score and grade fields stay
+ *                  populated for telemetry + per-category drill-down,
+ *                  but a downstream renderer should NOT advertise the
+ *                  letter grade as the headline (it would mislead the
+ *                  customer — "we couldn't tell" reads as "you got an A").
+ *                  Threshold is `inconclusive_percent > 50`.
+ *
+ * Added in F.4 Bug D after a fresh-DE scan with 98% inconclusive controls
+ * surfaced a misleading A/100 in the report header + email teaser.
+ */
+export type EvidenceSufficiency = 'sufficient' | 'insufficient';
+
+/**
  * Top-level scored report — the shape `score(EvidenceBundle)` returns and the
  * shape the app's `/audit/report/[id]` viewer renders.
  */
@@ -292,6 +311,13 @@ export interface ScoredReport {
    * Always shown when > 0.
    */
   inconclusive_percent: number;
+  /**
+   * Whether the scan gathered enough evidence for the headline grade to be
+   * meaningful. `'insufficient'` when `inconclusive_percent > 50`.
+   * Renderers should branch on this for the headline chip but keep the
+   * by-category drill-down rendering normally.
+   */
+  evidence_sufficiency: EvidenceSufficiency;
   /** Per-category aggregates. */
   by_category: CategoryScoreOutput[];
   /** Per-control results, ordered by control_id. */
