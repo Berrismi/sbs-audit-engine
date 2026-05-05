@@ -33,52 +33,94 @@
 //    EntityDefinition, FieldDefinition, etc.). The executor branches on this
 //    automatically. Regular SOQL is the default — no `source` field needed.
 //
+// 5. **Multi-query controls.** Some controls map to multiple SOQL queries
+//    (e.g. SBS-ACS-004 splits into via-permsets + via-profile to fit within
+//    the SOQL semi-join limit of 2). Evaluators that consume multiple
+//    queries handle the merge — see `packages/sbs-engine/src/evaluators/acs-004.ts`.
+//
+// 6. **Field-level vs object-level gates.** Use `toolingFieldsExist` (or
+//    `fieldsExist`) over `toolingObjectExists` (or `objectExists`) when the
+//    SELECT references a field that's conditional on org tier — DE in
+//    particular has the Tooling object but not every column. Object-only
+//    gates pass at runtime then fail mid-query with NO_SUCH_COLUMN. F.4 Bug
+//    C tightened this for int-002 + oauth-001.
+//
 // Today's verified set:
-//   - SBS-ACS-004   Super-admin equivalent users (PermSet OR Profile)
+//   - SBS-ACS-004   Super-admin equivalent users — split into two queries:
+//                     • via-permsets (PermissionSetAssignment relationship)
+//                     • via-profile  (Profile-level boolean perms)
+//                   Evaluator merges. Avoids the 3-semi-join SOQL limit.
 //   - SBS-ACS-005   Active users on standard profiles (custom-profile policy)
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
-//   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy)
+//   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
 //   - SBS-INT-003   Named Credentials inventory
-//   - SBS-OAUTH-001 Connected Apps without managed-package namespace (tooling)
+//   - SBS-OAUTH-001 Connected Apps without managed-package namespace (tooling, field-gated)
 
-import { fieldsExist, toolingObjectExists } from './applies-when';
+import { fieldsExist, toolingFieldsExist } from './applies-when';
 import type { SoqlQueryDef } from '../types';
 
 export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // SBS-ACS-004 — Documented Justification for All Super Admin–Equivalent
-  // Users. Enumerates active users carrying View All Data + Modify All Data
-  // + Manage Users from EITHER a permission set OR their profile. The
-  // evaluator uses this as inventory; the questionnaire adjudicates whether
-  // each user has documented justification (authoring rule: don't search for
-  // hypothetical __c fields — see file header).
+  // Users (path A: permission-set-driven super-admin grants).
+  //
+  // F.4 Bug C: split from a single combined query that hit "Maximum 2 semi
+  // join sub-selects allowed" against DE. The combined version chained 3 IN
+  // sub-selects (one per perm) plus a Profile OR clause. SOQL caps semi-joins
+  // at 2 — over the limit by one. The fix uses relationship traversal on
+  // PermissionSetAssignment instead of semi-joins, returning one row per
+  // (assignee, permission_set) pair where the set carries any of the 3
+  // super-admin perms. The evaluator unions per-user perms across rows and
+  // verifies coverage of all 3. This captures cross-permset composition
+  // (a user with ViewAll from set X + Modify from set Y) which a
+  // single-set semi-join would silently miss.
   {
-    id: 'acs-004-super-admin-equivalents',
+    id: 'acs-004-super-admin-via-permsets',
     controlIds: ['SBS-ACS-004'],
-    label: 'Active users with super-admin-equivalent permissions (PermSet or Profile)',
-    // Two paths combined with OR inside the WHERE:
-    //   Path A — permission-set-driven super-admin grants (assignee holds all
-    //            three perms via permission sets, possibly different sets).
-    //   Path B — profile-level super-admin grants (catches System Administrator
-    //            and any custom profile cloned from it).
+    label: 'Permission-set-driven super-admin permissions per active user',
     soql:
-      'SELECT Id, Username, Profile.Name FROM User WHERE IsActive = true AND (' +
-      '(Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.PermissionsViewAllData = true) ' +
-      'AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.PermissionsModifyAllData = true) ' +
-      'AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.PermissionsManageUsers = true)) ' +
-      'OR (Profile.PermissionsViewAllData = true AND Profile.PermissionsModifyAllData = true AND Profile.PermissionsManageUsers = true))',
+      'SELECT AssigneeId, Assignee.Username, Assignee.Profile.Name, ' +
+      'PermissionSet.PermissionsViewAllData, PermissionSet.PermissionsModifyAllData, PermissionSet.PermissionsManageUsers ' +
+      'FROM PermissionSetAssignment ' +
+      'WHERE Assignee.IsActive = true AND (' +
+      'PermissionSet.PermissionsViewAllData = true OR ' +
+      'PermissionSet.PermissionsModifyAllData = true OR ' +
+      'PermissionSet.PermissionsManageUsers = true)',
+  },
+
+  // SBS-ACS-004 (path B: profile-level super-admin grants — System
+  // Administrator and any custom profile cloned from it). Combined with
+  // path A for full coverage; evaluator dedupes users that appear in both.
+  {
+    id: 'acs-004-super-admin-via-profile',
+    controlIds: ['SBS-ACS-004'],
+    label: 'Profile-level super-admin users',
+    soql:
+      'SELECT Id, Username, Profile.Name FROM User WHERE IsActive = true AND ' +
+      'Profile.PermissionsViewAllData = true AND ' +
+      'Profile.PermissionsModifyAllData = true AND ' +
+      'Profile.PermissionsManageUsers = true',
   },
 
   // SBS-INT-002 — Inventory and Justification of Remote Site Settings.
   // RemoteSiteSetting is Tooling-API-only; its Tooling sObject equivalent is
   // RemoteProxy. The active list is the inventory; the audit procedure asks
   // the consultant to verify each is documented + justified (questionnaire).
+  //
+  // F.4 Bug C: gate widened from `toolingObjectExists` to `toolingFieldsExist`
+  // because some org tiers expose the RemoteProxy object but not the
+  // MasterLabel column we select.
   {
     id: 'int-002-remote-site-settings-inventory',
     controlIds: ['SBS-INT-002'],
     label: 'Active remote site settings (outbound endpoints from Apex)',
     source: 'tooling',
     soql: 'SELECT Id, EndpointUrl, IsActive, MasterLabel FROM RemoteProxy WHERE IsActive = true',
-    appliesWhen: toolingObjectExists('RemoteProxy'),
+    appliesWhen: toolingFieldsExist('RemoteProxy', [
+      'Id',
+      'EndpointUrl',
+      'IsActive',
+      'MasterLabel',
+    ]),
   },
 
   // SBS-INT-003 — Inventory and Justification of Named Credentials.
@@ -137,12 +179,15 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // ConnectedApplication is a Tooling-API entity. Connected apps without a
   // managed-package namespace are org-local (ad-hoc), not formally installed
   // via a managed/unmanaged package. Pass = 0 rows; fail = N ad-hoc apps.
+  //
+  // F.4 Bug C: field-gated. Some org tiers expose the ConnectedApplication
+  // object but not the NamespacePrefix column.
   {
     id: 'oauth-001-ad-hoc-connected-apps',
     controlIds: ['SBS-OAUTH-001'],
     label: 'Connected applications without a managed-package namespace (ad-hoc)',
     source: 'tooling',
     soql: 'SELECT Id, Name, NamespacePrefix FROM ConnectedApplication WHERE NamespacePrefix = null',
-    appliesWhen: toolingObjectExists('ConnectedApplication'),
+    appliesWhen: toolingFieldsExist('ConnectedApplication', ['Id', 'Name', 'NamespacePrefix']),
   },
 ];
