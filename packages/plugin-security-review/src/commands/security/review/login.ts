@@ -12,7 +12,15 @@ export type SecurityReviewLoginResult = { loggedIn: boolean; path: string };
 
 export default class SecurityReviewLogin extends SfCommand<SecurityReviewLoginResult> {
   public static override readonly summary =
-    'Store the HelloMavens consultant API key, backend base URL, and engagement-disclaimer attestation for future scan uploads.';
+    '[CONSULTANT-ONLY] Store the HelloMavens consultant API key, backend base URL, and engagement-disclaimer attestation for future scan uploads.';
+
+  public static override readonly description = `Today this command requires a HelloMavens-issued consultant API key
+and uploads results to HelloMavens' hosted scoring backend. If you're
+not a HelloMavens consultant you cannot complete this login yet.
+
+A self-service mode (no key required, no upload, scoring fully local
+with an unbranded report) is planned for Phase 8 of the project
+roadmap. Watch the sbs-audit-engine repo for progress.`;
 
   public static override readonly examples = [
     '$ sf security review login --api-base-url https://app.hellomavens.com',
