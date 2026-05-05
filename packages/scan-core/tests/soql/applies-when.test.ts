@@ -181,4 +181,33 @@ describe('toolingFieldsExist', () => {
     );
     expect(result).toEqual({ applies: false, reason: 'field_unavailable' });
   });
+
+  it('returns applies:false with object_unavailable when tooling namespace is present but describeSObject is absent', async () => {
+    // Guards against a regression making `describeSObject` non-optional in the
+    // ConnectionLike type — the helpers must keep tolerating partial adapters.
+    const conn: ConnectionLike = {
+      query: vi.fn(),
+      tooling: { query: vi.fn() },
+    };
+    const result = await toolingFieldsExist('ConnectedApplication', ['NamespacePrefix'])(
+      conn,
+      makeCtx(),
+    );
+    expect(result).toEqual({ applies: false, reason: 'object_unavailable' });
+  });
+});
+
+describe('fieldsExist edge cases', () => {
+  it('vacuously returns applies:true for an empty fieldNames array (documents the contract)', async () => {
+    // Empty list = no fields to require = predicate is satisfied. Surprising
+    // for an authoring mistake, but defensible — Array.prototype.every is
+    // vacuously true. This test pins the behavior so a future "guard against
+    // empty list" change is a deliberate API decision, not a silent flip.
+    const conn: ConnectionLike = {
+      query: vi.fn(),
+      describeSObject: vi.fn().mockResolvedValue({ name: 'User', fields: [] }),
+    };
+    const result = await fieldsExist('User', [])(conn, makeCtx());
+    expect(result).toEqual({ applies: true });
+  });
 });

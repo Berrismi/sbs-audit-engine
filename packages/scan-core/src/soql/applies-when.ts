@@ -11,6 +11,16 @@
 // is questionnaire territory. SOQL enumerates the population on standard
 // objects + Tooling entities; `appliesWhen` gates with these helpers when an
 // org tier (DE) doesn't carry a referenced object/field at all.
+//
+// `object_unavailable` reason note: this string covers two structurally
+// different situations — (a) the connection adapter doesn't expose a
+// describeSObject method at all (capability gap, usually a misconfigured
+// runner or test double), and (b) the describe call rejected at runtime
+// (true org-tier limitation: object isn't on this edition). Both produce the
+// same `kind: 'skipped'` outcome from the executor's perspective. If
+// downstream telemetry needs to distinguish them, widen `SkipReason` rather
+// than splitting at this layer — the helpers stay small and the executor
+// stays uniform.
 
 import type { AppliesWhenFn, ConnectionLike, DescribeSObjectResult } from '../types';
 
@@ -71,13 +81,12 @@ export function fieldsExist(objectName: string, fieldNames: readonly string[]): 
 
 export function toolingObjectExists(objectName: string): AppliesWhenFn {
   return async (connection, ctx) => {
-    const describer = connection.tooling?.describeSObject;
-    if (!describer) {
+    if (!connection.tooling?.describeSObject) {
       return { applies: false, reason: 'object_unavailable' };
     }
     try {
       await getDescribe(connection, ctx.toolingDescribeCache, objectName, (name) =>
-        describer.call(connection.tooling, name),
+        connection.tooling!.describeSObject!(name),
       );
       return { applies: true };
     } catch {
@@ -91,14 +100,13 @@ export function toolingFieldsExist(
   fieldNames: readonly string[],
 ): AppliesWhenFn {
   return async (connection, ctx) => {
-    const describer = connection.tooling?.describeSObject;
-    if (!describer) {
+    if (!connection.tooling?.describeSObject) {
       return { applies: false, reason: 'object_unavailable' };
     }
     let describe: DescribeSObjectResult;
     try {
       describe = await getDescribe(connection, ctx.toolingDescribeCache, objectName, (name) =>
-        describer.call(connection.tooling, name),
+        connection.tooling!.describeSObject!(name),
       );
     } catch {
       return { applies: false, reason: 'object_unavailable' };
