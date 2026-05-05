@@ -72,6 +72,49 @@ describe('uploadBundle', () => {
     }
   });
 
+  it('returns consultantPreviewUrl when the server includes it (Block F.3)', async () => {
+    const fetcher = async () =>
+      new Response(
+        JSON.stringify({
+          report_id: 'r-1',
+          report_url: 'https://app.x/audit/report/r-1',
+          consultant_preview_url: 'https://app.x/audit/report/r-1?preview=tok',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    const result = await uploadBundle({
+      bundle: FAKE_BUNDLE,
+      clientEmail: 'c@x.com',
+      consultantConsent: FAKE_CONSENT,
+      apiKey: 'k',
+      apiBaseUrl: 'https://app.x',
+      fetcher,
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.reportUrl).toBe('https://app.x/audit/report/r-1');
+      expect(result.consultantPreviewUrl).toBe('https://app.x/audit/report/r-1?preview=tok');
+    }
+  });
+
+  it('returns consultantPreviewUrl undefined when the server omits it (forward compatibility)', async () => {
+    const fetcher = async () =>
+      new Response(
+        JSON.stringify({ report_id: 'r-1', report_url: 'https://app.x/audit/report/r-1' }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    const result = await uploadBundle({
+      bundle: FAKE_BUNDLE,
+      clientEmail: 'c@x.com',
+      consultantConsent: FAKE_CONSENT,
+      apiKey: 'k',
+      apiBaseUrl: 'https://app.x',
+      fetcher,
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.consultantPreviewUrl).toBeUndefined();
+  });
+
   it('falls back to a status-only message when the body is not JSON', async () => {
     const fetcher = async () => new Response('upstream timeout', { status: 504 });
     const result = await uploadBundle({
