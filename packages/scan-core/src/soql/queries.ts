@@ -31,7 +31,7 @@
 // the audit_procedure it satisfies, plus the evaluator extension that
 // consumes it. No bulk additions.
 
-import { toolingObjectExists } from './applies-when';
+import { fieldsExist, toolingObjectExists } from './applies-when';
 import type { SoqlQueryDef } from '../types';
 
 export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
@@ -90,11 +90,10 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   },
 
   // SBS-ACS-012 — Classify Users for Login Hours Restrictions. Profiles
-  // with at least one Login Hours window configured. The presence of any
-  // login-hours configuration suggests the org has implemented
-  // classification-driven restrictions; absence suggests the policy is
-  // not in use anywhere. The evaluator pairs this with the questionnaire
-  // attestation about classification correctness.
+  // with at least one Login Hours window configured. The seven LoginHours*Start
+  // fields are conditional across editions (DE doesn't have them). When the
+  // fields are absent the query is skipped → evaluator falls back to
+  // questionnaire attestation.
   {
     id: 'acs-012-profiles-with-login-hours',
     controlIds: ['SBS-ACS-012'],
@@ -105,6 +104,15 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'OR LoginHoursWednesdayStart != null OR LoginHoursThursdayStart != null ' +
       'OR LoginHoursFridayStart != null OR LoginHoursSaturdayStart != null ' +
       'OR LoginHoursSundayStart != null',
+    appliesWhen: fieldsExist('Profile', [
+      'LoginHoursMondayStart',
+      'LoginHoursTuesdayStart',
+      'LoginHoursWednesdayStart',
+      'LoginHoursThursdayStart',
+      'LoginHoursFridayStart',
+      'LoginHoursSaturdayStart',
+      'LoginHoursSundayStart',
+    ]),
   },
 
   // SBS-OAUTH-001 — Require Formal Installation of Connected Apps.

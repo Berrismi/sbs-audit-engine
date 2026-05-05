@@ -54,6 +54,13 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(q!.appliesWhen).toBeDefined();
   });
 
+  it('acs-012 query gates on Profile login-hours field availability', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-012-profiles-with-login-hours');
+    expect(q).toBeDefined();
+    expect(q!.source ?? 'regular').toBe('regular');
+    expect(q!.appliesWhen).toBeDefined();
+  });
+
   it('the verified set includes the Block E baseline queries', () => {
     const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
     // Block E.1 baseline (3 controls):
