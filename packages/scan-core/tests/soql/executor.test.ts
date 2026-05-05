@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { executeSoqlQuery, executeSoqlBundle } from '../../src/soql/executor';
 import type { ConnectionLike, ProgressEvent, SoqlQueryDef } from '../../src/types';
 
@@ -92,6 +92,41 @@ describe('executeSoqlQuery', () => {
     expect(result.kind).toBe('failed');
     if (result.kind === 'failed') {
       expect(result.error.message).toBe('some string error');
+    }
+  });
+
+  it('routes through connection.tooling.query when query.source === "tooling"', async () => {
+    const toolingQuery = vi.fn().mockResolvedValue({
+      records: [{ Id: 'tp-1' }],
+      totalSize: 1,
+      done: true,
+    });
+    const conn: ConnectionLike = {
+      query: vi.fn().mockRejectedValue(new Error('regular path should not be hit')),
+      tooling: { query: toolingQuery },
+    };
+    const query: SoqlQueryDef = {
+      ...baseQuery,
+      source: 'tooling',
+      soql: 'SELECT Id FROM RemoteProxy',
+    };
+
+    const result = await executeSoqlQuery(conn, query);
+
+    expect(result.kind).toBe('ok');
+    expect(toolingQuery).toHaveBeenCalledWith('SELECT Id FROM RemoteProxy');
+    expect(conn.query).not.toHaveBeenCalled();
+  });
+
+  it('returns failed when query.source === "tooling" but connection.tooling is missing', async () => {
+    const conn: ConnectionLike = { query: vi.fn() };
+    const query: SoqlQueryDef = { ...baseQuery, source: 'tooling' };
+
+    const result = await executeSoqlQuery(conn, query);
+
+    expect(result.kind).toBe('failed');
+    if (result.kind === 'failed') {
+      expect(result.error.message).toContain('Tooling API namespace unavailable');
     }
   });
 });
