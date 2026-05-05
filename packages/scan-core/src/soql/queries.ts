@@ -108,15 +108,15 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   },
 
   // SBS-OAUTH-001 — Require Formal Installation of Connected Apps.
-  // Connected apps without a managed-package namespace are org-local
-  // (ad-hoc), not formally installed via a managed/unmanaged package.
-  // Pass = 0 rows; fail = N rows of ad-hoc connected apps. The
-  // ConnectedApplication.NamespacePrefix field is null for org-local apps
-  // and non-null for apps that came from a packaged install.
+  // ConnectedApplication is a Tooling-API entity. Connected apps without a
+  // managed-package namespace are org-local (ad-hoc), not formally installed
+  // via a managed/unmanaged package. Pass = 0 rows; fail = N ad-hoc apps.
   {
     id: 'oauth-001-ad-hoc-connected-apps',
     controlIds: ['SBS-OAUTH-001'],
     label: 'Connected applications without a managed-package namespace (ad-hoc)',
+    source: 'tooling',
     soql: 'SELECT Id, Name, NamespacePrefix FROM ConnectedApplication WHERE NamespacePrefix = null',
+    appliesWhen: toolingObjectExists('ConnectedApplication'),
   },
 ];

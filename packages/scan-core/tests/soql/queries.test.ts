@@ -46,6 +46,14 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(q!.appliesWhen).toBeDefined();
   });
 
+  it('oauth-001 query targets ConnectedApplication via tooling source', () => {
+    const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'oauth-001-ad-hoc-connected-apps');
+    expect(q).toBeDefined();
+    expect(q!.source).toBe('tooling');
+    expect(q!.soql).toContain('FROM ConnectedApplication');
+    expect(q!.appliesWhen).toBeDefined();
+  });
+
   it('the verified set includes the Block E baseline queries', () => {
     const ids = new Set(DEFAULT_SOQL_QUERIES.map((q) => q.id));
     // Block E.1 baseline (3 controls):
