@@ -195,4 +195,40 @@ describe('assembleEvidenceBundle', () => {
       'code_analyzer',
     ]);
   });
+
+  it('emits a limits_rest_api Evidence variant when limits result is ok', () => {
+    const bundle = assembleEvidenceBundle({
+      subjectId: 'test',
+      queryResults: [],
+      limits: {
+        kind: 'ok',
+        apiVersion: '60.0',
+        limits: {
+          DailyApiRequests: { max: 100000, remaining: 95000 },
+        },
+      },
+    });
+    const limits = bundle.evidence.find((e) => e.source === 'limits_rest_api');
+    expect(limits).toBeDefined();
+    if (limits && limits.source === 'limits_rest_api') {
+      expect(limits.api_version).toBe('60.0');
+      expect(limits.limits['DailyApiRequests']).toEqual({ max: 100000, remaining: 95000 });
+    }
+  });
+
+  it('omits the limits_rest_api Evidence variant when limits result is unsupported or failed', () => {
+    const unsupported = assembleEvidenceBundle({
+      subjectId: 'test',
+      queryResults: [],
+      limits: { kind: 'unsupported', reason: 'no_request_method' },
+    });
+    expect(unsupported.evidence.find((e) => e.source === 'limits_rest_api')).toBeUndefined();
+
+    const failed = assembleEvidenceBundle({
+      subjectId: 'test',
+      queryResults: [],
+      limits: { kind: 'failed', error: { message: 'whatever' } },
+    });
+    expect(failed.evidence.find((e) => e.source === 'limits_rest_api')).toBeUndefined();
+  });
 });

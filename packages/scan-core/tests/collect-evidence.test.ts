@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { collectEvidence } from '../src/index';
 import type { ConnectionLike, ProgressEvent, SoqlQueryDef } from '../src/types';
 
@@ -161,5 +161,24 @@ describe('collectEvidence', () => {
 
     expect(result.bundle.evidence).toEqual([]);
     expect(result.codeAnalyzer).toBeUndefined();
+  });
+
+  it('triggers fetchLimits when onlySources includes limits_rest_api', async () => {
+    const requestSpy = vi.fn().mockResolvedValue({
+      DailyApiRequests: { Max: 50000, Remaining: 49500 },
+    });
+    const conn: ConnectionLike = {
+      query: vi.fn().mockResolvedValue({ records: [], totalSize: 0, done: true }),
+      request: requestSpy,
+    };
+    const result = await collectEvidence({
+      connection: conn,
+      subjectId: 'test',
+      soqlQueries: [],
+      onlySources: ['limits_rest_api'],
+    });
+    expect(requestSpy).toHaveBeenCalledWith('/services/data/v60.0/limits');
+    expect(result.limits?.kind).toBe('ok');
+    expect(result.bundle.evidence.some((e) => e.source === 'limits_rest_api')).toBe(true);
   });
 });

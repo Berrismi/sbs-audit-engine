@@ -4,6 +4,7 @@
 import type { Evidence, EvidenceBundle } from '@hellomavens/security-review-for-salesforce-engine';
 import type { CodeAnalyzerExecution } from './code-analyzer/runner';
 import type { HealthCheckResult } from './health-check/client';
+import type { LimitsResult } from './limits/client';
 import type { QueryResult } from './types';
 
 export interface AssembleOptions {
@@ -16,6 +17,9 @@ export interface AssembleOptions {
   /** Code Analyzer execution result, if run. Omitted (or failed) → no
    * code_analyzer Evidence variant in the bundle. */
   codeAnalyzer?: CodeAnalyzerExecution;
+  /** Limits REST API result, if collected. Omitted (or unsupported/failed) →
+   * no limits_rest_api Evidence variant in the bundle. */
+  limits?: LimitsResult;
   /** Injectable clock for deterministic testing. Defaults to `() => new Date()`. */
   now?: () => Date;
 }
@@ -63,9 +67,20 @@ export function assembleEvidenceBundle(opts: AssembleOptions): EvidenceBundle {
         ]
       : [];
 
+  const limitsEvidence: Evidence[] =
+    opts.limits?.kind === 'ok'
+      ? [
+          {
+            source: 'limits_rest_api',
+            api_version: opts.limits.apiVersion,
+            limits: opts.limits.limits,
+          },
+        ]
+      : [];
+
   return {
     subject_id: opts.subjectId,
     collected_at: now().toISOString(),
-    evidence: [...soqlEvidence, ...healthCheckEvidence, ...codeAnalyzerEvidence],
+    evidence: [...soqlEvidence, ...healthCheckEvidence, ...codeAnalyzerEvidence, ...limitsEvidence],
   };
 }

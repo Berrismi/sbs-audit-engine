@@ -134,7 +134,7 @@ export interface CollectEvidenceOptions {
   /** Restrict which evidence sources to collect. Defaults to all available
    * sources. SOQL + Health Check API run with just a Connection; Code
    * Analyzer also requires the `codeAnalyzer` option to be set. */
-  onlySources?: readonly ('soql' | 'health_check_api' | 'code_analyzer')[];
+  onlySources?: readonly ('soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api')[];
   /** Subscribe to per-query lifecycle events. */
   onProgress?: ProgressListener;
   /** Override the default SOQL query bundle (mainly for tests). */
