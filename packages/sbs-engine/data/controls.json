@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-06T12:21:03.720Z",
-  "engine_version": "0.0.0-alpha.11",
+  "fetched_at": "2026-05-06T19:04:33.194Z",
+  "engine_version": "0.0.0-alpha.12",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -1648,7 +1648,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.100"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Sensitive Public Content links are password-protected, so an intercepted or accidentally-shared URL alone isn't enough to view the content — there's an authentication layer between link possession and data exposure."
       }
     },
