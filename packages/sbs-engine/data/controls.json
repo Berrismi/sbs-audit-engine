@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-06T21:43:00.475Z",
-  "engine_version": "0.0.0-alpha.13",
+  "fetched_at": "2026-05-06T22:53:43.023Z",
+  "engine_version": "0.0.0-alpha.14",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -42,7 +42,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Your permission set model is documented and enforced, so privilege sprawl can't accumulate quietly — every authorization construct conforms to the standard, and access reviews actually have something to compare against."
       }
     },
@@ -84,7 +84,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Your API-enabled authorizations are tracked with documented justification, so you can see who has programmatic data access at a glance and prove every permission is intentional during audit reviews."
       }
     },
@@ -130,7 +130,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "This high-risk permission is granted only to documented, justified users, so people can't quietly self-authorize OAuth apps that bypass your Connected App governance and reach data without oversight."
       }
     },
@@ -255,7 +255,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "This permission, which bypasses API Access Control entirely, is granted only to justified users, so external apps can't get data access without your vetting and allowlisting first."
       }
     },

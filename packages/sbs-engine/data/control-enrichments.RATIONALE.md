@@ -48,6 +48,42 @@ rights), A.8.3 (Information access restriction).
 
 **Outliers:**
 
+- **ACS-001** (documented permission set model) — baseline + A04
+  (Insecure Design) because an undocumented authorization model is a
+  design failure, not just an access-control failure.
+  **CLI evidence:** classified `cli_corroborating` as of engine
+  alpha.14 via the `acs-001-custom-permission-sets-inventory` query
+  (`SELECT Id, Label, Name FROM PermissionSet WHERE IsCustom = true`).
+  SOQL surfaces the inventory of org-authored perm sets; the
+  questionnaire confirms each maps to the documented model + naming
+  conventions. 0 rows = trivially compliant; ≥1 rows = inconclusive
+  pending model cross-walk.
+- **ACS-002** (API-Enabled justification) — baseline + A05 (Security
+  Misconfiguration) because un-justified API-Enabled assignments are
+  the canonical "perm bloat" misconfig.
+  **CLI evidence:** classified `cli_corroborating` as of engine
+  alpha.14 via the `acs-002-api-enabled-via-permsets` query
+  (`PermissionSetAssignment` joined to `PermissionSet.PermissionsApiEnabled`).
+  SOQL surfaces active users granted API Enabled via permset; the
+  questionnaire confirms each has documented justification.
+  Profile-direct grants are out-of-band — separate consultant check.
+- **ACS-003** (Approve Uninstalled Connected Apps) — baseline + A05 +
+  A08 (Software and Data Integrity Failures) because a user who can
+  self-approve an unvetted Connected App can introduce supply-chain
+  risk.
+  **CLI evidence:** classified `cli_corroborating` as of engine
+  alpha.14 via the
+  `acs-003-approve-uninstalled-connected-apps-via-permsets` query
+  (`PermissionSetAssignment` joined to
+  `PermissionSet.PermissionsApprovedConnectedAppsAccess`). Same shape
+  as ACS-002.
+- **ACS-006** (Use Any API Client) — baseline + A05.
+  **CLI evidence:** classified `cli_corroborating` as of engine
+  alpha.14 via the `acs-006-use-any-api-client-via-permsets` query
+  (`PermissionSetAssignment` joined to
+  `PermissionSet.PermissionsUseAnyApiClient`). Same shape as ACS-002.
+  This permission bypasses Connected App allow-listing — high-impact
+  misuse surface, so the inventory is direct value to the audit.
 - **ACS-007** (NHI inventory) replaces A.5.15 with A.5.9 (Inventory of
   information assets) + A.5.16 (Identity management) — the control is
   about _who exists_, not _who has what_.

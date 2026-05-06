@@ -17,7 +17,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Your permission set model is documented and enforced, so privilege sprawl can't accumulate quietly — every authorization construct conforms to the standard, and access reviews actually have something to compare against."
     },
     "SBS-ACS-002": {
@@ -27,7 +27,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Your API-enabled authorizations are tracked with documented justification, so you can see who has programmatic data access at a glance and prove every permission is intentional during audit reviews."
     },
     "SBS-ACS-003": {
@@ -41,7 +41,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "This high-risk permission is granted only to documented, justified users, so people can't quietly self-authorize OAuth apps that bypass your Connected App governance and reach data without oversight."
     },
     "SBS-ACS-004": {
@@ -71,7 +71,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "This permission, which bypasses API Access Control entirely, is granted only to justified users, so external apps can't get data access without your vetting and allowlisting first."
     },
     "SBS-ACS-007": {
