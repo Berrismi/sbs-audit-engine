@@ -127,7 +127,7 @@ describe('sf security review run', () => {
     expect(result.bundlePath).toBeUndefined();
 
     const passed = mockScanCore.collectEvidence.mock.calls[0]![0];
-    expect(passed.onlySources).toEqual(['soql', 'health_check_api']);
+    expect(passed.onlySources).toEqual(['soql', 'health_check_api', 'limits_rest_api']);
     expect(passed.codeAnalyzer).toBeUndefined();
     expect(mockClient.uploadBundle).toHaveBeenCalledWith(
       expect.objectContaining({
