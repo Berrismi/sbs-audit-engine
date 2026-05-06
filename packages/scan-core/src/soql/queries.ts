@@ -46,11 +46,15 @@
 //    C tightened this for int-002 + oauth-001.
 //
 // Today's verified set:
+//   - SBS-ACS-001   Custom permission sets inventory (model documentation)
+//   - SBS-ACS-002   Active users with API-Enabled (via permset assignment)
+//   - SBS-ACS-003   Active users with Approve Uninstalled Connected Apps (via permset assignment)
 //   - SBS-ACS-004   Super-admin equivalent users — split into two queries:
 //                     • via-permsets (PermissionSetAssignment relationship)
 //                     • via-profile  (Profile-level boolean perms)
 //                   Evaluator merges. Avoids the 3-semi-join SOQL limit.
 //   - SBS-ACS-005   Active users on standard profiles (custom-profile policy)
+//   - SBS-ACS-006   Active users with Use Any API Client (via permset assignment)
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
 //   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
 //   - SBS-FILE-002  ContentDistribution rows without password (sensitive-link auth)
@@ -248,5 +252,73 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     source: 'tooling',
     soql: 'SELECT Id, Name, NamespacePrefix FROM ConnectedApplication WHERE NamespacePrefix = null',
     appliesWhen: toolingFieldsExist('ConnectedApplication', ['Id', 'Name', 'NamespacePrefix']),
+  },
+
+  // SBS-ACS-001 — Enforce a Documented Permission Set Model. Audit_procedure
+  // step 2 says "Enumerate all Profiles, Permission Sets, and Permission Set
+  // Groups." The platform can produce that inventory; "matches the documented
+  // model" is process. We enumerate non-managed-package permission sets
+  // (`IsCustom = true`) — managed-package perm sets are author-controlled
+  // upstream and out of scope for the org's documentation discipline. Pass =
+  // 0 rows (org has no custom perm sets — trivially compliant); ≥1 rows =
+  // inconclusive, questionnaire confirms each is in the documented model.
+  // Same shape as INT-002 / INT-003.
+  {
+    id: 'acs-001-custom-permission-sets-inventory',
+    controlIds: ['SBS-ACS-001'],
+    label: 'Custom (non-managed-package) permission sets inventory',
+    soql: 'SELECT Id, Label, Name FROM PermissionSet WHERE IsCustom = true',
+    appliesWhen: fieldsExist('PermissionSet', ['Id', 'Label', 'Name', 'IsCustom']),
+  },
+
+  // SBS-ACS-002 — Documented Justification for All API-Enabled Authorizations.
+  // Audit_procedure step 1 enumerates profiles/permsets/permset-groups granting
+  // `API Enabled`. We surface the WHO (active users with API-Enabled via
+  // permset assignment); the questionnaire confirms each entry has documented
+  // justification. Profile-direct grants are not enumerated here — that's a
+  // known gap addressed by the `Profile.PermissionsApiEnabled` cross-check
+  // the consultant performs out-of-band; the inventory we surface is the
+  // permset-driven population (the more common modern grant pattern).
+  {
+    id: 'acs-002-api-enabled-via-permsets',
+    controlIds: ['SBS-ACS-002'],
+    label: 'Active users granted API Enabled via permission set',
+    soql:
+      'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
+      'FROM PermissionSetAssignment ' +
+      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsApiEnabled = true',
+  },
+
+  // SBS-ACS-003 — Documented Justification for Approve Uninstalled Connected
+  // Apps Permission. Same pattern as ACS-002: surface the inventory of users
+  // granted this permission via permset; questionnaire confirms each is
+  // justified + restricted to admin/integration personas. Field-gated because
+  // the boolean field name varies across editions; if the gate fires the
+  // evaluator falls back to questionnaire attestation.
+  {
+    id: 'acs-003-approve-uninstalled-connected-apps-via-permsets',
+    controlIds: ['SBS-ACS-003'],
+    label: 'Active users granted Approve Uninstalled Connected Apps via permission set',
+    soql:
+      'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
+      'FROM PermissionSetAssignment ' +
+      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsApprovedConnectedAppsAccess = true',
+    appliesWhen: fieldsExist('PermissionSet', ['Id', 'PermissionsApprovedConnectedAppsAccess']),
+  },
+
+  // SBS-ACS-006 — Documented Justification for Use Any API Client Permission.
+  // Same pattern as ACS-002 / ACS-003. Surfacing the WHO; questionnaire
+  // adjudicates the WHY. The Use Any API Client permission bypasses Connected
+  // App allow-listing, so misuse is a high-impact integration risk — the
+  // evaluator inventory is direct value to the audit.
+  {
+    id: 'acs-006-use-any-api-client-via-permsets',
+    controlIds: ['SBS-ACS-006'],
+    label: 'Active users granted Use Any API Client via permission set',
+    soql:
+      'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
+      'FROM PermissionSetAssignment ' +
+      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsUseAnyApiClient = true',
+    appliesWhen: fieldsExist('PermissionSet', ['Id', 'PermissionsUseAnyApiClient']),
   },
 ];
