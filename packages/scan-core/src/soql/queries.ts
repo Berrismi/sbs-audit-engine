@@ -221,8 +221,8 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     id: 'file-002-content-distributions-without-passwords',
     controlIds: ['SBS-FILE-002'],
     label: 'Public Content links lacking password protection',
-    soql: 'SELECT Id FROM ContentDistribution WHERE Password = null',
-    appliesWhen: fieldsExist('ContentDistribution', ['Id', 'Password']),
+    soql: 'SELECT Id FROM ContentDistribution WHERE PreferencesPasswordRequired = false',
+    appliesWhen: fieldsExist('ContentDistribution', ['Id', 'PreferencesPasswordRequired']),
   },
 
   // SBS-OAUTH-001 — Require Formal Installation of Connected Apps.
