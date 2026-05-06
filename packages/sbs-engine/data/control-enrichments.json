@@ -565,7 +565,7 @@
         "gdpr": ["Article 5(1)(e)", "Article 32"],
         "ccpa": ["§1798.100"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_primary",
       "pass_narrative": "Public Content links carry expiry dates appropriate to the sensitivity of what they share, so a leaked or forgotten link doesn't extend exposure indefinitely — time-bounded access is governance you can actually enforce."
     },
     "SBS-FILE-002": {

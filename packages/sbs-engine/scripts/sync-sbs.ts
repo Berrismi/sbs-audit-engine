@@ -28,6 +28,7 @@ import { parse as parseYaml } from 'yaml';
 import packageJson from '../package.json' with { type: 'json' };
 import type {
   CategoryPrefix,
+  CliEvidenceClass,
   Control,
   ControlLibrary,
   RemediationScope,
@@ -151,7 +152,7 @@ interface ControlEnrichmentsFile {
         gdpr?: string[];
         ccpa?: string[];
       };
-      cli_evidence_class?: string;
+      cli_evidence_class?: CliEvidenceClass;
       pass_narrative?: string;
     }
   >;
@@ -421,6 +422,11 @@ function buildControl(
       weight: weightFromRiskLevel(riskLevel),
       owasp: enrichment?.owasp ?? [],
       regulations: enrichment?.regulations ?? {},
+      // Default to questionnaire_only when the enrichment doesn't specify.
+      // Every authored entry in control-enrichments.json carries a value;
+      // the fallback only fires for hypothetically un-enriched controls,
+      // which would already trigger the missingEnrichments warn() above.
+      cli_evidence_class: enrichment?.cli_evidence_class ?? 'questionnaire_only',
       pass_narrative:
         enrichment?.pass_narrative ?? `[unauthored: pass_narrative for ${yaml.control_id}]`,
     },

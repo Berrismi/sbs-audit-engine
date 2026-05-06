@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-06T03:20:29.185Z",
-  "engine_version": "0.0.0-alpha.10",
+  "fetched_at": "2026-05-06T12:21:03.720Z",
+  "engine_version": "0.0.0-alpha.11",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -42,6 +42,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Your permission set model is documented and enforced, so privilege sprawl can't accumulate quietly — every authorization construct conforms to the standard, and access reviews actually have something to compare against."
       }
     },
@@ -83,6 +84,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Your API-enabled authorizations are tracked with documented justification, so you can see who has programmatic data access at a glance and prove every permission is intentional during audit reviews."
       }
     },
@@ -128,6 +130,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "This high-risk permission is granted only to documented, justified users, so people can't quietly self-authorize OAuth apps that bypass your Connected App governance and reach data without oversight."
       }
     },
@@ -169,6 +172,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Your super-admin–equivalent users are documented and tracked, so investigations are faster, access reviews are credible, and orphaned admin accounts can't accumulate quietly behind the scenes."
       }
     },
@@ -210,6 +214,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Regular users sit on custom profiles, not Salesforce-managed standard ones, so platform updates can't enable new permissions without your approval and least privilege is actually enforceable."
       }
     },
@@ -250,6 +255,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "This permission, which bypasses API Access Control entirely, is granted only to justified users, so external apps can't get data access without your vetting and allowlisting first."
       }
     },
@@ -290,6 +296,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.9", "A.5.16", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "You have a current inventory of non-human identities, so automated access can be reviewed, orphaned credentials can be retired, and security incidents involving integrations are actually investigable."
       }
     },
@@ -331,6 +338,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Non-human identities aren't carrying broad privileges by default, so a compromised API key or OAuth token can't bypass sharing rules or trigger administrative operations org-wide."
       }
     },
@@ -372,6 +380,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Privileged non-human identities have compensating controls layered on top of credentials, so secret leakage isn't a single point of failure for your most sensitive integrations."
       }
     },
@@ -412,6 +421,7 @@
           "soc2": ["CC6.1", "CC6.2", "CC6.3"],
           "iso27001": ["A.5.18", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Access is reviewed and recertified on a cadence, so privilege creep can't quietly accumulate from old roles, temporary projects, and forgotten grants — least privilege stays current over time."
       }
     },
@@ -452,6 +462,7 @@
           "soc2": ["CC6.3", "CC8.1"],
           "iso27001": ["A.5.18", "A.8.3", "A.8.32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Access changes go through governed approval and audit, so excessive permissions can't slip in unnoticed and incident investigations have a paper trail to follow."
       }
     },
@@ -492,6 +503,7 @@
           "soc2": ["CC6.1"],
           "iso27001": ["A.5.15", "A.8.3"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Privileged accounts are classified for login-hours restrictions, adding a defense-in-depth layer — so even a compromised credential can't be exploited freely during off-hours when detection is thin."
       }
     },
@@ -532,6 +544,7 @@
           "soc2": ["CC6.1", "CC6.7"],
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "SSO enforcement is on org-wide, so users can't quietly authenticate around centralized identity management — credential-based attacks lose their direct path into your org."
       }
     },
@@ -576,6 +589,7 @@
           "soc2": ["CC6.1", "CC6.7"],
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "SSO bypass exceptions are documented and approved, so off-SSO accounts can't proliferate unnoticed and audit reviews have clean visibility into every authentication exception."
       }
     },
@@ -620,6 +634,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.17", "A.8.5", "A.8.20"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Profile login IP ranges are scoped, not wide-open, so authentication can't happen from arbitrary locations on the internet — a defense-in-depth layer if a credential ever leaks."
       }
     },
@@ -662,6 +677,7 @@
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "MFA is enforced for external users with substantial data access, so a stolen password alone can't sign someone in — phishing and credential-stuffing lose their main path to your sensitive data."
       }
     },
@@ -705,6 +721,7 @@
           "soc2": ["CC7.1", "CC8.1"],
           "iso27001": ["A.8.25", "A.8.28", "A.8.32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Every Salesforce code change goes through peer review before deployment, so a single developer — compromised, malicious, or simply mistaken — can't push insecure code into production unilaterally."
       }
     },
@@ -749,6 +766,7 @@
           "soc2": ["CC7.1", "CC8.1"],
           "iso27001": ["A.8.25", "A.8.28", "A.8.29"]
         },
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Static code analysis runs before every merge, so SOQL injection, insecure data exposure, and improper access control patterns get caught at code-review time instead of in production."
       }
     },
@@ -789,6 +807,7 @@
           "soc2": ["CC7.1", "CC7.2"],
           "iso27001": ["A.8.15", "A.8.16"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Persistent application logging is wired in, so security investigations actually have data to work with — Salesforce's transient debug logs aren't your only forensic surface."
       }
     },
@@ -835,6 +854,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.150"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Sensitive data is kept out of application logs, so a low-privilege account with log access can't extract credentials or PII without tripping the access controls on the source objects."
       }
     },
@@ -880,6 +900,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.15", "A.8.3", "A.8.26"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Portal Apex methods don't accept user-controlled parameters for record access, so external users can't manipulate inputs to enumerate records they shouldn't see."
       }
     },
@@ -924,6 +945,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.15", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Guest users have minimal record access, so unauthenticated traffic can't quietly enumerate organizational data through your customer-portal trust boundary."
       }
     },
@@ -968,6 +990,7 @@
           "soc2": ["CC3.2", "CC6.1"],
           "iso27001": ["A.5.9", "A.5.15", "A.8.3"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Every Apex class and Flow exposed to your portal users is inventoried with documented profile access, so your external attack surface is knowable, security testing has scope, and unexpected externally-callable code can't accumulate quietly."
       }
     },
@@ -1015,6 +1038,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.150"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Portal-exposed Flows derive record access from the authenticated user's context, not from user-supplied input variables, so external users can't manipulate flow inputs to reach records they should never see."
       }
     },
@@ -1055,6 +1079,7 @@
           "iso27001": ["A.8.8", "A.8.29"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Your portal security controls get exercised against adversarial input on a defined cadence, so configuration audits are corroborated by runtime testing — authorization gaps surface during testing instead of during a breach."
       }
     },
@@ -1097,6 +1122,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.100"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "You can detect regulated data in long-text fields, so PII can't accumulate in unknown locations — GDPR Right-to-Erasure and CCPA deletion requests are actually executable when they arrive."
       }
     },
@@ -1138,6 +1164,7 @@
           "iso27001": ["A.5.9", "A.5.12", "A.8.10"],
           "gdpr": ["Article 30"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Your inventory of regulated-data fields is current, so you know exactly where personal data lives and can enforce protection, retention, and deletion obligations without scrambling to find it."
       }
     },
@@ -1179,6 +1206,7 @@
           "iso27001": ["A.5.30", "A.8.13", "A.8.14"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Backups are tested, not just configured, so accidental deletion, malicious destruction, or configuration corruption can be recovered from with confidence rather than hope."
       }
     },
@@ -1224,6 +1252,7 @@
           "iso27001": ["A.8.15"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Field history tracking is on for sensitive fields, so unauthorized or accidental changes are detectable, investigatable, and accountable rather than silent."
       }
     },
@@ -1268,6 +1297,7 @@
           "soc2": ["CC8.1"],
           "iso27001": ["A.5.15", "A.8.32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Metadata changes go through a designated deployment identity, so production changes are attributable and unauthorized direct edits stand out instead of blending into routine admin activity."
       }
     },
@@ -1312,6 +1342,7 @@
           "soc2": ["CC8.1"],
           "iso27001": ["A.8.32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "You've defined which metadata types are high-risk, so deployment governance has clear boundaries — Apex, auth settings, and outbound connectivity can't be edited directly in production."
       }
     },
@@ -1355,6 +1386,7 @@
           "soc2": ["CC7.2", "CC8.1"],
           "iso27001": ["A.8.15", "A.8.16", "A.8.32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Unauthorized changes to high-risk metadata trigger alerts, so malicious or accidental drift gets surfaced quickly instead of persisting for weeks before being noticed."
       }
     },
@@ -1398,6 +1430,7 @@
           "soc2": ["CC8.1"],
           "iso27001": ["A.8.32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Production configuration ties back to a source-controlled approval trail, so 'what changed, when, by whom' is answerable — incident investigation has a real starting point instead of guesswork."
       }
     },
@@ -1443,6 +1476,7 @@
           "iso27001": ["A.5.17", "A.8.4", "A.8.28"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Secret scanning runs on your repos, so hardcoded credentials get caught before they're committed — and the supply-chain path through repository access stays closed to outsiders."
       }
     },
@@ -1483,6 +1517,7 @@
           "soc2": ["CC6.1"],
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Your CLI Connected App has token expiration policies, so a stolen laptop's token files don't grant indefinite access to production — the credential exposure window is bounded."
       }
     },
@@ -1524,6 +1559,7 @@
           "iso27001": ["A.5.1", "A.5.36", "A.5.37"],
           "gdpr": ["Article 5(2)"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Your Salesforce security configurations, exceptions, justifications, and SBS-required inventories live in a centralized system of record, so governance survives staff turnover and audit conclusions can actually be reconstructed from durable artifacts."
       }
     },
@@ -1565,6 +1601,7 @@
           "gdpr": ["Article 5(1)(e)", "Article 32"],
           "ccpa": ["§1798.100"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Public Content links carry expiry dates appropriate to the sensitivity of what they share, so a leaked or forgotten link doesn't extend exposure indefinitely — time-bounded access is governance you can actually enforce."
       }
     },
@@ -1611,6 +1648,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.100"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Sensitive Public Content links are password-protected, so an intercepted or accidentally-shared URL alone isn't enough to view the content — there's an authentication layer between link possession and data exposure."
       }
     },
@@ -1652,6 +1690,7 @@
           "gdpr": ["Article 5(2)", "Article 32"],
           "ccpa": ["§1798.100"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Active Public Content links get reviewed and cleaned up on a defined cadence, so legacy and accidentally-shared links don't accumulate as forgotten exposure — your shared-content surface area stays bounded over time."
       }
     },
@@ -1696,6 +1735,7 @@
           "soc2": ["CC6.6", "CC6.7"],
           "iso27001": ["A.5.19", "A.8.20"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Browser extensions accessing Salesforce go through governance, so cloned or malicious extensions can't quietly harvest session tokens or exfiltrate data from authenticated users."
       }
     },
@@ -1739,6 +1779,7 @@
           "soc2": ["CC6.6"],
           "iso27001": ["A.5.19", "A.5.23", "A.8.20"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Your Remote Site Settings inventory is documented with justification, so unvetted endpoints can't be authorized for Apex callouts and you know exactly which external services your code talks to."
       }
     },
@@ -1784,6 +1825,7 @@
           "soc2": ["CC6.6", "CC6.7"],
           "iso27001": ["A.5.19", "A.5.20", "A.8.5", "A.8.20"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Named Credentials are inventoried with justification, so undocumented integration paths can't quietly connect to insecure endpoints — every external connection is accounted for."
       }
     },
@@ -1824,6 +1866,7 @@
           "soc2": ["CC7.2"],
           "iso27001": ["A.8.15", "A.8.16"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "API Total Usage logs are retained for 30 days, so you have visibility into REST/SOAP/Bulk API activity — anomalous behavior is detectable and incident scope is actually determinable."
       }
     },
@@ -1865,6 +1908,7 @@
           "iso27001": ["A.8.15", "A.8.16"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Event Monitoring log storage is enabled for the event types your security policy requires, so investigations have the telemetry to reconstruct what happened — file downloads, API calls, report exports, all retained instead of silently dropped."
       }
     },
@@ -1906,6 +1950,7 @@
           "iso27001": ["A.8.15", "A.8.16"],
           "gdpr": ["Article 32"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Event logs persist for your required retention period, exported when Salesforce native retention falls short and protected from administrative deletion, so a slow-burn incident can still be reconstructed weeks or months after the fact."
       }
     },
@@ -1948,6 +1993,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.100"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Anomalous login patterns — impossible travel, suspicious networks, off-hours access, brute-force precursors — trigger investigation in your monitoring stack, so a compromised credential surfaces as an alert instead of a quiet foothold."
       }
     },
@@ -1990,6 +2036,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.100"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "API activity is baselined and anomalies — mass exfiltration, unexpected object access, sudden write/delete shifts — surface as alerts, so post-authentication attacks via stolen tokens or compromised integrations don't operate silently."
       }
     },
@@ -2032,6 +2079,7 @@
           "soc2": ["A1.1", "CC7.2"],
           "iso27001": ["A.8.6", "A.8.16"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "API consumption is tracked against your daily limit with proactive alerts at 80-90% utilization, so a runaway integration or sudden spike gets triaged before the platform starts blocking calls and breaking core business processes."
       }
     },
@@ -2077,6 +2125,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.15", "A.5.19", "A.8.5"]
         },
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Connected Apps go through formal installation, so security configuration — refresh token lifetimes, session policies, IP restrictions — is enforced by you, not inherited from the external developer."
       }
     },
@@ -2121,6 +2170,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.15", "A.5.16", "A.8.5"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "Connected Apps require explicit profile or permission set access, so a Connected App can't quietly authenticate any user — least-privilege actually applies to OAuth sessions."
       }
     },
@@ -2161,6 +2211,7 @@
           "soc2": ["CC3.2", "CC6.1"],
           "iso27001": ["A.5.9", "A.5.15", "A.5.19"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "OAuth-enabled Connected Apps are classified by criticality, so risk assessment is anchored — you know which integrations touch sensitive data and where to focus governance and monitoring."
       }
     },
@@ -2204,6 +2255,7 @@
           "soc2": ["CC9.2"],
           "iso27001": ["A.5.19", "A.5.20", "A.5.21", "A.5.22"]
         },
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "High-risk Connected App vendors have documented due diligence on file, so onboarding decisions are informed and contractual obligations match the access being granted."
       }
     },
@@ -2244,6 +2296,7 @@
           "soc2": ["CC7.1"],
           "iso27001": ["A.5.36", "A.8.9"]
         },
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "You have a Health Check baseline, so configuration drift is actually detectable — you can tell when settings diverge from intentional decisions versus accumulated neglect."
       }
     },
@@ -2284,6 +2337,7 @@
           "soc2": ["CC4.1", "CC7.1"],
           "iso27001": ["A.5.36", "A.8.9"]
         },
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Health Check deviations get reviewed and remediated, so configuration drift doesn't quietly weaken your security posture between audits — your baseline stays meaningful over time."
       }
     }

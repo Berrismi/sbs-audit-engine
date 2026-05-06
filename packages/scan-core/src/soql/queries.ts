@@ -52,6 +52,7 @@
 //                   Evaluator merges. Avoids the 3-semi-join SOQL limit.
 //   - SBS-ACS-005   Active users on standard profiles (custom-profile policy)
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
+//   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
 //   - SBS-INT-003   Named Credentials inventory
 //   - SBS-OAUTH-001 Connected Apps without managed-package namespace (tooling, field-gated)
@@ -173,6 +174,30 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'LoginHoursSaturdayStart',
       'LoginHoursSundayStart',
     ]),
+  },
+
+  // SBS-FILE-001 — Require Expiry Dates on Public Content Links.
+  //
+  // ContentDistribution is a regular SOQL object (not Tooling). Each row
+  // represents a Public Content link to a file in Salesforce Files / Content.
+  // `PreferencesExpires = false` means the link has no expiry date set —
+  // the audit_procedure asks to enumerate exactly these rows (step 2).
+  // Pass = 0 rows (every Public Content link has expiry, or the org has no
+  // Public Content links at all). Fail = N rows.
+  //
+  // Edition gate: Salesforce Files / Content must be enabled. `fieldsExist`
+  // covers both shapes — object missing entirely (DE without Content
+  // enabled → describeSObject rejects) AND object present but
+  // `PreferencesExpires` field absent on a degraded edition. Either way the
+  // executor reports `kind: 'skipped'` and the evaluator falls back to
+  // questionnaire attestation. ContentDocumentId is intentionally NOT in
+  // the SELECT — we count + flag, not surface the underlying content path.
+  {
+    id: 'file-001-content-distributions-without-expiry',
+    controlIds: ['SBS-FILE-001'],
+    label: 'Public Content links lacking expiry dates',
+    soql: 'SELECT Id, PreferencesExpires FROM ContentDistribution WHERE PreferencesExpires = false',
+    appliesWhen: fieldsExist('ContentDistribution', ['Id', 'PreferencesExpires']),
   },
 
   // SBS-OAUTH-001 — Require Formal Installation of Connected Apps.

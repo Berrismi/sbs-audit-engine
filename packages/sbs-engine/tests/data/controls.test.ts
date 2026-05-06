@@ -107,6 +107,26 @@ describe('controls.json integrity', () => {
     }
     expect(todoFields).toEqual([]);
   });
+
+  it('every control carries a cli_evidence_class with a valid value', () => {
+    const VALID_CLASSES: readonly string[] = [
+      'cli_primary',
+      'cli_corroborating',
+      'questionnaire_only',
+    ];
+    const offenders: string[] = [];
+    for (const c of library.controls) {
+      const cls = c.hellomavens_enrichments.cli_evidence_class;
+      if (cls === undefined) {
+        offenders.push(`${c.id} (cli_evidence_class missing)`);
+        continue;
+      }
+      if (!VALID_CLASSES.includes(cls)) {
+        offenders.push(`${c.id} (cli_evidence_class=${String(cls)} not in valid set)`);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
 });
 
 describe('control-overrides.json', () => {

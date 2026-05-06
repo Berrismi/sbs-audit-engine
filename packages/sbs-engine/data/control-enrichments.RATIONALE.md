@@ -161,6 +161,14 @@ information about California residents).
   don't claim HIPAA scope for the expiry-only control; expiry without
   password is a content-lifetime concern, not an authentication one.
   Picks up GDPR Article 5(1)(e) (storage limitation) explicitly.
+  **CLI evidence:** classified `cli_primary` as of engine alpha.11
+  via the `file-001-content-distributions-without-expiry` query
+  (`SELECT Id, PreferencesExpires FROM ContentDistribution WHERE
+PreferencesExpires = false`). The audit_procedure step 2 directly
+  maps to this query's WHERE clause — SOQL is ground truth.
+  Edition-gated on `ContentDistribution.PreferencesExpires`
+  presence; falls back to questionnaire when Salesforce Files /
+  Content isn't enabled in the org.
 - **FILE-002** (Passwords on sensitive links) picks up A07
   (Identification and Authentication Failures) on top of the baseline
   because password protection is fundamentally an auth layer, plus the
