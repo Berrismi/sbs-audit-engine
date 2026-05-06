@@ -310,6 +310,19 @@ ISO A.5.15 + A.5.16 + A.8.5.
 
 **Outliers:**
 
+- **OAUTH-002** (profile/permset access scoping) — baseline.
+  **CLI evidence:** classified `cli_corroborating` as of engine
+  alpha.15 via the `oauth-002-connected-apps-without-admin-approval`
+  query (`SELECT Id, Name FROM ConnectedApplication WHERE
+OptionsAdminApprovalRequired = false`, Tooling API). The
+  `OptionsAdminApprovalRequired` flag is the platform-side signal for
+  "admin approved users are pre-authorized" — when true, only assigned
+  profiles/permsets can use the app; when false, any authenticated
+  user can self-authorize. SOQL surfaces apps lacking the toggle;
+  questionnaire confirms whether each is intentional self-service or
+  a misconfiguration. 0 rows = pass; ≥1 rows = inconclusive.
+  Field-gated; falls back to questionnaire when the column is absent
+  on a degraded edition.
 - **OAUTH-003** (criticality classification) adds SOC 2 CC3.2 (risk
   identification) and ISO A.5.9 (asset inventory) — the control is
   classification, not access enforcement.

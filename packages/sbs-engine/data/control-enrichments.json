@@ -462,7 +462,7 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.5.16", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Connected Apps require explicit profile or permission set access, so a Connected App can't quietly authenticate any user — least-privilege actually applies to OAuth sessions."
     },
     "SBS-OAUTH-003": {

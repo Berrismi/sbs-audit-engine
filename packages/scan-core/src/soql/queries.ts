@@ -61,6 +61,7 @@
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
 //   - SBS-INT-003   Named Credentials inventory
 //   - SBS-OAUTH-001 Connected Apps without managed-package namespace (tooling, field-gated)
+//   - SBS-OAUTH-002 Connected Apps not requiring admin approval (tooling, field-gated)
 
 import { fieldsExist, toolingFieldsExist } from './applies-when';
 import type { SoqlQueryDef } from '../types';
@@ -320,5 +321,38 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'FROM PermissionSetAssignment ' +
       'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsUseAnyApiClient = true',
     appliesWhen: fieldsExist('PermissionSet', ['Id', 'PermissionsUseAnyApiClient']),
+  },
+
+  // SBS-OAUTH-002 — Require Profile or Permission Set Access Control for
+  // Connected Apps. ConnectedApplication's `OptionsAdminApprovalRequired`
+  // flag is the platform-side signal for "admin approved users are
+  // pre-authorized" — when true, only assigned profiles/permsets can use
+  // the app. When false, any authenticated user can self-authorize. The
+  // audit_procedure step 2 asks the consultant to verify "access is
+  // granted only through assigned profiles or permission sets" — that's
+  // exactly what this flag enforces.
+  //
+  // Classification: cli_corroborating per the roadmap. SOQL surfaces apps
+  // without admin-approval requirement; questionnaire confirms whether
+  // those are intentional (e.g., a managed-package app intended for
+  // self-service) or a real misconfiguration. Pass = 0 rows (every app
+  // requires admin approval); ≥1 rows = inconclusive (deferring intent
+  // verification to questionnaire).
+  //
+  // Field-gated on `OptionsAdminApprovalRequired` because some org tiers
+  // expose ConnectedApplication but not this column; gate fires →
+  // questionnaire fallback.
+  {
+    id: 'oauth-002-connected-apps-without-admin-approval',
+    controlIds: ['SBS-OAUTH-002'],
+    label:
+      'Connected applications not requiring admin approval (self-service authorization allowed)',
+    source: 'tooling',
+    soql: 'SELECT Id, Name FROM ConnectedApplication WHERE OptionsAdminApprovalRequired = false',
+    appliesWhen: toolingFieldsExist('ConnectedApplication', [
+      'Id',
+      'Name',
+      'OptionsAdminApprovalRequired',
+    ]),
   },
 ];
