@@ -52,8 +52,8 @@ describe('perfect-org integration fixture', () => {
     expect(non_pass).toEqual([]);
   });
 
-  it('returns all 42 control results', () => {
-    expect(report.control_results).toHaveLength(42);
+  it('returns one result per control in the library', () => {
+    expect(report.control_results).toHaveLength(library.controls.length);
   });
 
   it('carries the SBS + engine version metadata', () => {

@@ -4,4 +4,4 @@
 //
 // AUTO-GENERATED — do not edit by hand. Run `pnpm sync:sbs` to regenerate.
 // Source: https://github.com/Salesforce-Security-Benchmark/docs-site
-// Pinned to v0.4.1 (850f3cb2f0da28a9b025e4ad2f89092a4933ae9d).
+// Pinned to d4304e18e6f3747b04b1a7097b3d03a6036e5a3f (d4304e18e6f3747b04b1a7097b3d03a6036e5a3f).

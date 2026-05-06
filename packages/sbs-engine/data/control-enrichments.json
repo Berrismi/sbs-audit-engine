@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "description": "HelloMavens-authored mappings from each SBS v0.4.1 control to OWASP Top 10 2021 categories, regulatory citations (HIPAA Security Rule, SOC 2 Trust Services Criteria 2017, ISO 27001:2022 Annex A, GDPR, CCPA), a `cli_evidence_class` flag (Phase 5 Block E) tagging which controls have a verified CLI evidence path, and a `pass_narrative` (Phase 6 / appendix validation cards) — a 20-40 word customer-facing string describing what passing the control protects against. Merged into hellomavens_enrichments by scripts/sync-sbs.ts. See control-enrichments.RATIONALE.md for the editorial reasoning per category.",
+  "description": "HelloMavens-authored mappings from each SBS control (54 at upstream main @ d4304e1) to OWASP Top 10 2021 categories, regulatory citations (HIPAA Security Rule, SOC 2 Trust Services Criteria 2017, ISO 27001:2022 Annex A, GDPR, CCPA), a `cli_evidence_class` flag (Phase 5 Block E) tagging which controls have a verified CLI evidence path, and a `pass_narrative` (Phase 6 / appendix validation cards) — a 20-40 word customer-facing string describing what passing the control protects against. Merged into hellomavens_enrichments by scripts/sync-sbs.ts. See control-enrichments.RATIONALE.md for the editorial reasoning per category.",
   "sources": {
     "owasp": "OWASP Top 10 2021 — https://owasp.org/Top10/",
     "hipaa": "HIPAA Security Rule, 45 CFR §§164.302-318 — https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
@@ -505,6 +505,153 @@
       },
       "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Health Check deviations get reviewed and remediated, so configuration drift doesn't quietly weaken your security posture between audits — your baseline stays meaningful over time."
+    },
+    "SBS-CPORTAL-003": {
+      "owasp": [
+        "A04:2021-Insecure Design",
+        "A05:2021-Security Misconfiguration",
+        "A09:2021-Security Logging and Monitoring Failures"
+      ],
+      "regulations": {
+        "hipaa": ["164.308(a)(1)(ii)(D)", "164.308(a)(4)"],
+        "soc2": ["CC3.2", "CC6.1"],
+        "iso27001": ["A.5.9", "A.5.15", "A.8.3"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Every Apex class and Flow exposed to your portal users is inventoried with documented profile access, so your external attack surface is knowable, security testing has scope, and unexpected externally-callable code can't accumulate quietly."
+    },
+    "SBS-CPORTAL-004": {
+      "owasp": [
+        "A01:2021-Broken Access Control",
+        "A04:2021-Insecure Design",
+        "A05:2021-Security Misconfiguration"
+      ],
+      "regulations": {
+        "hipaa": ["164.308(a)(4)", "164.312(a)"],
+        "soc2": ["CC6.1", "CC6.6"],
+        "iso27001": ["A.5.15", "A.8.3", "A.8.26"],
+        "gdpr": ["Article 32"],
+        "ccpa": ["§1798.150"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Portal-exposed Flows derive record access from the authenticated user's context, not from user-supplied input variables, so external users can't manipulate flow inputs to reach records they should never see."
+    },
+    "SBS-CPORTAL-005": {
+      "owasp": ["A04:2021-Insecure Design", "A05:2021-Security Misconfiguration"],
+      "regulations": {
+        "soc2": ["CC4.1", "CC7.1"],
+        "iso27001": ["A.8.8", "A.8.29"],
+        "gdpr": ["Article 32"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Your portal security controls get exercised against adversarial input on a defined cadence, so configuration audits are corroborated by runtime testing — authorization gaps surface during testing instead of during a breach."
+    },
+    "SBS-FDNS-001": {
+      "owasp": ["A04:2021-Insecure Design", "A05:2021-Security Misconfiguration"],
+      "regulations": {
+        "hipaa": ["164.308(a)(8)", "164.316(b)"],
+        "soc2": ["CC1.4", "CC2.2", "CC4.1"],
+        "iso27001": ["A.5.1", "A.5.36", "A.5.37"],
+        "gdpr": ["Article 5(2)"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Your Salesforce security configurations, exceptions, justifications, and SBS-required inventories live in a centralized system of record, so governance survives staff turnover and audit conclusions can actually be reconstructed from durable artifacts."
+    },
+    "SBS-FILE-001": {
+      "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
+      "regulations": {
+        "soc2": ["CC6.1", "CC6.6"],
+        "iso27001": ["A.5.10", "A.5.13", "A.8.12"],
+        "gdpr": ["Article 5(1)(e)", "Article 32"],
+        "ccpa": ["§1798.100"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Public Content links carry expiry dates appropriate to the sensitivity of what they share, so a leaked or forgotten link doesn't extend exposure indefinitely — time-bounded access is governance you can actually enforce."
+    },
+    "SBS-FILE-002": {
+      "owasp": [
+        "A01:2021-Broken Access Control",
+        "A04:2021-Insecure Design",
+        "A07:2021-Identification and Authentication Failures"
+      ],
+      "regulations": {
+        "hipaa": ["164.308(a)(4)", "164.312(a)(1)", "164.312(a)(2)(iv)"],
+        "soc2": ["CC6.1", "CC6.6", "CC6.7"],
+        "iso27001": ["A.5.10", "A.5.13", "A.8.12"],
+        "gdpr": ["Article 32"],
+        "ccpa": ["§1798.100"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Sensitive Public Content links are password-protected, so an intercepted or accidentally-shared URL alone isn't enough to view the content — there's an authentication layer between link possession and data exposure."
+    },
+    "SBS-FILE-003": {
+      "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
+      "regulations": {
+        "soc2": ["CC6.1", "CC6.6"],
+        "iso27001": ["A.5.10", "A.5.13", "A.8.12"],
+        "gdpr": ["Article 5(2)", "Article 32"],
+        "ccpa": ["§1798.100"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Active Public Content links get reviewed and cleaned up on a defined cadence, so legacy and accidentally-shared links don't accumulate as forgotten exposure — your shared-content surface area stays bounded over time."
+    },
+    "SBS-MON-001": {
+      "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+      "regulations": {
+        "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
+        "soc2": ["CC7.2", "CC7.3"],
+        "iso27001": ["A.8.15", "A.8.16"],
+        "gdpr": ["Article 32"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Event Monitoring log storage is enabled for the event types your security policy requires, so investigations have the telemetry to reconstruct what happened — file downloads, API calls, report exports, all retained instead of silently dropped."
+    },
+    "SBS-MON-002": {
+      "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+      "regulations": {
+        "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)", "164.316(b)(2)(i)"],
+        "soc2": ["CC7.2", "CC7.3"],
+        "iso27001": ["A.8.15", "A.8.16"],
+        "gdpr": ["Article 32"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Event logs persist for your required retention period, exported when Salesforce native retention falls short and protected from administrative deletion, so a slow-burn incident can still be reconstructed weeks or months after the fact."
+    },
+    "SBS-MON-003": {
+      "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+      "regulations": {
+        "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
+        "soc2": ["CC7.2", "CC7.3"],
+        "iso27001": ["A.8.15", "A.8.16"],
+        "gdpr": ["Article 32"],
+        "ccpa": ["§1798.100"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Anomalous login patterns — impossible travel, suspicious networks, off-hours access, brute-force precursors — trigger investigation in your monitoring stack, so a compromised credential surfaces as an alert instead of a quiet foothold."
+    },
+    "SBS-MON-004": {
+      "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+      "regulations": {
+        "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
+        "soc2": ["CC7.2", "CC7.3"],
+        "iso27001": ["A.8.15", "A.8.16"],
+        "gdpr": ["Article 32"],
+        "ccpa": ["§1798.100"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "API activity is baselined and anomalies — mass exfiltration, unexpected object access, sudden write/delete shifts — surface as alerts, so post-authentication attacks via stolen tokens or compromised integrations don't operate silently."
+    },
+    "SBS-MON-005": {
+      "owasp": [
+        "A05:2021-Security Misconfiguration",
+        "A09:2021-Security Logging and Monitoring Failures"
+      ],
+      "regulations": {
+        "soc2": ["A1.1", "CC7.2"],
+        "iso27001": ["A.8.6", "A.8.16"]
+      },
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "API consumption is tracked against your daily limit with proactive alerts at 80-90% utilization, so a runaway integration or sudden spike gets triaged before the platform starts blocking calls and breaking core business processes."
     }
   }
 }

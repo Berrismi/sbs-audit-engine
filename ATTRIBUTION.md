@@ -15,8 +15,8 @@ The current pinned versions are also machine-readable in [`upstream-sources.toml
 
 - **Source:** [github.com/Salesforce-Security-Benchmark/docs-site](https://github.com/Salesforce-Security-Benchmark/docs-site)
 - **License:** [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
-- **Pinned version:** v0.4.1
-- **What we use:** the 42 controls' structured metadata from
+- **Pinned commit:** `main` @ `d4304e18e6f3747b04b1a7097b3d03a6036e5a3f` (ahead of latest tagged release `v0.4.1`, which carried 42 controls; the pinned commit carries 54).
+- **What we use:** the 54 controls' structured metadata from
   `control-metadata/SBS-*.yaml` (id, category, remediation scope, task title)
   AND the prose body of each control (description, risk narrative, audit
   procedure, remediation, default value) extracted from

@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 //
-// Hand-maintained registry mapping every SBS v0.4.1 control id to its
-// evaluator function. No glob magic — explicit registration keeps tree-
-// shaking honest, makes missing entries a compile error, and produces a
-// clean diff when SBS adds a control.
+// Hand-maintained registry mapping every SBS control id (currently 54 at
+// upstream main @ d4304e1) to its evaluator function. No glob magic —
+// explicit registration keeps tree-shaking honest, makes missing entries a
+// compile error, and produces a clean diff when SBS adds a control.
 //
 // The companion `tests/coverage.test.ts` asserts every control id in
 // data/controls.json has an entry here AND a corresponding evaluator file.
@@ -36,6 +36,9 @@ import { evaluate as code004 } from './evaluators/code-004';
 
 import { evaluate as cportal001 } from './evaluators/cportal-001';
 import { evaluate as cportal002 } from './evaluators/cportal-002';
+import { evaluate as cportal003 } from './evaluators/cportal-003';
+import { evaluate as cportal004 } from './evaluators/cportal-004';
+import { evaluate as cportal005 } from './evaluators/cportal-005';
 
 import { evaluate as data001 } from './evaluators/data-001';
 import { evaluate as data002 } from './evaluators/data-002';
@@ -49,10 +52,22 @@ import { evaluate as dep004 } from './evaluators/dep-004';
 import { evaluate as dep005 } from './evaluators/dep-005';
 import { evaluate as dep006 } from './evaluators/dep-006';
 
+import { evaluate as fdns001 } from './evaluators/fdns-001';
+
+import { evaluate as file001 } from './evaluators/file-001';
+import { evaluate as file002 } from './evaluators/file-002';
+import { evaluate as file003 } from './evaluators/file-003';
+
 import { evaluate as int001 } from './evaluators/int-001';
 import { evaluate as int002 } from './evaluators/int-002';
 import { evaluate as int003 } from './evaluators/int-003';
 import { evaluate as int004 } from './evaluators/int-004';
+
+import { evaluate as mon001 } from './evaluators/mon-001';
+import { evaluate as mon002 } from './evaluators/mon-002';
+import { evaluate as mon003 } from './evaluators/mon-003';
+import { evaluate as mon004 } from './evaluators/mon-004';
+import { evaluate as mon005 } from './evaluators/mon-005';
 
 import { evaluate as oauth001 } from './evaluators/oauth-001';
 import { evaluate as oauth002 } from './evaluators/oauth-002';
@@ -88,6 +103,9 @@ export const EVALUATOR_REGISTRY: ReadonlyMap<string, Evaluator> = new Map<string
 
   ['SBS-CPORTAL-001', cportal001],
   ['SBS-CPORTAL-002', cportal002],
+  ['SBS-CPORTAL-003', cportal003],
+  ['SBS-CPORTAL-004', cportal004],
+  ['SBS-CPORTAL-005', cportal005],
 
   ['SBS-DATA-001', data001],
   ['SBS-DATA-002', data002],
@@ -101,10 +119,22 @@ export const EVALUATOR_REGISTRY: ReadonlyMap<string, Evaluator> = new Map<string
   ['SBS-DEP-005', dep005],
   ['SBS-DEP-006', dep006],
 
+  ['SBS-FDNS-001', fdns001],
+
+  ['SBS-FILE-001', file001],
+  ['SBS-FILE-002', file002],
+  ['SBS-FILE-003', file003],
+
   ['SBS-INT-001', int001],
   ['SBS-INT-002', int002],
   ['SBS-INT-003', int003],
   ['SBS-INT-004', int004],
+
+  ['SBS-MON-001', mon001],
+  ['SBS-MON-002', mon002],
+  ['SBS-MON-003', mon003],
+  ['SBS-MON-004', mon004],
+  ['SBS-MON-005', mon005],
 
   ['SBS-OAUTH-001', oauth001],
   ['SBS-OAUTH-002', oauth002],

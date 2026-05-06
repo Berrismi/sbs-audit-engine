@@ -33,7 +33,10 @@ describe('disaster-org integration fixture', () => {
   });
 
   it('reports critical_fail_count >= 9 (all upstream Critical controls fail)', () => {
-    // SBS v0.4.1 has 9 Critical controls; AUTH-004 override pushes that to 10.
+    // SBS upstream main @ d4304e1 has multiple Critical controls; CPORTAL-004
+    // is new at this pin, AUTH-004 risk_level is sourced from the markdown
+    // badge (`Critical`) per resolveRiskLevel. Lower bound stays at 9 to
+    // remain valid against earlier pins; current expected count is higher.
     expect(report.critical_fail_count).toBeGreaterThanOrEqual(9);
   });
 
@@ -52,7 +55,7 @@ describe('disaster-org integration fixture', () => {
     expect(non_fail).toEqual([]);
   });
 
-  it('returns all 42 control results', () => {
-    expect(report.control_results).toHaveLength(42);
+  it('returns one result per control in the library', () => {
+    expect(report.control_results).toHaveLength(library.controls.length);
   });
 });

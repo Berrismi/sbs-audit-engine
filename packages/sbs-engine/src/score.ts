@@ -13,6 +13,7 @@
 // ScoredReport.
 
 import controlsJson from '../data/controls.json' with { type: 'json' };
+import packageJson from '../package.json' with { type: 'json' };
 import { EVALUATOR_REGISTRY } from './evaluator-registry';
 import {
   categoryScore,
@@ -36,7 +37,13 @@ import type {
 
 const library = controlsJson as unknown as ControlLibrary;
 
-export const ENGINE_VERSION = '0.0.0-alpha.3';
+/**
+ * Engine version, sourced from package.json so the persisted
+ * ScoredReport.engine_version always matches the published npm version.
+ * A test in tests/data/version.test.ts asserts this constant === packageJson.version
+ * so a future engineer cannot reintroduce a literal here that drifts.
+ */
+export const ENGINE_VERSION = packageJson.version;
 
 /** Drop the `SBS-` prefix and replace `-` so SBS-ACS-004 → Q-ACS-004. */
 function questionIdFor(controlId: string): string {

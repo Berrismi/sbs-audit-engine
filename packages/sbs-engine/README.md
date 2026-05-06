@@ -26,12 +26,13 @@ npm i @hellomavens/security-review-for-salesforce-engine
 ```
 
 > Phase 1 alpha. The API will change before 0.1.0. Pin exactly:
-> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.5"`.
+> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.10"`.
 
 ## What this is
 
-A typed scoring engine and 42-control library (growing toward SBS 1.0's
-54 controls) for auditing Salesforce orgs against the open
+A typed scoring engine and 54-control library (mirroring SBS upstream
+`main` @ `d4304e1`; latest tagged release `v0.4.1` carried 42) for
+auditing Salesforce orgs against the open
 [Security Benchmark for Salesforce](https://github.com/Salesforce-Security-Benchmark/docs-site).
 
 Built by HelloMavens. Implements the SBS standard — does not author it.
@@ -60,8 +61,9 @@ the consultant CLI in Phase 5.
 
 To be transparent about what is built vs. borrowed:
 
-- **Borrowed (CC BY-SA 4.0):** the 54 control definitions from SBS v0.4.1
-  upstream, normalized into `data/controls.json` (also CC BY-SA 4.0 per
+- **Borrowed (CC BY-SA 4.0):** the 54 control definitions from SBS
+  upstream `main` @ `d4304e1` (ahead of latest tagged `v0.4.1`),
+  normalized into `data/controls.json` (also CC BY-SA 4.0 per
   ShareAlike).
 - **Borrowed (Apache-2.0/BSD/MIT):** runtime dependencies, see ATTRIBUTION.md.
 - **Built by HelloMavens (MIT):** scoring algorithm, evaluator pattern,

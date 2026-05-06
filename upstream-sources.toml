@@ -8,7 +8,11 @@
 [sbs]
 name = "Security Benchmark for Salesforce"
 repo = "Salesforce-Security-Benchmark/docs-site"
-ref = "v0.4.1"
+# Sha-pinned to a commit on `main` that's ahead of latest tagged release v0.4.1.
+# Tagged release lagged behind upstream by 12 controls (42 → 54); pinning to
+# the sha lets us deliver the full SBS standard now. Re-pin to a tagged
+# release when SBS publishes v0.5.0 / v1.0.
+ref = "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f"
 license = "CC-BY-SA-4.0"
 control_metadata_path = "control-metadata"
 

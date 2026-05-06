@@ -1,9 +1,9 @@
 {
-  "sbs_version": "0.4.1",
-  "upstream_ref": "v0.4.1",
-  "upstream_sha": "850f3cb2f0da28a9b025e4ad2f89092a4933ae9d",
-  "fetched_at": "2026-05-06T00:08:36.591Z",
-  "engine_version": "0.0.0-dev",
+  "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+  "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+  "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+  "fetched_at": "2026-05-06T03:20:29.185Z",
+  "engine_version": "0.0.0-alpha.10",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -24,13 +24,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -65,13 +65,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -106,13 +106,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -151,13 +151,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -192,13 +192,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-005.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -232,13 +232,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-006.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -272,13 +272,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-007.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -313,13 +313,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-008.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -344,7 +344,7 @@
       "risk_narrative": "Without compensating controls, privileged non-human identities rely solely on credential secrecy for protection—a single point of failure. Unlike human users, these identities typically use persistent credentials (API keys, OAuth tokens, certificates) that do not expire and are not protected by multi-factor authentication. Compensating controls provide defense-in-depth: IP restrictions limit where credentials can be used, monitoring enables detection of compromise, and credential rotation limits the window of exposure. However, other controls (SBS-ACS-008) still govern whether broad privileges are granted; compensating controls reduce blast radius rather than establishing the primary security boundary.",
       "audit_procedure": "1. Using the results from SBS-ACS-007, identify all non-human identities with broad privileges that have documented business justification\n2. For each privileged non-human identity, verify that at least two of the following compensating controls are implemented:\n   - **IP Address Restrictions:** Profile or permission set restricts login to specific IP ranges\n   - **OAuth Scope Limitations:** Connected app uses minimal OAuth scopes; refresh tokens have expiration\n   - **Activity Monitoring:** Automated monitoring alerts on unusual activity (off-hours access, high volume, geographic anomalies)\n   - **Credential Rotation:** Credentials are rotated at least every 90 days\n   - **Dedicated Identity:** Separate identity per integration (not shared across multiple systems)\n3. Verify that monitoring alerts are actively reviewed and responded to\n4. Confirm that compensating controls are documented in the justification for the privileged access",
       "remediation_steps": "1. For each privileged non-human identity, implement IP address restrictions in the assigned profile or permission set to limit access to known integration sources\n2. For OAuth-based integrations, configure connected apps with minimal required scopes and enable refresh token expiration\n3. Implement automated monitoring for privileged non-human identity activity using Event Monitoring, Shield Event Monitoring, or third-party SSPM tools\n4. Establish credential rotation policies requiring API keys, passwords, and certificates to be rotated at least every 90 days\n5. Ensure each integration uses a dedicated non-human identity rather than sharing credentials across multiple systems\n6. Document all implemented compensating controls in the access justification",
-      "default_value": "Salesforce does not require or enforce compensating controls for privileged non-human identities. IP restrictions, OAuth scopes, monitoring, and credential rotation must be configured manually by administrators.\nSalesforce does not require creating and assigning custom profiles.",
+      "default_value": "Salesforce does not require or enforce compensating controls for privileged non-human identities. IP restrictions, OAuth scopes, monitoring, and credential rotation must be configured manually by administrators.",
       "remediation": {
         "scope": "entity",
         "entity_type": "User"
@@ -354,13 +354,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-009.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -394,13 +394,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-010.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -434,13 +434,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-011.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -474,13 +474,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-ACS-012.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/access-controls.md"
         }
       ],
@@ -514,13 +514,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-AUTH-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/authentication.md"
         }
       ],
@@ -555,13 +555,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-AUTH-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/authentication.md"
         }
       ],
@@ -599,13 +599,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-AUTH-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/authentication.md"
         }
       ],
@@ -643,13 +643,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-AUTH-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/authentication.md"
         }
       ],
@@ -684,13 +684,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-CODE-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/code-security.md"
         }
       ],
@@ -727,13 +727,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-CODE-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/code-security.md"
         }
       ],
@@ -771,13 +771,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-CODE-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/code-security.md"
         }
       ],
@@ -812,13 +812,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-CODE-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/code-security.md"
         }
       ],
@@ -841,14 +841,14 @@
     {
       "id": "SBS-CPORTAL-001",
       "category": "CPORTAL",
-      "title": "Prevent Parameter-Based Record Access in Portal Apex",
-      "control_statement": "All Apex methods exposed to customer portal users must not accept user-provided parameters that determine which records are accessed, and must instead derive record access exclusively from the authenticated user's context.",
-      "description": "Organizations must architect portal-exposed Apex methods to prevent Insecure Direct Object Reference (IDOR) vulnerabilities by prohibiting acceptance of user-supplied record identifiers, SOQL filter predicates, field selection lists, or relationship traversal parameters. Methods must derive data access from server-side evaluation of the running user's context using `UserInfo` class methods (`UserInfo.getUserId()`, `UserInfo.getContactId()`, etc.) and traverse relationships from the authenticated user's associated records (User → Contact → Account) rather than trusting client-side input.\n\nExamples of prohibited parameter patterns include:\n- Record IDs passed from the frontend to control which records are queried\n- Dynamic WHERE clause components or filter criteria supplied by the user  \n- Field lists determining what data is returned via dynamic SOQL\n- Parent/child relationship identifiers controlling query scope",
+      "title": "Prevent Insecure Direct Object Reference (IDOR) in Portal Apex",
+      "control_statement": "All Apex methods exposed to Experience Cloud or customer portal users must enforce server-side authorization for every record accessed or modified. User-supplied parameters (including record IDs, filters, field names, or relationship references) must not be trusted as the basis for access control and must be validated against the running user's sharing, CRUD, and FLS permissions before use.",
+      "description": "Portal-exposed Apex methods are callable by external users and therefore must not rely on client-provided identifiers or query inputs to determine record access. Accepting record IDs, filter criteria, field lists, or relationship paths without validating the running user's access creates Insecure Direct Object Reference (IDOR) vulnerabilities.\n\nMethods must:\n\n* Run `with sharing` unless explicitly justified.\n* Enforce object- and field-level permissions.\n* Prevent user-controlled SOQL structure (e.g., dynamic WHERE clauses or field lists).\n* Restrict data scope to records the authenticated user is authorized to access according to business rules.\n\nParameters may be accepted when required for legitimate functionality, but must be validated server-side before querying or performing DML.",
       "risk_level": "Critical",
-      "risk_narrative": "When portal-exposed methods accept user-controlled parameters to determine record access, external users can manipulate these inputs to bypass intended access controls and exfiltrate unauthorized data. By iterating record IDs, modifying query filters, or injecting field names, attackers gain direct access to records beyond their sharing-based permissions—even when proper sharing keywords are declared. This vulnerability is especially severe in customer portal contexts where thousands of external users with adversarial intent can systematically enumerate organizational data. A single method accepting a record ID parameter from the frontend creates a SQL injection-equivalent vulnerability in the Salesforce trust model—allowing attackers to read, modify, or delete data without authentication or authorization checks, independent of any other security control failures. This constitutes a Critical boundary violation: unauthorized users access data they should never see, with no compensating controls required to fail.",
-      "audit_procedure": "1. Identify all Apex classes containing `@AuraEnabled` methods or other methods exposed to customer portal sites.  \n2. For each method, examine the parameter list to identify parameters of type `Id`, `String`, `List<Id>`, `List<String>`, `Set<Id>`, or `Map<String, Object>` that could control record access.  \n3. Review the method implementation to determine if parameters influence SOQL query construction (WHERE clauses, record IDs, field selection, relationship traversal).  \n4. Verify that methods derive record access from `UserInfo.getUserId()` or related user context rather than accepting frontend-supplied identifiers.  \n5. Conduct penetration testing by attempting to pass unauthorized record IDs or manipulated parameters from portal user sessions.  \n6. Flag any method that accepts user-supplied parameters controlling record access as noncompliant.",
-      "remediation_steps": "1. Refactor portal-exposed methods to eliminate all parameters that control record access, query scope, or field selection.  \n2. Implement server-side logic that determines accessible records based on the running user's context:\n   ```apex\n   @AuraEnabled\n   public static Account getMyAccount() {\n       Id userId = UserInfo.getUserId();\n       User currentUser = [SELECT ContactId FROM User WHERE Id = :userId];\n       Contact portalContact = [SELECT AccountId FROM Contact WHERE Id = :currentUser.ContactId];\n       return [SELECT Id, Name FROM Account WHERE Id = :portalContact.AccountId];\n   }\n   ```\n3. For methods that must operate on specific records, validate ownership using `UserRecordAccess` before returning data:\n   ```apex\n   List<UserRecordAccess> access = [SELECT RecordId, HasReadAccess \n                                     FROM UserRecordAccess \n                                     WHERE UserId = :UserInfo.getUserId() \n                                     AND RecordId = :recordId];\n   if (access.isEmpty() || !access[0].HasReadAccess) {\n       throw new AuraHandledException('Access denied');\n   }\n   ```\n4. Establish code review requirements that specifically check for parameter-based access control in portal-exposed methods.",
-      "default_value": "Salesforce does not prevent or validate user-supplied parameters in custom Apex code. Developers bear full responsibility for implementing access controls.",
+      "risk_narrative": "If portal-exposed Apex trusts user-controlled parameters to determine record access, external users can manipulate inputs to retrieve or modify unauthorized records. This may enable record enumeration, data exfiltration, or data corruption. IDOR vulnerabilities represent a critical authorization boundary failure.",
+      "audit_procedure": "1. Identify all Apex classes exposing `@AuraEnabled`, `@InvocableMethod`, or `@RestResource` methods accessible to portal users.\n2. Review method parameters of type `Id`, `String`, collections, or maps that could influence record access.\n3. Verify that:\n\n   * Classes run `with sharing` or implement equivalent authorization checks.\n   * Record access is validated before query or DML.\n   * CRUD and FLS are enforced.\n   * Dynamic SOQL does not incorporate unsanitized user input.\n4. Attempt to access unauthorized records by manipulating record IDs or filter inputs from a portal user session.\n5. Flag any method that relies solely on user-supplied parameters to control record access as noncompliant.",
+      "remediation_steps": "* Enforce `with sharing` on portal-facing classes by default.\n* Scope queries using the running user's context where possible.\n* If record IDs are accepted as parameters, verify access using sharing or `UserRecordAccess` before returning or modifying data.\n* Remove user-controlled query structure and whitelist allowable filter inputs.\n* Enforce CRUD and FLS on all returned or modified records.",
+      "default_value": "Salesforce does not validate user-supplied parameters in custom Apex. Developers are responsible for implementing server-side authorization controls in all portal-exposed methods.",
       "remediation": {
         "scope": "entity",
         "entity_type": "AuraEnabled Method"
@@ -858,13 +858,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-CPORTAL-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/customer-portals.md"
         }
       ],
@@ -902,13 +902,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-CPORTAL-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/customer-portals.md"
         }
       ],
@@ -925,6 +925,137 @@
           "iso27001": ["A.5.15", "A.8.3"]
         },
         "pass_narrative": "Guest users have minimal record access, so unauthenticated traffic can't quietly enumerate organizational data through your customer-portal trust boundary."
+      }
+    },
+    {
+      "id": "SBS-CPORTAL-003",
+      "category": "CPORTAL",
+      "title": "Inventory Portal-Exposed Apex Classes and Flows",
+      "control_statement": "Organizations must maintain an authoritative inventory of all Apex classes and Autolaunched Flows exposed to Experience Cloud sites, documenting which components are accessible to external and guest users.",
+      "description": "Organizations must document all Apex classes with `@AuraEnabled` methods and all Autolaunched Flows that can be invoked from Experience Cloud sites. The inventory must include which portal user profiles and permission sets can access each component.",
+      "risk_level": "High",
+      "risk_narrative": "Without a complete inventory of portal-exposed components, organizations cannot assess their external attack surface or enforce security reviews for externally accessible code. Security teams lose visibility into which business logic external users can invoke, preventing effective security testing, incident response, and access governance. This impairs the ability to detect unauthorized exposure of sensitive functionality or identify components requiring security hardening.",
+      "audit_procedure": "1. Request the organization's inventory of portal-exposed Apex classes and Flows from the designated system of record.\n2. Query all Apex classes with `@AuraEnabled` methods accessible to portal user profiles.\n3. Query all Autolaunched Flows invoked from Experience Cloud pages or components.\n4. Verify each component appears in the inventory with documentation of which portal profiles can access it.\n5. Flag any portal-exposed component missing from the inventory as noncompliant.",
+      "remediation_steps": "1. Enumerate all Apex classes containing `@AuraEnabled` methods.\n2. Enumerate all Autolaunched Flows embedded in Experience Cloud sites.\n3. For each component, document which portal user profiles and permission sets have access.\n4. Store the inventory in the designated system of record.\n5. Establish a process to update the inventory when new components are exposed to portals.",
+      "default_value": "Salesforce does not require or maintain an inventory of portal-exposed components.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Inventory all portal-exposed Apex classes and Flows",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-CPORTAL-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/customer-portals.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [
+          "A04:2021-Insecure Design",
+          "A05:2021-Security Misconfiguration",
+          "A09:2021-Security Logging and Monitoring Failures"
+        ],
+        "regulations": {
+          "hipaa": ["164.308(a)(1)(ii)(D)", "164.308(a)(4)"],
+          "soc2": ["CC3.2", "CC6.1"],
+          "iso27001": ["A.5.9", "A.5.15", "A.8.3"]
+        },
+        "pass_narrative": "Every Apex class and Flow exposed to your portal users is inventoried with documented profile access, so your external attack surface is knowable, security testing has scope, and unexpected externally-callable code can't accumulate quietly."
+      }
+    },
+    {
+      "id": "SBS-CPORTAL-004",
+      "category": "CPORTAL",
+      "title": "Prevent Parameter-Based Record Access in Portal-Exposed Flows",
+      "control_statement": "Autolaunched Flows exposed to customer portal users must not accept user-supplied input variables that directly determine which records are accessed.",
+      "description": "Flows invoked from Experience Cloud must not accept input variables for record IDs, object names, or filter criteria. All record access must be derived from the authenticated user's context using `$User.ContactId` or similar user context resources.",
+      "risk_level": "Critical",
+      "risk_narrative": "Flows accepting user-controlled input variables for record access create IDOR vulnerabilities allowing external users to access any record in the org. Because Autolaunched Flows run in system context without sharing by default, a single flow accepting a record ID input parameter bypasses all permissions and sharing rules. This constitutes a Critical boundary violation: unauthorized users access data they should never see, with no compensating controls required to fail.",
+      "audit_procedure": "1. Using the inventory from SBS-CPORTAL-003, identify all portal-exposed Autolaunched Flows.\n2. For each flow, examine input variables for types that could contain record IDs (Text, Record, Text Collection).\n3. Review flow logic to determine if input variables influence Get Records, Update Records, or Delete Records elements.\n4. Flag any flow accepting user-supplied input variables that control record access as noncompliant.",
+      "remediation_steps": "1. Refactor flows to eliminate input variables controlling record access.\n2. Derive accessible records from authenticated user context (e.g., `$User.Id`, `$User.ContactId`, `$User.AccountId`).\n3. Configure flows to run in user context (\"With Sharing\") where available.",
+      "default_value": "Salesforce does not prevent flows from accepting user-supplied input variables. Autolaunched Flows run in system context without sharing by default.",
+      "remediation": {
+        "scope": "entity",
+        "entity_type": "Flow"
+      },
+      "task_title_template": "Refactor {{entity.name}} to use user context instead of input parameters",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-CPORTAL-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/customer-portals.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 5,
+        "owasp": [
+          "A01:2021-Broken Access Control",
+          "A04:2021-Insecure Design",
+          "A05:2021-Security Misconfiguration"
+        ],
+        "regulations": {
+          "hipaa": ["164.308(a)(4)", "164.312(a)"],
+          "soc2": ["CC6.1", "CC6.6"],
+          "iso27001": ["A.5.15", "A.8.3", "A.8.26"],
+          "gdpr": ["Article 32"],
+          "ccpa": ["§1798.150"]
+        },
+        "pass_narrative": "Portal-exposed Flows derive record access from the authenticated user's context, not from user-supplied input variables, so external users can't manipulate flow inputs to reach records they should never see."
+      }
+    },
+    {
+      "id": "SBS-CPORTAL-005",
+      "category": "CPORTAL",
+      "title": "Conduct Penetration Testing for Portal Security",
+      "control_statement": "Organizations with Experience Cloud sites must conduct penetration testing of portal security controls before initial go-live and subsequently after major releases or on a defined cadence.",
+      "description": "Penetration testing validates that authentication boundaries, authorization controls, and data access restrictions function correctly under adversarial conditions. Testing must target portal-exposed Apex classes, Flows, and components, including parameter manipulation, IDOR attempts, and privilege escalation scenarios. Organizations determine ongoing testing frequency based on regulatory requirements and change velocity.",
+      "risk_level": "High",
+      "risk_narrative": "Without regular penetration testing, organizations cannot verify that portal security controls function correctly when adversaries attempt to exploit them. Configuration audits verify settings exist but cannot validate runtime behavior under attack. Undetected vulnerabilities in portal-exposed components allow unauthorized data access.",
+      "audit_procedure": "1. Verify penetration testing was conducted before initial portal go-live.\n2. Verify the organization has defined an ongoing testing cadence based on regulatory requirements and change frequency.\n3. Request documentation of the most recent portal penetration test.\n4. Verify testing occurred according to the defined cadence or after major releases.\n5. Confirm test scope included portal-exposed Apex classes and Flows.\n6. Review test report for identified vulnerabilities and remediation status.\n7. Flag as noncompliant if no go-live testing occurred, ongoing testing does not follow the defined cadence, or if high/critical findings remain unremediated.",
+      "remediation_steps": "1. Conduct penetration testing before initial portal go-live.\n2. Define ongoing testing cadence based on regulatory requirements and release frequency.\n3. Engage qualified penetration testers with Salesforce Experience Cloud expertise.\n4. Define test scope covering all portal-exposed components.\n5. Conduct testing according to defined cadence and after major portal changes.\n6. Remediate identified vulnerabilities before production deployment.",
+      "default_value": "Salesforce does not require or conduct penetration testing of customer implementations.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Conduct annual penetration testing of portal security controls",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-CPORTAL-005.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/customer-portals.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": ["A04:2021-Insecure Design", "A05:2021-Security Misconfiguration"],
+        "regulations": {
+          "soc2": ["CC4.1", "CC7.1"],
+          "iso27001": ["A.8.8", "A.8.29"],
+          "gdpr": ["Article 32"]
+        },
+        "pass_narrative": "Your portal security controls get exercised against adversarial input on a defined cadence, so configuration audits are corroborated by runtime testing — authorization gaps surface during testing instead of during a breach."
       }
     },
     {
@@ -946,13 +1077,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DATA-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/data-security.md"
         }
       ],
@@ -988,13 +1119,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DATA-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/data-security.md"
         }
       ],
@@ -1029,13 +1160,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DATA-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/data-security.md"
         }
       ],
@@ -1071,13 +1202,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DATA-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/data-security.md"
         }
       ],
@@ -1115,13 +1246,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DEP-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/deployments.md"
         }
       ],
@@ -1159,13 +1290,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DEP-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/deployments.md"
         }
       ],
@@ -1203,13 +1334,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DEP-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/deployments.md"
         }
       ],
@@ -1246,13 +1377,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DEP-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/deployments.md"
         }
       ],
@@ -1289,13 +1420,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DEP-005.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/deployments.md"
         }
       ],
@@ -1334,13 +1465,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-DEP-006.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/deployments.md"
         }
       ],
@@ -1353,6 +1484,175 @@
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
         },
         "pass_narrative": "Your CLI Connected App has token expiration policies, so a stolen laptop's token files don't grant indefinite access to production — the credential exposure window is bounded."
+      }
+    },
+    {
+      "id": "SBS-FDNS-001",
+      "category": "FDNS",
+      "title": "Centralized Security System of Record",
+      "control_statement": "The organization must maintain a centralized system of record documenting all Salesforce security configurations, exceptions, justifications, and SBS-required inventories.",
+      "description": "The organization must maintain a centralized, durable, and accessible system of record that documents all Salesforce security-relevant configurations, exceptions, justifications, approvals, and control-specific inventories required by the SBS. The system of record must not rely on personal knowledge or undocumented institutional memory.",
+      "risk_level": "High",
+      "risk_narrative": "A formally maintained system of record is foundational for ensuring repeatable, auditable, and transparent security governance. Without a centralized repository, organizations cannot reliably track required justifications, exceptions, or configuration states, resulting in control failures, loss of historical context, and inconsistent application of security standards. A system of record enables auditors, security engineers, and automation tools to validate compliance objectively.",
+      "audit_procedure": "1. Identify and review the organization’s designated system of record for Salesforce security governance.  \n2. Verify that the system of record is centrally accessible to authorized personnel and is not dependent on individual personnel knowledge.  \n3. Confirm that the system of record includes all artifacts required by SBS controls, including:  \n   - Documented justifications for elevated permissions or exceptions.  \n   - Inventories of profiles, permission sets, permission set groups, integrations, API-enabled entities, and other required listings.  \n   - Recorded security decisions, approvals, and exceptions.  \n4. Validate that the system of record is current and reflects the state of the Salesforce environment at the time of audit.",
+      "remediation_steps": "1. Establish or designate a centralized system of record capable of storing and maintaining all required SBS documentation.  \n2. Populate the system of record with all missing inventories, justifications, and security-relevant artifacts mandated by SBS controls.  \n3. Implement a maintenance process to keep the system of record current with ongoing changes to the Salesforce environment.",
+      "default_value": "Salesforce does not provide or require a system of record for documenting security-relevant metadata, exceptions, or justifications.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Establish centralized security system of record for Salesforce governance",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-FDNS-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/foundations.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": ["A04:2021-Insecure Design", "A05:2021-Security Misconfiguration"],
+        "regulations": {
+          "hipaa": ["164.308(a)(8)", "164.316(b)"],
+          "soc2": ["CC1.4", "CC2.2", "CC4.1"],
+          "iso27001": ["A.5.1", "A.5.36", "A.5.37"],
+          "gdpr": ["Article 5(2)"]
+        },
+        "pass_narrative": "Your Salesforce security configurations, exceptions, justifications, and SBS-required inventories live in a centralized system of record, so governance survives staff turnover and audit conclusions can actually be reconstructed from durable artifacts."
+      }
+    },
+    {
+      "id": "SBS-FILE-001",
+      "category": "FILE",
+      "title": "Require Expiry Dates on Public Content Links",
+      "control_statement": "Organizations must ensure that Public Content links have an appropriate expiry date.",
+      "description": "The organization must ensure that any content shared via Public Content links has an appropriate expiry date set dependent upon the classification of the content. The expiry date could be never for non-sensitive content—a PDF of the organization's Privacy Policy as an example—or it could be less than a week for sensitive information.",
+      "risk_level": "Moderate",
+      "risk_narrative": "Without an expiry date, Public Content links remain permanently accessible, extending the window of potential exposure indefinitely. While the link itself must be obtained by an unauthorized party for access to occur, perpetually valid links increase the cumulative risk of data exposure through link leakage, sharing, or discovery. Time-bounded links reduce the blast radius of any single link compromise and support data lifecycle governance.",
+      "audit_procedure": "1. Enumerate all `ContentDistribution` object records via the SOAP/REST API or Apex.\n2. Identify all records where `PreferencesExpires = false`.\n3. Flag any Public Content links without expiry dates for review.",
+      "remediation_steps": "1. For each flagged content distribution record, determine the sensitivity classification of the associated content.\n2. Set an appropriate expiry date on the `ContentDistribution` object based on content classification.\n3. Establish organizational policy defining maximum link lifetimes by data classification.",
+      "default_value": "When a user manually creates a Public Content link on a piece of content, Salesforce suggests an expiry date. This can be overridden by the user. In the past, the default was no expiry date.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Enforce expiry dates on all Public Content links",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-FILE-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/file-security.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
+        "regulations": {
+          "soc2": ["CC6.1", "CC6.6"],
+          "iso27001": ["A.5.10", "A.5.13", "A.8.12"],
+          "gdpr": ["Article 5(1)(e)", "Article 32"],
+          "ccpa": ["§1798.100"]
+        },
+        "pass_narrative": "Public Content links carry expiry dates appropriate to the sensitivity of what they share, so a leaked or forgotten link doesn't extend exposure indefinitely — time-bounded access is governance you can actually enforce."
+      }
+    },
+    {
+      "id": "SBS-FILE-002",
+      "category": "FILE",
+      "title": "Require Passwords on Public Content Links for Sensitive Content",
+      "control_statement": "Organizations must ensure that Public Content links to sensitive content have a password.",
+      "description": "The organization must ensure that any sensitive content shared via Public Content links has a password set to protect the content if the link is intercepted or inadvertently shared.",
+      "risk_level": "High",
+      "risk_narrative": "Without a password, anyone who obtains an unexpired Public Content link—through interception, accidental sharing, or link harvesting—can immediately access the associated data. For sensitive content, this creates a direct path to data exposure that requires only link acquisition. Password protection adds an authentication layer that prevents opportunistic access and limits the impact of link compromise, supporting breach containment and regulatory compliance for sensitive data handling.",
+      "audit_procedure": "1. Enumerate all `ContentDistribution` object records via the SOAP/REST API or Apex.\n2. Identify all records where `Password` is null.\n3. Cross-reference with content classification to identify sensitive content lacking password protection.\n4. Flag any Public Content links to sensitive content without passwords for review.",
+      "remediation_steps": "1. For each flagged content distribution record, determine the sensitivity classification of the associated content.\n2. For sensitive content, set a password on the ContentDistribution record via the Salesforce UI.\n3. Communicate the password to intended recipients through a separate, secure channel.\n4. Establish organizational policy requiring password protection for all Public Content links to sensitive data.",
+      "default_value": "When a user manually creates a Public Content link on a piece of content, the default is to not have a password.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Enforce passwords on Public Content links for sensitive content",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-FILE-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/file-security.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": [
+          "A01:2021-Broken Access Control",
+          "A04:2021-Insecure Design",
+          "A07:2021-Identification and Authentication Failures"
+        ],
+        "regulations": {
+          "hipaa": ["164.308(a)(4)", "164.312(a)(1)", "164.312(a)(2)(iv)"],
+          "soc2": ["CC6.1", "CC6.6", "CC6.7"],
+          "iso27001": ["A.5.10", "A.5.13", "A.8.12"],
+          "gdpr": ["Article 32"],
+          "ccpa": ["§1798.100"]
+        },
+        "pass_narrative": "Sensitive Public Content links are password-protected, so an intercepted or accidentally-shared URL alone isn't enough to view the content — there's an authentication layer between link possession and data exposure."
+      }
+    },
+    {
+      "id": "SBS-FILE-003",
+      "category": "FILE",
+      "title": "Periodic Review and Cleanup of Public Content Links",
+      "control_statement": "Organizations must implement a recurring process to review all active Public Content links and remove or remediate links that are no longer required, lack appropriate controls, or were created outside of current policy.",
+      "description": "The organization must establish a defined cadence (e.g., quarterly) to scan all `ContentDistribution` records and review active Public Content links. This review should identify links that are forgotten, no longer needed, were created before current security controls were implemented, resulted from accidental sharing, or otherwise do not comply with organizational policy. Identified links must be remediated by applying appropriate controls (expiry dates, passwords) or deleted if no longer required.",
+      "risk_level": "Moderate",
+      "risk_narrative": "Without periodic review, Public Content links accumulate over time—including legacy links created before security policies were established, links that have outlived their business purpose, and links created through accidental or unauthorized sharing. These forgotten links represent persistent exposure that may go undetected indefinitely. While this control does not prevent initial link creation issues, it provides a governance mechanism to identify and remediate accumulated risk, supporting defense-in-depth and reducing the organization's overall exposure footprint.",
+      "audit_procedure": "1. Verify the organization has a documented process for periodic Public Content link review.\n2. Confirm the review cadence is defined (e.g., quarterly, monthly) and appropriate for the organization's risk profile.\n3. Obtain evidence of recent review execution (e.g., scan results, remediation records, review meeting notes).\n4. Verify that reviews include all active `ContentDistribution` records.\n5. Confirm that identified issues are tracked through remediation or deletion.\n6. Flag organizations without a documented review process or evidence of recent execution.",
+      "remediation_steps": "1. Establish a documented process for periodic review of all `ContentDistribution` records.\n2. Define a review cadence appropriate to organizational risk tolerance (quarterly recommended as a baseline).\n3. Create a scanning mechanism (script, report, or tool) to enumerate all active Public Content links.\n4. Define review criteria to identify links requiring remediation: missing expiry dates, missing passwords on sensitive content, links older than a defined threshold, or links to content no longer requiring external sharing.\n5. Assign ownership for the review process and remediation actions.\n6. Maintain records of each review cycle for audit purposes.",
+      "default_value": "Salesforce does not provide a built-in mechanism for periodic review of Public Content links; organizations must implement this process manually or through custom tooling.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Implement periodic review and cleanup of Public Content links",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-FILE-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/file-security.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
+        "regulations": {
+          "soc2": ["CC6.1", "CC6.6"],
+          "iso27001": ["A.5.10", "A.5.13", "A.8.12"],
+          "gdpr": ["Article 5(2)", "Article 32"],
+          "ccpa": ["§1798.100"]
+        },
+        "pass_narrative": "Active Public Content links get reviewed and cleaned up on a defined cadence, so legacy and accidentally-shared links don't accumulate as forgotten exposure — your shared-content surface area stays bounded over time."
       }
     },
     {
@@ -1374,13 +1674,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-INT-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/integrations.md"
         }
       ],
@@ -1419,13 +1719,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-INT-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/integrations.md"
         }
       ],
@@ -1462,13 +1762,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-INT-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/integrations.md"
         }
       ],
@@ -1506,13 +1806,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-INT-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/integrations.md"
         }
       ],
@@ -1525,6 +1825,214 @@
           "iso27001": ["A.8.15", "A.8.16"]
         },
         "pass_narrative": "API Total Usage logs are retained for 30 days, so you have visibility into REST/SOAP/Bulk API activity — anomalous behavior is detectable and incident scope is actually determinable."
+      }
+    },
+    {
+      "id": "SBS-MON-001",
+      "category": "MON",
+      "title": "Enable Event Monitoring Log Storage",
+      "control_statement": "Organizations using Salesforce Event Monitoring must ensure that storage of required Event Monitoring logs is enabled for all event types necessary to support the organization's security monitoring and compliance policies.",
+      "description": "Salesforce Event Monitoring generates detailed activity logs in the `EventLogFile` dataset. These logs provide visibility into user behavior, API activity, report usage, file access, and other system interactions.\n\nSalesforce automatically generates many event logs; however, organizations must ensure that **storage is enabled for the event types they intend to retain and analyze**.\n\nEvent Monitoring log storage determines whether Salesforce retains generated event logs so they can be accessed through the platform or exported to external monitoring systems.\n\nExamples of Event Monitoring log types include:\n\n- API activity logs\n- API Total Usage logs\n- Report access logs\n- Dashboard access logs\n- URI navigation logs\n- Lightning page view logs\n- Apex execution logs\n- File download logs\n\nIf storage is not enabled for a given event type, Salesforce may not retain the corresponding event data, preventing organizations from analyzing that activity.\n\nOrganizations should ensure storage is enabled for all event types necessary to support security monitoring, incident response, and compliance requirements.",
+      "risk_level": "High",
+      "risk_narrative": "Failure to ensure Event Monitoring log storage is enabled creates a significant monitoring gap.\n\nWithout these logs:\n\n- Security teams cannot reconstruct user activity during a suspected breach.\n- Data exfiltration events (such as large file downloads or abnormal API usage) may go undetected.\n- Detailed forensic investigations become impossible due to lack of historical telemetry.\n- Organizations may fail to meet regulatory or internal security logging requirements.\n\nBecause Salesforce logs cannot be retroactively generated, failing to retain required event logs results in permanent loss of security telemetry.",
+      "audit_procedure": "1. Navigate to **Setup**\n2. Open **Event Monitoring Settings**\n3. Verify that **Generate Event Log Files** is enabled\n4. Open **Event Manager**\n5. Review each event type and verify that **Enable Storage** is enabled for all log types required by the organization's security monitoring policy",
+      "remediation_steps": "1. Navigate to **Setup**\n2. Open **Event Monitoring Settings**\n3. Enable **Generate Event Log Files**\n4. Open **Event Manager**\n5. For each required event type:\n   - Select the event\n   - Enable **Storage**\n\nOrganizations should also implement automated export or integration with external monitoring platforms where appropriate.",
+      "default_value": "Salesforce provides a limited set of Event Monitoring logs by default in Enterprise, Unlimited, and Performance editions. These logs include Login, Logout, and API Total Usage events with **1-day retention**.\n\nAdditional event types and extended retention (up to one year) require the **Event Monitoring add-on**.",
+      "remediation": {
+        "scope": "org"
+      },
+      "task_title_template": "Enable Event Monitoring log storage for all required event types",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-MON-001.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/event-monitoring.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+        "regulations": {
+          "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
+          "soc2": ["CC7.2", "CC7.3"],
+          "iso27001": ["A.8.15", "A.8.16"],
+          "gdpr": ["Article 32"]
+        },
+        "pass_narrative": "Event Monitoring log storage is enabled for the event types your security policy requires, so investigations have the telemetry to reconstruct what happened — file downloads, API calls, report exports, all retained instead of silently dropped."
+      }
+    },
+    {
+      "id": "SBS-MON-002",
+      "category": "MON",
+      "title": "Retaining Event Logs",
+      "control_statement": "Organizations must retain security event logs for the defined retention period and implement measures to protect the logs from tampering and unauthorized deletion to ensure forensic availability.",
+      "description": "The retention of security event logs is critical for effective incident investigation and forensic analysis. Security incidents often remain undetected for extended periods of time, and investigators must be able to reconstruct historical activity to determine the origin, scope, and impact of an attack.\n\nSalesforce provides multiple categories of logs with different native retention periods.\n\nBuilt-in audit logs include:\n\n- **LoginHistory** – records login attempts and authentication activity. Retention is up to approximately 6 months, though high-volume environments may experience shorter effective retention.\n- **SetupAuditTrail** – records administrative configuration changes. Retention is 180 days.\n\nThese built-in logs provide baseline visibility but typically lack the detail required for advanced security investigations.\n\nOrganizations requiring detailed user activity telemetry must use **Event Monitoring**, which provides the `EventLogFile` dataset. These logs include detailed activity such as:\n\n- API activity\n- report access\n- dashboard usage\n- file downloads\n- Lightning page navigation\n- Apex execution\n- URI activity\n\nRetention of Event Monitoring logs depends on licensing:\n\n- **Without the Event Monitoring add-on:** Salesforce provides a limited set of Event Monitoring logs (including Login, Logout, and API Total Usage) with **1-day retention**.\n- **With the Event Monitoring add-on:** many additional event types become available and retention is extended, typically ranging from **30 days up to one year**, depending on the license.\n\nBecause Salesforce automatically purges logs once their retention period expires, organizations with longer retention requirements must export these logs to an external system.\n\nCommon approaches include forwarding logs to:\n\n- a Security Information and Event Management (SIEM) platform\n- centralized log aggregation systems\n- secure long-term archival storage\n\nExternal retention ensures that forensic data remains available even after Salesforce purges the logs from the platform.\n\nSalesforce also provides administrative capabilities that allow authorized users to delete stored Event Monitoring data. To reduce the risk of log tampering, organizations must strictly control and monitor permissions related to Event Monitoring data deletion.\n\nChanges to the **\"Delete Event Monitoring Data\"** permission and related configuration settings should be monitored through the `SetupAuditTrail` log.",
+      "risk_level": "High",
+      "risk_narrative": "Failure to implement adequate log retention and protection creates significant risks for incident response and regulatory compliance.\n\nIf logs are not retained for a sufficient period:\n\n- Security teams may be unable to reconstruct the timeline of an attack.\n- Indicators of compromise may be permanently lost before detection occurs.\n- The organization may be unable to determine the scope of data exposure.\n\nIn addition, attackers who obtain administrative privileges may attempt to delete stored event logs to conceal malicious activity. Without secure external copies stored in a separate system, this could permanently destroy critical forensic evidence.\n\nBecause Salesforce logs cannot be retroactively generated, failure to retain logs results in permanent loss of investigative data.",
+      "audit_procedure": "1. Obtain the organization's security policy defining required log retention periods.\n2. Review the Salesforce organization's licensing and Event Monitoring configuration to determine the native retention period of logs.\n3. Verify whether Event Monitoring logs are exported to an external system such as a SIEM or centralized logging platform.\n4. Confirm that the combined retention period (Salesforce native retention plus external storage retention) meets or exceeds the required organizational or regulatory retention policy.\n5. Review the `SetupAuditTrail` log to confirm that changes to Event Monitoring configuration and permissions are monitored, including assignment of the **Delete Event Monitoring Data** permission.",
+      "remediation_steps": "1. If longer retention is required, purchase Salesforce Event Monitoring or export logs to an external secure storage system.\n2. Implement automated log export or forwarding to a SIEM or centralized monitoring platform.\n3. Restrict the **Delete Event Monitoring Data** permission to a minimal set of trusted administrators.\n4. Configure monitoring alerts to detect any assignment of this permission or modification of Event Monitoring settings.\n5. Periodically verify that log exports are functioning correctly and that required log types are being successfully captured.",
+      "default_value": "Typical native Salesforce retention periods include:\n\n- **LoginHistory:** up to approximately 6 months (may be shorter in high-volume environments)\n- **SetupAuditTrail:** 180 days\n- **Event Monitoring logs (`EventLogFile` dataset):** a limited set of logs is available by default with **1-day retention**; extended retention and additional log types require the Event Monitoring add-on",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement event log retention and export to meet required retention periods",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-MON-002.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/event-monitoring.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+        "regulations": {
+          "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)", "164.316(b)(2)(i)"],
+          "soc2": ["CC7.2", "CC7.3"],
+          "iso27001": ["A.8.15", "A.8.16"],
+          "gdpr": ["Article 32"]
+        },
+        "pass_narrative": "Event logs persist for your required retention period, exported when Salesforce native retention falls short and protected from administrative deletion, so a slow-burn incident can still be reconstructed weeks or months after the fact."
+      }
+    },
+    {
+      "id": "SBS-MON-003",
+      "category": "MON",
+      "title": "Monitor for Suspicious Logins",
+      "control_statement": "Organizations must continuously monitor and alert on anomalous login patterns to promptly detect and mitigate compromised accounts and application credentials.",
+      "description": "Continuously monitoring user and application login activity is paramount for maintaining the security of a Salesforce environment, especially for Orgs containing sensitive data. The primary objective is the early detection of compromised credentials, which are often the initial vector for sophisticated data breaches. Effective monitoring requires organizations to move beyond simple success/failure log tracking and implement sophisticated anomaly detection techniques.\n\nOrganizations must establish a baseline of normal login behavior for all users and connected applications. Any deviation from this baseline should trigger an alert for investigation. Key anomalous patterns to continuously monitor include:\n\n1. Geographic and Travel Anomalies: Logins originating from an unexpected or uncommon geolocation, particularly from high-risk regions. A high-severity alert should be generated for \"impossible travel\" scenarios, where a user's successive login attempts originate from two distant locations within a time frame that makes physical travel unfeasible.\n2. Suspicious Network Origins: Logins from IP addresses associated with known malicious or anonymity-enabling networks. This includes TOR exit nodes, commercial/consumer VPNs, and proxies, which attackers use to mask their true location and identity.\n3. Time-based Anomalies: Logins occurring outside of a user's typical working hours (e.g. in the middle of the night) or during a period when the user is known to be on vacation.\n4. High-Volume Failed Logins: A large number of failed login attempts followed by a successful one (a common pattern for brute-force or credential stuffing attacks), particularly if the successful login originates from a previously unseen IP address.\n5. Client and User-Agent Changes: Unexplained shifts in the login application (e.g. logging in via a mobile app when only web access is typical) or a suspicious, malformed, or blacklisted user-agent string.\n\nDue to the volume and complexity of login data, this monitoring is typically performed by processing Salesforce `LoginHistory` and relevant Event Monitoring logs in a dedicated monitoring system.",
+      "risk_level": "High",
+      "risk_narrative": "Failure to continuously monitor and rapidly respond to suspicious login activity creates an immediate and severe risk of a full system compromise. This control's absence exposes the organization to three critical, cascading risks:\n\n1. The primary risk is that a successful suspicious login is the initial foothold for a sophisticated attack. Without automated, anomaly-based alerting, the attacker's presence goes unnoticed, leading to a prolonged \"dwell time\" (the period between compromise and detection). A longer dwell time allows the attacker to extensively reconnoiter the environment, escalate privileges, and establish persistence. The longer the intruders have to prepare, the harder it is to evict them from the Org.\n2. Compromised credentials grant attackers direct access to sensitive customer data, intellectual property, and internal records. The lack of timely detection enables the attacker to perform mass data exfiltration via API, reporting, or export functionality before the account can be disabled, leading to financial, regulatory, and reputational damage.\n3. An attacker with elevated access can modify or delete critical configuration settings, business-critical data, or code, leading to system downtime, operational failures, and a loss of data integrity.",
+      "audit_procedure": "1. Verify the organization utilizes a continuous analytics solution that looks for anomalies in Salesforce login data\n2. Confirm that the analytics solution's monitoring scope includes all user logins and all non-human integration or application user logins, regardless of whether the authentication method is Single Sign-On (SSO) or direct Salesforce login.\n3. Confirm that there is a documented, mandatory procedure to periodically (e.g. quarterly) review, test, and update the login anomaly detection rules and baselines to ensure they remain effective and minimize false positives. Review should also include an analysis of investigated suspicious login alerts during the review period – no investigations can mean the rules are not firing.\n4. Review the process and history of investigating and responding to suspicious login alerts.",
+      "remediation_steps": "1. Take into use a dedicated Security Information and Event Management (SIEM) or a specialized login anomaly detection platform. If a platform is already in place, ensure all Salesforce authentication and event logs, particularly LoginHistory and relevant Event Monitoring logs, are being successfully exported, ingested, and correctly parsed.\n2. Configure the monitoring solution to explicitly analyze login events from all sources, including:\n- Human Users: Both Single Sign-On (SSO) and direct Salesforce credentials.\n- Non-Human/Integration Accounts: Any connected systems, APIs, or automated processes.\n3. Periodically review and test the effectiveness of the deployed detection rules, minimizing false positives and updating baselines as organizational travel patterns or integration accounts change.\n4. Define clear, high-priority, and time-bound Standard Operating Procedures (SOPs) to investigate and respond to all generated suspicious login alerts.",
+      "default_value": "Salesforce natively provides the raw login data in the LoginHistory object. However, without additional paid features or products or custom in-house development, Salesforce does not automatically detect or alert on the sophisticated, anomalous login patterns described in this control. Detection is entirely manual, relying on an administrator running reports against the raw LoginHistory data.",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement continuous monitoring and alerting for suspicious login activity",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-MON-003.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/event-monitoring.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+        "regulations": {
+          "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
+          "soc2": ["CC7.2", "CC7.3"],
+          "iso27001": ["A.8.15", "A.8.16"],
+          "gdpr": ["Article 32"],
+          "ccpa": ["§1798.100"]
+        },
+        "pass_narrative": "Anomalous login patterns — impossible travel, suspicious networks, off-hours access, brute-force precursors — trigger investigation in your monitoring stack, so a compromised credential surfaces as an alert instead of a quiet foothold."
+      }
+    },
+    {
+      "id": "SBS-MON-004",
+      "category": "MON",
+      "title": "Monitor for Suspicious API Activity",
+      "control_statement": "Organizations must continuously monitor and alert on all API activity to establish a baseline, detect anomalous and malicious activity, and identify potential application and integration abuse in a timely manner.",
+      "description": "Monitoring of API activity is a critical security layer that is necessary even after robust login monitoring is in place. Login monitoring alone is insufficient because many advanced threats — including compromised services, session hijacking, stolen access tokens, and malicious insider activity — can bypass the initial authentication step. To effectively detect these post-authentication attacks, organizations must continuously analyze access patterns against established baselines of normal behavior.\n\nThis requires ingesting and analyzing granular API event logs, which are primarily available through the Salesforce Event Monitoring add-on. Key anomalous patterns that must be continuously monitored, baselined, and alerted upon include:\n1. Unexpected Data Access/Objects: An application or user suddenly querying, modifying, or deleting objects they have never interacted with before (e.g. a Sales user starting to query security configurations or an integration account exporting massive volumes of a sensitive object like Case or Account).\n2. Anomalous Volume of API Calls: Any sharp, unexplained spike or drop in API request volume from a specific user or application, can be an indicator of mass data exfiltration or other malicious activity.\n3. Uncharacteristic Action Types: A pattern shift from read-heavy operations to write/delete-heavy operations, such as a reporting application suddenly creating or deleting users, which points to application abuse or compromise.\n4. Suspicious Network Origins (Post-Login): API activity originating from an IP address or geolocation that is unusual for the user or application, especially when the access token may have been stolen and is being used from a suspicious location.\n5. Use of Unapproved/Deprecated API Versions: Calls being made using API endpoints or versions that the organization has explicitly phased out or restricted for security reasons.\n6. Unexpected applications: Application use by users should be monitored for anomalies. It should be noted that the attackers can use common applications and try to hide in plain sight in the logs. They can also use \"evil twin\" attacks pretending to be a service used by the company but in reality using a different account or even a completely fake tool.",
+      "risk_level": "High",
+      "risk_narrative": "Failure to monitor API activity creates a critical blind spot for post-authentication attacks, leading to severe and cascading consequences:\n1. The primary risk is that a compromised application, integration account, or stolen session token can be used to perform mass, high-speed data exfiltration. \n2. Attackers can leverage API access to perform unauthorized and undetectable manipulation of the Salesforce Org.",
+      "audit_procedure": "1. Verify the organization utilizes a continuous analytics solution (e.g. SIEM, log aggregation platform) that is verifiably integrated with and ingesting all required API activity data, specifically the detailed Event Monitoring logs from Salesforce.\n2. Confirm that the monitoring scope includes all API access, including user-initiated, non-human/integration accounts, and all API methods (e.g. REST, SOAP, Bulk). Verify the logs ingested are granular enough to track specific API calls (CRUD operations) against specific objects.\n3. Request evidence (e.g. SIEM rule configurations, simulated alert outputs) to verify that the following specific, high-severity anomaly detection rules are active and tuned:\n- Mass Data Exfiltration: Alerts on an anomalous spike in data retrieval volume for a specific user or application, especially for sensitive objects.\n- Unauthorized Object Access: Alerts on a user or integration account attempting CRUD operations on objects they have no historical precedent for interacting with (e.g. Sales user accessing Security Settings).\n- Suspicious Action Shift: Alerts on a shift from a baseline of read-only operations to a high volume of write or delete operations by a user or application.\n- Suspicious Network Origins: Alerts on API calls originating from a suspicious or high-risk geolocation/IP address that is unusual for the accessing entity.\n4. Process Review - Triage & Response: Examine the documented procedures for triage, investigation, and response to API anomaly alerts. Review a sample of anomaly findings and the actions taken on them for e.g. the past 6 months, to confirm that alerts are being acted upon within the defined parameter.",
+      "remediation_steps": "1. Deploy or build a dedicated analytics solution for granular API log analysis. Ensure all relevant Salesforce Event Monitoring logs for API activity are being successfully exported, ingested, and correctly parsed into the monitoring platform.\n2. Configure the analytics solution to first establish a baseline of normal API behavior for every user and integration account. Following the baseline period, configure and tune high-severity anomaly detection rules to detect deviations, specifically rules that:\n- Alert on an anomalous spike in data retrieval (read/query) volume.\n- Monitor for CRUD (Create, Read, Update, Delete) operations on objects or security settings outside of an entity's established historical interaction baseline.\n- Flag a change from read-heavy activity to an unusual volume of write or delete operations.\n- Alert on API calls originating from a suspicious or atypical geolocation/IP address for the accessing entity.\n3. Define clear, high-priority, and time-bound Standard Operating Procedures (SOPs) to investigate and respond to all generated API anomaly alerts. The procedure must include immediate steps to lock or deactivate the compromised user or application account and revoke stolen access tokens to prevent further data loss or system manipulation.\n4. Establish a mandatory, recurring (e.g. quarterly) review process to:\n- Periodically test the effectiveness of the deployed detection rules using simulated incidents (e.g. table-top exercises).\n- Review and update the established baselines as new integrations are deployed or organizational usage patterns change.",
+      "default_value": "Salesforce provides some raw API usage data (APITotalUsage), but it does not automatically detect, baseline, or alert on sophisticated API anomalies. Automated anomaly detection requires paid add-ons (like Event Monitoring), third-party solutions, or custom in-house development.",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement continuous monitoring and alerting for suspicious API activity",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-MON-004.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/event-monitoring.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 3,
+        "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
+        "regulations": {
+          "hipaa": ["164.308(a)(1)(ii)(D)", "164.312(b)"],
+          "soc2": ["CC7.2", "CC7.3"],
+          "iso27001": ["A.8.15", "A.8.16"],
+          "gdpr": ["Article 32"],
+          "ccpa": ["§1798.100"]
+        },
+        "pass_narrative": "API activity is baselined and anomalies — mass exfiltration, unexpected object access, sudden write/delete shifts — surface as alerts, so post-authentication attacks via stolen tokens or compromised integrations don't operate silently."
+      }
+    },
+    {
+      "id": "SBS-MON-005",
+      "category": "MON",
+      "title": "Monitor API Usage Against Limits",
+      "control_statement": "Organizations must implement continuous, real-time monitoring and alerting on current API usage against defined Salesforce limits to proactively prevent service disruptions.",
+      "description": "Monitoring API usage against defined organizational and Salesforce-imposed limits is a critical operational security measure to ensure service availability. These limits, which operate on a rolling 24-hour window and represent a total, shared quota across all users and integrated applications in the Org, are designed to ensure system stability and fair resource allocation.\n\nWhen the organizational API call quota is exceeded, the Salesforce platform begins to block all further inbound API requests until the rolling 24-hour count drops below the threshold. This results in immediate and severe business process disruptions, as core integrations are effectively disabled. Examples of process failures include:\n\n- Inability to sync critical data (e.g. financial or delivery information) between ERP/external systems and Salesforce.\n- Interruption of vital business processes (e.g. orders or customer service tickets failing to be created or updated).\n- Failure of marketing automation or data warehousing tools to ingest or extract necessary information.\n\nLimit breaches can occur for two primary reasons:\n1. Gradual Overconsumption: Poor architectural design or uncontrolled integration growth, where the cumulative API usage of all systems slowly exceeds the Org's capacity.\n2. Sudden Spike: A sudden, catastrophic spike in calls caused by a misconfigured internal or third-party application e.g. getting stuck in a loop.\n\nTo proactively mitigate these risks, organizations must implement a continuous, real-time monitoring solution. This solution must track current API consumption against the official limits (which are tied to the Salesforce Edition and user license count) and provide immediate alerts before the critical threshold is breached. Limits and current usage can be reviewed in the \"System Overview\" section under Setup. It is also important to monitor sub-quotas for specific services like Bulk API, Streaming API, and Platform events.\n\nWhen the API limit is at risk (e.g. above a defined threshold, for example, 80% or 90% utilization), the organization must execute a defined, high-priority incident response plan. This plan must first focus on immediate triage to identify the source of the consumption spike — whether it is a malicious actor, a runaway integration, or unexpected growth. While root cause is still under investigation immediate mitigation steps include:\n1. Traffic Reduction: Temporarily reducing API calls by disabling non-critical integrations or their respective system users to conserve remaining quota.\n2. Quota Increase: Proactively contacting Salesforce to purchase additional, temporary or permanent API quota if architectural changes are not immediately feasible.",
+      "risk_level": "Moderate",
+      "risk_narrative": "Failure to stay within API limits creates an immediate and severe risk to the availability of critical business operations. Exceeding the rolling 24-hour API quota blocks all further inbound requests, which effectively disables core integrations (e.g. with ERP), leading to catastrophic failures of vital business processes like order placement and resulting in direct financial loss.",
+      "audit_procedure": "1. Review the organization's daily API limit and current 24-hour usage in the Salesforce System Overview in Setup.\n2. Verify that a continuous monitoring solution (at minimum Salesforce's native API Usage Notifications) is implemented and active.\n3. Confirm that the monitoring solution is configured to trigger immediate, high-priority alerts at a proactive threshold (e.g. 80% or 90% utilization) before the hard limit is breached. Request evidence (e.g. rule configurations, test alerts) to support this.\n4. Examine the formal, documented incident response plan for API limit breaches. Verify the plan clearly defines:\n- The immediate triage steps to identify the runaway process or application causing the spike.\n- The mandatory, temporary mitigation steps (e.g. disabling non-critical integrations).\n- The process for escalating and requesting a temporary or permanent API quota increase from Salesforce.\n5. Review the history (e.g. for the past 12 months) of any API limit breach or near-breach incidents. Confirm that the response procedure was followed and was effective in mitigating the service disruption.",
+      "remediation_steps": "1. Configure Salesforce's native \"API Usage Notifications\" in Setup and, more critically, integrate API consumption data into an external monitoring solution. Configure high-priority alerts to trigger at a proactive utilization threshold (e.g. 80-90%) before the hard limit is reached.\n2. Establish a formal, high-priority Standard Operating Procedure (SOP) to be executed upon a high-utilization alert. This SOP must clearly define and be rehearsed to:\n- Immediately identify the user, application, or integration responsible for the spike in API consumption.\n- Mandate the immediate, temporary disabling of non-critical, high-volume integrations to conserve remaining quota.\n- Outline the process for proactively requesting a temporary or permanent API quota increase from Salesforce.\n3. Following any API limit breach or near-breach, mandate a post-incident review to analyze the root cause. The outcome should be a plan to re-engineer high-volume integrations for more efficient usage (e.g. using Bulk API or other low-volume methods) to prevent recurrence.\n4. Continuous Monitoring Maintenance: Establish a mandatory, recurring (e.g. quarterly) review process to confirm the ongoing integrity and functionality of the API usage data export to the monitoring platform.",
+      "default_value": "Salesforce provides native API limit and usage data, including basic API Usage Notifications. However, it does not automatically implement the proactive, high-priority alerting (e.g. at 80-90% utilization) required to prevent service disruption. Effective control requires manual configuration of native features and/or integration with a monitoring solution.",
+      "remediation": {
+        "scope": "mechanism"
+      },
+      "task_title_template": "Implement continuous API usage monitoring against Salesforce limits",
+      "sources": [
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "control-metadata/SBS-MON-005.yaml"
+        },
+        {
+          "type": "sbs",
+          "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
+          "upstream_path": "benchmark/event-monitoring.md"
+        }
+      ],
+      "hellomavens_enrichments": {
+        "weight": 2,
+        "owasp": [
+          "A05:2021-Security Misconfiguration",
+          "A09:2021-Security Logging and Monitoring Failures"
+        ],
+        "regulations": {
+          "soc2": ["A1.1", "CC7.2"],
+          "iso27001": ["A.8.6", "A.8.16"]
+        },
+        "pass_narrative": "API consumption is tracked against your daily limit with proactive alerts at 80-90% utilization, so a runaway integration or sudden spike gets triaged before the platform starts blocking calls and breaking core business processes."
       }
     },
     {
@@ -1547,13 +2055,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-OAUTH-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/oauth-security.md"
         }
       ],
@@ -1592,13 +2100,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-OAUTH-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/oauth-security.md"
         }
       ],
@@ -1636,13 +2144,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-OAUTH-003.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/oauth-security.md"
         }
       ],
@@ -1676,13 +2184,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-OAUTH-004.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/oauth-security.md"
         }
       ],
@@ -1718,13 +2226,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-SECCONF-001.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/security-configuration.md"
         }
       ],
@@ -1758,13 +2266,13 @@
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "control-metadata/SBS-SECCONF-002.yaml"
         },
         {
           "type": "sbs",
           "upstream_repo": "Salesforce-Security-Benchmark/docs-site",
-          "upstream_ref": "v0.4.1",
+          "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
           "upstream_path": "benchmark/security-configuration.md"
         }
       ],

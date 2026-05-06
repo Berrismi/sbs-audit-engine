@@ -15,7 +15,7 @@ The current pinned versions are also machine-readable in [`upstream-sources.toml
 
 - **Source:** [github.com/Salesforce-Security-Benchmark/docs-site](https://github.com/Salesforce-Security-Benchmark/docs-site)
 - **License:** [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
-- **Pinned version:** v0.4.1
+- **Pinned commit:** `main` @ `d4304e18e6f3747b04b1a7097b3d03a6036e5a3f` (ahead of latest tagged release `v0.4.1`, which carried 42 controls; the pinned commit carries 54).
 - **What we use:** the 54 control definitions in `control-metadata/SBS-*.yaml`,
   normalized into [`packages/sbs-engine/data/controls.json`](./packages/sbs-engine/data/controls.json).
 - **Per the ShareAlike clause:** our derived `controls.json` is itself licensed
@@ -66,8 +66,9 @@ To be clear about what is _our_ contribution on top of the above:
 - Editorial overrides for SBS controls whose upstream YAML is missing a
   required field, captured in
   [`packages/sbs-engine/data/control-overrides.json`](./packages/sbs-engine/data/control-overrides.json).
-  Currently overrides `SBS-AUTH-004` (upstream YAML omits `risk_level`; we
-  pin to `Critical` based on the control's narrative).
+  Currently empty; the previous `SBS-AUTH-004` override was retired once
+  the markdown-badge fallback in `resolveRiskLevel` landed (the badge
+  declares `Critical` and is the canonical upstream source).
 - The questionnaire question text, "I don't know" inconclusive handling, and
   skip logic.
 - The CLI orchestration (Salesforce auth, SOQL bundle, evidence-bundle
