@@ -122,6 +122,14 @@ export interface ControlEnrichments {
   evaluator?: string;
   /** Path to the remediation playbook markdown (relative to packages/sbs-engine). */
   playbook?: string;
+  /**
+   * One-or-two-sentence customer-facing validation copy describing what
+   * passing this control protects against. ~20-40 words. Inverted
+   * counterpart of the upstream `risk_narrative` — written in second
+   * person, focused on what the customer is doing right rather than
+   * what's at risk. HelloMavens-authored, not upstream SBS.
+   */
+  pass_narrative: string;
 }
 
 /**

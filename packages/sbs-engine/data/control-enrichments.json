@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "description": "HelloMavens-authored mappings from each SBS v0.4.1 control to OWASP Top 10 2021 categories, regulatory citations (HIPAA Security Rule, SOC 2 Trust Services Criteria 2017, ISO 27001:2022 Annex A, GDPR, CCPA), and a `cli_evidence_class` flag (Phase 5 Block E) tagging which controls have a verified CLI evidence path. Merged into hellomavens_enrichments by scripts/sync-sbs.ts. See control-enrichments.RATIONALE.md for the editorial reasoning per category.",
+  "description": "HelloMavens-authored mappings from each SBS v0.4.1 control to OWASP Top 10 2021 categories, regulatory citations (HIPAA Security Rule, SOC 2 Trust Services Criteria 2017, ISO 27001:2022 Annex A, GDPR, CCPA), a `cli_evidence_class` flag (Phase 5 Block E) tagging which controls have a verified CLI evidence path, and a `pass_narrative` (Phase 6 / appendix validation cards) — a 20-40 word customer-facing string describing what passing the control protects against. Merged into hellomavens_enrichments by scripts/sync-sbs.ts. See control-enrichments.RATIONALE.md for the editorial reasoning per category.",
   "sources": {
     "owasp": "OWASP Top 10 2021 — https://owasp.org/Top10/",
     "hipaa": "HIPAA Security Rule, 45 CFR §§164.302-318 — https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
@@ -17,7 +17,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Your permission set model is documented and enforced, so privilege sprawl can't accumulate quietly — every authorization construct conforms to the standard, and access reviews actually have something to compare against."
     },
     "SBS-ACS-002": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -26,7 +27,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Your API-enabled authorizations are tracked with documented justification, so you can see who has programmatic data access at a glance and prove every permission is intentional during audit reviews."
     },
     "SBS-ACS-003": {
       "owasp": [
@@ -39,7 +41,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "This high-risk permission is granted only to documented, justified users, so people can't quietly self-authorize OAuth apps that bypass your Connected App governance and reach data without oversight."
     },
     "SBS-ACS-004": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -48,7 +51,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "cli_primary"
+      "cli_evidence_class": "cli_primary",
+      "pass_narrative": "Your super-admin–equivalent users are documented and tracked, so investigations are faster, access reviews are credible, and orphaned admin accounts can't accumulate quietly behind the scenes."
     },
     "SBS-ACS-005": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -57,7 +61,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "cli_primary"
+      "cli_evidence_class": "cli_primary",
+      "pass_narrative": "Regular users sit on custom profiles, not Salesforce-managed standard ones, so platform updates can't enable new permissions without your approval and least privilege is actually enforceable."
     },
     "SBS-ACS-006": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -66,7 +71,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "This permission, which bypasses API Access Control entirely, is granted only to justified users, so external apps can't get data access without your vetting and allowlisting first."
     },
     "SBS-ACS-007": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -75,7 +81,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.9", "A.5.16", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "You have a current inventory of non-human identities, so automated access can be reviewed, orphaned credentials can be retired, and security incidents involving integrations are actually investigable."
     },
     "SBS-ACS-008": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -84,7 +91,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Non-human identities aren't carrying broad privileges by default, so a compromised API key or OAuth token can't bypass sharing rules or trigger administrative operations org-wide."
     },
     "SBS-ACS-009": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -93,7 +101,8 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Privileged non-human identities have compensating controls layered on top of credentials, so secret leakage isn't a single point of failure for your most sensitive integrations."
     },
     "SBS-ACS-010": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -102,7 +111,8 @@
         "soc2": ["CC6.1", "CC6.2", "CC6.3"],
         "iso27001": ["A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Access is reviewed and recertified on a cadence, so privilege creep can't quietly accumulate from old roles, temporary projects, and forgotten grants — least privilege stays current over time."
     },
     "SBS-ACS-011": {
       "owasp": ["A01:2021-Broken Access Control", "A05:2021-Security Misconfiguration"],
@@ -111,7 +121,8 @@
         "soc2": ["CC6.3", "CC8.1"],
         "iso27001": ["A.5.18", "A.8.3", "A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Access changes go through governed approval and audit, so excessive permissions can't slip in unnoticed and incident investigations have a paper trail to follow."
     },
     "SBS-ACS-012": {
       "owasp": ["A01:2021-Broken Access Control"],
@@ -120,7 +131,8 @@
         "soc2": ["CC6.1"],
         "iso27001": ["A.5.15", "A.8.3"]
       },
-      "cli_evidence_class": "cli_primary"
+      "cli_evidence_class": "cli_primary",
+      "pass_narrative": "Privileged accounts are classified for login-hours restrictions, adding a defense-in-depth layer — so even a compromised credential can't be exploited freely during off-hours when detection is thin."
     },
     "SBS-AUTH-001": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -129,7 +141,8 @@
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "SSO enforcement is on org-wide, so users can't quietly authenticate around centralized identity management — credential-based attacks lose their direct path into your org."
     },
     "SBS-AUTH-002": {
       "owasp": [
@@ -141,7 +154,8 @@
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "SSO bypass exceptions are documented and approved, so off-SSO accounts can't proliferate unnoticed and audit reviews have clean visibility into every authentication exception."
     },
     "SBS-AUTH-003": {
       "owasp": [
@@ -153,7 +167,8 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.17", "A.8.5", "A.8.20"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Profile login IP ranges are scoped, not wide-open, so authentication can't happen from arbitrary locations on the internet — a defense-in-depth layer if a credential ever leaks."
     },
     "SBS-AUTH-004": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -163,7 +178,8 @@
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"],
         "gdpr": ["Article 32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "MFA is enforced for external users with substantial data access, so a stolen password alone can't sign someone in — phishing and credential-stuffing lose their main path to your sensitive data."
     },
     "SBS-CODE-001": {
       "owasp": [
@@ -175,7 +191,8 @@
         "soc2": ["CC7.1", "CC8.1"],
         "iso27001": ["A.8.25", "A.8.28", "A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Every Salesforce code change goes through peer review before deployment, so a single developer — compromised, malicious, or simply mistaken — can't push insecure code into production unilaterally."
     },
     "SBS-CODE-002": {
       "owasp": [
@@ -188,7 +205,8 @@
         "soc2": ["CC7.1", "CC8.1"],
         "iso27001": ["A.8.25", "A.8.28", "A.8.29"]
       },
-      "cli_evidence_class": "cli_corroborating"
+      "cli_evidence_class": "cli_corroborating",
+      "pass_narrative": "Static code analysis runs before every merge, so SOQL injection, insecure data exposure, and improper access control patterns get caught at code-review time instead of in production."
     },
     "SBS-CODE-003": {
       "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
@@ -197,7 +215,8 @@
         "soc2": ["CC7.1", "CC7.2"],
         "iso27001": ["A.8.15", "A.8.16"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Persistent application logging is wired in, so security investigations actually have data to work with — Salesforce's transient debug logs aren't your only forensic surface."
     },
     "SBS-CODE-004": {
       "owasp": [
@@ -211,7 +230,8 @@
         "gdpr": ["Article 32"],
         "ccpa": ["§1798.150"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Sensitive data is kept out of application logs, so a low-privilege account with log access can't extract credentials or PII without tripping the access controls on the source objects."
     },
     "SBS-CPORTAL-001": {
       "owasp": [
@@ -224,7 +244,8 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.8.3", "A.8.26"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Portal Apex methods don't accept user-controlled parameters for record access, so external users can't manipulate inputs to enumerate records they shouldn't see."
     },
     "SBS-CPORTAL-002": {
       "owasp": [
@@ -237,7 +258,8 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Guest users have minimal record access, so unauthenticated traffic can't quietly enumerate organizational data through your customer-portal trust boundary."
     },
     "SBS-DATA-001": {
       "owasp": ["A02:2021-Cryptographic Failures", "A04:2021-Insecure Design"],
@@ -248,7 +270,8 @@
         "gdpr": ["Article 32"],
         "ccpa": ["§1798.100"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "You can detect regulated data in long-text fields, so PII can't accumulate in unknown locations — GDPR Right-to-Erasure and CCPA deletion requests are actually executable when they arrive."
     },
     "SBS-DATA-002": {
       "owasp": ["A04:2021-Insecure Design"],
@@ -258,7 +281,8 @@
         "iso27001": ["A.5.9", "A.5.12", "A.8.10"],
         "gdpr": ["Article 30"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Your inventory of regulated-data fields is current, so you know exactly where personal data lives and can enforce protection, retention, and deletion obligations without scrambling to find it."
     },
     "SBS-DATA-003": {
       "owasp": ["A04:2021-Insecure Design", "A08:2021-Software and Data Integrity Failures"],
@@ -268,7 +292,8 @@
         "iso27001": ["A.5.30", "A.8.13", "A.8.14"],
         "gdpr": ["Article 32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Backups are tested, not just configured, so accidental deletion, malicious destruction, or configuration corruption can be recovered from with confidence rather than hope."
     },
     "SBS-DATA-004": {
       "owasp": [
@@ -281,7 +306,8 @@
         "iso27001": ["A.8.15"],
         "gdpr": ["Article 32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Field history tracking is on for sensitive fields, so unauthorized or accidental changes are detectable, investigatable, and accountable rather than silent."
     },
     "SBS-DEP-001": {
       "owasp": [
@@ -294,7 +320,8 @@
         "soc2": ["CC8.1"],
         "iso27001": ["A.5.15", "A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Metadata changes go through a designated deployment identity, so production changes are attributable and unauthorized direct edits stand out instead of blending into routine admin activity."
     },
     "SBS-DEP-002": {
       "owasp": [
@@ -307,7 +334,8 @@
         "soc2": ["CC8.1"],
         "iso27001": ["A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "You've defined which metadata types are high-risk, so deployment governance has clear boundaries — Apex, auth settings, and outbound connectivity can't be edited directly in production."
     },
     "SBS-DEP-003": {
       "owasp": [
@@ -319,7 +347,8 @@
         "soc2": ["CC7.2", "CC8.1"],
         "iso27001": ["A.8.15", "A.8.16", "A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Unauthorized changes to high-risk metadata trigger alerts, so malicious or accidental drift gets surfaced quickly instead of persisting for weeks before being noticed."
     },
     "SBS-DEP-004": {
       "owasp": [
@@ -331,7 +360,8 @@
         "soc2": ["CC8.1"],
         "iso27001": ["A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Production configuration ties back to a source-controlled approval trail, so 'what changed, when, by whom' is answerable — incident investigation has a real starting point instead of guesswork."
     },
     "SBS-DEP-005": {
       "owasp": [
@@ -345,7 +375,8 @@
         "iso27001": ["A.5.17", "A.8.4", "A.8.28"],
         "gdpr": ["Article 32"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Secret scanning runs on your repos, so hardcoded credentials get caught before they're committed — and the supply-chain path through repository access stays closed to outsiders."
     },
     "SBS-DEP-006": {
       "owasp": ["A07:2021-Identification and Authentication Failures"],
@@ -354,7 +385,8 @@
         "soc2": ["CC6.1"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Your CLI Connected App has token expiration policies, so a stolen laptop's token files don't grant indefinite access to production — the credential exposure window is bounded."
     },
     "SBS-INT-001": {
       "owasp": [
@@ -367,7 +399,8 @@
         "soc2": ["CC6.6", "CC6.7"],
         "iso27001": ["A.5.19", "A.8.20"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Browser extensions accessing Salesforce go through governance, so cloned or malicious extensions can't quietly harvest session tokens or exfiltrate data from authenticated users."
     },
     "SBS-INT-002": {
       "owasp": [
@@ -378,7 +411,8 @@
         "soc2": ["CC6.6"],
         "iso27001": ["A.5.19", "A.5.23", "A.8.20"]
       },
-      "cli_evidence_class": "cli_primary"
+      "cli_evidence_class": "cli_primary",
+      "pass_narrative": "Your Remote Site Settings inventory is documented with justification, so unvetted endpoints can't be authorized for Apex callouts and you know exactly which external services your code talks to."
     },
     "SBS-INT-003": {
       "owasp": [
@@ -391,7 +425,8 @@
         "soc2": ["CC6.6", "CC6.7"],
         "iso27001": ["A.5.19", "A.5.20", "A.8.5", "A.8.20"]
       },
-      "cli_evidence_class": "cli_primary"
+      "cli_evidence_class": "cli_primary",
+      "pass_narrative": "Named Credentials are inventoried with justification, so undocumented integration paths can't quietly connect to insecure endpoints — every external connection is accounted for."
     },
     "SBS-INT-004": {
       "owasp": ["A09:2021-Security Logging and Monitoring Failures"],
@@ -400,7 +435,8 @@
         "soc2": ["CC7.2"],
         "iso27001": ["A.8.15", "A.8.16"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "API Total Usage logs are retained for 30 days, so you have visibility into REST/SOAP/Bulk API activity — anomalous behavior is detectable and incident scope is actually determinable."
     },
     "SBS-OAUTH-001": {
       "owasp": [
@@ -413,7 +449,8 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.5.19", "A.8.5"]
       },
-      "cli_evidence_class": "cli_primary"
+      "cli_evidence_class": "cli_primary",
+      "pass_narrative": "Connected Apps go through formal installation, so security configuration — refresh token lifetimes, session policies, IP restrictions — is enforced by you, not inherited from the external developer."
     },
     "SBS-OAUTH-002": {
       "owasp": [
@@ -425,7 +462,8 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.5.16", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "Connected Apps require explicit profile or permission set access, so a Connected App can't quietly authenticate any user — least-privilege actually applies to OAuth sessions."
     },
     "SBS-OAUTH-003": {
       "owasp": ["A01:2021-Broken Access Control", "A04:2021-Insecure Design"],
@@ -433,7 +471,8 @@
         "soc2": ["CC3.2", "CC6.1"],
         "iso27001": ["A.5.9", "A.5.15", "A.5.19"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "OAuth-enabled Connected Apps are classified by criticality, so risk assessment is anchored — you know which integrations touch sensitive data and where to focus governance and monitoring."
     },
     "SBS-OAUTH-004": {
       "owasp": [
@@ -444,7 +483,8 @@
         "soc2": ["CC9.2"],
         "iso27001": ["A.5.19", "A.5.20", "A.5.21", "A.5.22"]
       },
-      "cli_evidence_class": "questionnaire_only"
+      "cli_evidence_class": "questionnaire_only",
+      "pass_narrative": "High-risk Connected App vendors have documented due diligence on file, so onboarding decisions are informed and contractual obligations match the access being granted."
     },
     "SBS-SECCONF-001": {
       "owasp": ["A05:2021-Security Misconfiguration"],
@@ -453,7 +493,8 @@
         "soc2": ["CC7.1"],
         "iso27001": ["A.5.36", "A.8.9"]
       },
-      "cli_evidence_class": "cli_corroborating"
+      "cli_evidence_class": "cli_corroborating",
+      "pass_narrative": "You have a Health Check baseline, so configuration drift is actually detectable — you can tell when settings diverge from intentional decisions versus accumulated neglect."
     },
     "SBS-SECCONF-002": {
       "owasp": ["A05:2021-Security Misconfiguration"],
@@ -462,7 +503,8 @@
         "soc2": ["CC4.1", "CC7.1"],
         "iso27001": ["A.5.36", "A.8.9"]
       },
-      "cli_evidence_class": "cli_corroborating"
+      "cli_evidence_class": "cli_corroborating",
+      "pass_narrative": "Health Check deviations get reviewed and remediated, so configuration drift doesn't quietly weaken your security posture between audits — your baseline stays meaningful over time."
     }
   }
 }
