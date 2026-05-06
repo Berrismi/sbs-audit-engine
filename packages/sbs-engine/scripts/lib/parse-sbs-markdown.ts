@@ -128,6 +128,17 @@ function splitIntoSections(lines: string[]): Map<SectionName, string> {
   return out;
 }
 
+// Section aliases for upstream variation. Foundational controls in
+// `benchmark/foundations.md` (SBS-FDNS-*) frame the risk discussion as
+// "Rationale" rather than "Risk" because the controls are about
+// foundational governance posture rather than specific threat scenarios.
+// We bucket Rationale prose into the 'Risk' section so risk_narrative
+// gets populated; risk_level still falls back to YAML for these
+// (foundations.md doesn't carry a Risk badge).
+const SECTION_ALIASES: Record<string, SectionName> = {
+  Rationale: 'Risk',
+};
+
 function matchSectionOpener(line: string): { section: SectionName; inline: string } | null {
   for (const name of SECTION_NAMES) {
     // Accept both `**Section:**` (typical) and `**Section**:` (upstream
@@ -142,6 +153,18 @@ function matchSectionOpener(line: string): { section: SectionName; inline: strin
     const idxOutside = line.indexOf(outside);
     if (idxOutside !== -1) {
       return { section: name, inline: line.slice(idxOutside + outside.length).trim() };
+    }
+  }
+  for (const [alias, section] of Object.entries(SECTION_ALIASES)) {
+    const inside = `**${alias}:**`;
+    const outside = `**${alias}**:`;
+    const idxInside = line.indexOf(inside);
+    if (idxInside !== -1) {
+      return { section, inline: line.slice(idxInside + inside.length).trim() };
+    }
+    const idxOutside = line.indexOf(outside);
+    if (idxOutside !== -1) {
+      return { section, inline: line.slice(idxOutside + outside.length).trim() };
     }
   }
   return null;

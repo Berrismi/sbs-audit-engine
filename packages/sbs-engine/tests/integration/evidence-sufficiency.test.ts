@@ -85,14 +85,14 @@ describe('evidence_sufficiency on ScoredReport', () => {
   });
 
   it('exactly 50% inconclusive reports sufficient (strict greater-than threshold)', () => {
-    // 42 controls; pick exactly 21 to be idk (50.0%).
+    // Pick exactly half the library to be idk for a clean 50.0% boundary case.
     const totalControls = library.controls.length;
     const targetIdkCount = Math.floor(totalControls / 2);
     const bundle = bundleFor((_id, i) =>
       i < targetIdkCount ? { kind: 'idk' } : { kind: 'boolean', value: true },
     );
     const report = score(bundle);
-    // 42 / 2 = 21 inconclusive of 42 = 50.0 exactly.
+    // floor(N/2) / N is at most 50.0% (exactly 50% for even N).
     expect(report.inconclusive_percent).toBeLessThanOrEqual(50);
     expect(report.evidence_sufficiency).toBe('sufficient');
   });
@@ -102,8 +102,10 @@ describe('evidence_sufficiency on ScoredReport', () => {
     // passes from the questionnaire fallback. The engine still computes a
     // grade and score (for telemetry), but evidence_sufficiency flags the
     // headline shouldn't claim them.
+    const totalControls = library.controls.length;
+    const passCount = 1; // single pass amongst N-1 idk → ~98% inconclusive
     const bundle = bundleFor((_id, i) =>
-      i < 41 ? { kind: 'idk' } : { kind: 'boolean', value: true },
+      i < totalControls - passCount ? { kind: 'idk' } : { kind: 'boolean', value: true },
     );
     const report = score(bundle);
     expect(report.inconclusive_percent).toBeGreaterThan(90);

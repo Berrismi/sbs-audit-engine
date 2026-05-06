@@ -113,8 +113,10 @@ To be transparent about what is built vs. borrowed:
 
 - **Borrowed (CC BY-SA 4.0):** the 54 control definitions from the
   [Security Benchmark for Salesforce](https://github.com/Salesforce-Security-Benchmark/docs-site).
-  We pin to a specific upstream version (currently v0.4.1) and re-publish a
-  normalized `controls.json` derivative under the same CC BY-SA 4.0 license.
+  We pin to a specific upstream commit (currently `main` @ `d4304e1`,
+  ahead of latest tagged release `v0.4.1` which carried 42 controls) and
+  re-publish a normalized `controls.json` derivative under the same
+  CC BY-SA 4.0 license.
 - **Borrowed (BSD-3-Clause):** [Salesforce Code Analyzer](https://github.com/forcedotcom/code-analyzer)
   for evidence collection (PMD, ESLint, Flow, RetireJS, SFGE, Regex engines
   bundled). Used in Phase 5 as a child process; not redistributed.
@@ -141,19 +143,21 @@ see Migration above.)
 
 What's shipping today:
 
-- All 42 control evaluators (questionnaire-evidence path), each backed by
+- All 54 control evaluators (questionnaire-evidence path), each backed by
   ≥4 unit tests covering pass/fail/idk/no-evidence.
 - `score(EvidenceBundle): ScoredReport` top-level entrypoint with category
   - overall scoring per spec §8 (weighted by each category's Critical+High
     control share) and risk grade A–F with the critical-fail-caps-at-C rule.
 - Three integration fixtures (perfect-org, disaster-org, mixed-with-idk)
-  proving the math end-to-end. 260 tests total.
+  proving the math end-to-end. 350+ tests total.
 - OWASP Top 10 2021 + HIPAA Security Rule + SOC 2 TSC + ISO 27001:2022
   Annex A + GDPR + CCPA mappings on every control via
   `data/control-enrichments.json` (HelloMavens-authored, MIT, with per-
   category rationale in `control-enrichments.RATIONALE.md`).
 - HelloMavens-authored editorial overrides for upstream YAML gaps
-  (`data/control-overrides.json` — currently pins SBS-AUTH-004 to Critical).
+  (`data/control-overrides.json` — currently empty; SBS-AUTH-004's
+  Critical risk_level is now sourced from the upstream markdown badge
+  via the parser's badge fallback).
 - Workspace scaffolding (pnpm workspaces, Node 24.15 LTS, TypeScript strict).
 - Quality gates verified green in CI (Husky, lint-staged, commitlint,
   gitleaks, ESLint, Prettier, Vitest with coverage thresholds, Semgrep,
@@ -161,10 +165,10 @@ What's shipping today:
 - `main` branch is protected: PRs required, all status checks must pass,
   branches must be up to date, no force-push, no deletion, conversations
   must resolve.
-- `sync-sbs.ts` fetcher pulls the 42 control YAMLs from the pinned SBS
-  upstream tag (v0.4.1), merges in HM overrides + enrichments, and
-  normalizes them into `controls.json`. Cron-driven `upstream-sync.yml`
-  reports drift weekly.
+- `sync-sbs.ts` fetcher pulls the 54 control YAMLs from the pinned SBS
+  upstream commit (`main` @ `d4304e1`), merges in HM overrides +
+  enrichments, and normalizes them into `controls.json`. Cron-driven
+  `upstream-sync.yml` reports drift weekly.
 
 What's stubbed or in flight:
 
@@ -175,8 +179,9 @@ What's stubbed or in flight:
   removed and `packages/plugin-security-review/` will replace it).
 - The custom HelloMavens PMD ruleset (placeholder + `rulesets/TODO.md`
   documents how to swap one in later via Salesforce Code Analyzer).
-- Note: 42 controls today, not 54. Spec assumed SBS 1.0; current upstream
-  is v0.4.1. Count grows as SBS approaches 1.0.
+- Note: 54 controls today, mirroring SBS upstream `main` (sha
+  `d4304e1`), which is ahead of latest tagged release `v0.4.1` (42
+  controls). Re-pin to a tagged release once SBS publishes v0.5.0 / v1.0.
 
 ## Local development
 

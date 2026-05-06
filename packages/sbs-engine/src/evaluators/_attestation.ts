@@ -3,7 +3,7 @@
 //
 // Internal helper for boolean-attestation evaluators (Phase 3).
 //
-// Every SBS v0.4.1 questionnaire question for a scored control is `kind:
+// Every SBS questionnaire question for a scored control is `kind:
 // 'boolean'` (verified at registry construction). The pattern is identical
 // for all of them: read the questionnaire answer, map Yes/No/IDK to
 // pass/fail/inconclusive, and degrade gracefully when no evidence is

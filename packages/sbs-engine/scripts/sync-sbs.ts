@@ -25,6 +25,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseToml } from 'smol-toml';
 import { parse as parseYaml } from 'yaml';
+import packageJson from '../package.json' with { type: 'json' };
 import type {
   CategoryPrefix,
   Control,
@@ -214,7 +215,10 @@ const CATEGORY_TO_MARKDOWN: Record<CategoryPrefix, string> = {
   CPORTAL: 'customer-portals.md',
   DATA: 'data-security.md',
   DEP: 'deployments.md',
+  FDNS: 'foundations.md',
+  FILE: 'file-security.md',
   INT: 'integrations.md',
+  MON: 'event-monitoring.md',
   OAUTH: 'oauth-security.md',
   SECCONF: 'security-configuration.md',
 };
@@ -347,7 +351,7 @@ async function main(): Promise<void> {
     upstream_ref: sbs.ref,
     upstream_sha: commit.sha,
     fetched_at: new Date().toISOString(),
-    engine_version: '0.0.0-dev',
+    engine_version: packageJson.version,
     controls,
   };
 

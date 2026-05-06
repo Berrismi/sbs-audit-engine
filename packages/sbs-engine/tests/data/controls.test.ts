@@ -19,7 +19,7 @@ const library = controlsJson as unknown as ControlLibrary;
 
 const ALLOWED_RISK_LEVELS: readonly RiskLevel[] = ['Critical', 'High', 'Moderate'];
 const ALLOWED_WEIGHTS = [2, 3, 5];
-const EXPECTED_CONTROL_COUNT = 42; // SBS v0.4.1
+const EXPECTED_CONTROL_COUNT = 54; // SBS upstream main @ d4304e1
 
 describe('controls.json integrity', () => {
   it(`contains the expected number of controls (${EXPECTED_CONTROL_COUNT})`, () => {

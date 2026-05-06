@@ -4,7 +4,7 @@
 // Public entrypoint for @hellomavens/security-review-for-salesforce-engine.
 //
 // Phase 3 ships:
-//   - All 42 control evaluators (questionnaire-evidence path)
+//   - All 54 control evaluators (questionnaire-evidence path)
 //   - score() — top-level scoring entrypoint (EvidenceBundle → ScoredReport)
 //   - Category + overall scoring math; risk-grade A/B/C/D/F with the
 //     "any critical fail caps grade at C" rule

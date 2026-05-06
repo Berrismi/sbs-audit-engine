@@ -19,8 +19,9 @@ export type RiskLevel = 'Critical' | 'High' | 'Moderate';
 export type RemediationScope = 'org' | 'entity' | 'mechanism' | 'inventory';
 
 /**
- * The 9 SBS category prefixes present at v0.4.1. May expand as SBS approaches 1.0
- * (FOUNDATIONS, FILE, MON expected to land in later versions).
+ * SBS category prefixes. 12 categories at upstream main sha d4304e1
+ * (54 controls). Source of truth is the per-control YAML id prefix in
+ * upstream `control-metadata/SBS-{CAT}-{NUM}.yaml`.
  */
 export type CategoryPrefix =
   | 'ACS'
@@ -29,7 +30,10 @@ export type CategoryPrefix =
   | 'CPORTAL'
   | 'DATA'
   | 'DEP'
+  | 'FDNS'
+  | 'FILE'
   | 'INT'
+  | 'MON'
   | 'OAUTH'
   | 'SECCONF';
 

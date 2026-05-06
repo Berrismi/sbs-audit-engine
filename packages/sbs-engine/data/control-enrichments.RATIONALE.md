@@ -5,9 +5,10 @@ SPDX-License-Identifier: MIT
 
 # Control enrichment rationale
 
-`control-enrichments.json` is HelloMavens-authored. It maps each SBS v0.4.1
-control to OWASP Top 10 2021 categories and regulatory citations
-(HIPAA Security Rule, SOC 2 TSC 2017, ISO 27001:2022 Annex A, GDPR, CCPA).
+`control-enrichments.json` is HelloMavens-authored. It maps each SBS control
+(54 at upstream main @ d4304e1) to OWASP Top 10 2021 categories and
+regulatory citations (HIPAA Security Rule, SOC 2 TSC 2017, ISO 27001:2022
+Annex A, GDPR, CCPA).
 
 This file documents the editorial reasoning. Per spec §12, these mappings
 are the single biggest source of "wow" in the buyer-facing report —
@@ -102,6 +103,27 @@ ISO A.5.15 + A.8.3.
 CPORTAL-001 adds ISO A.8.26 (Application security requirements)
 because it's specifically about portal-Apex implementation patterns.
 
+**Outliers (post-2026-05-06 bump to main @ d4304e1):**
+
+- **CPORTAL-003** (Inventory portal-exposed Apex/Flows) reframes from
+  access enforcement to **asset governance** — leans on OWASP A04 + A05 +
+  A09 (Security Logging and Monitoring Failures) since the control is
+  about visibility into the externally-callable surface, and on
+  ISO A.5.9 (asset inventory) + SOC 2 CC3.2 (risk identification).
+- **CPORTAL-004** (Param-based record access in portal-exposed Flows) is
+  the Flow-runtime sibling of CPORTAL-001 — same IDOR-class problem in
+  Autolaunched Flows that run in system context by default. Mirrors
+  CPORTAL-001's full reg set (HIPAA 164.308(a)(4) + 164.312(a),
+  SOC 2 CC6.1 + CC6.6, ISO A.5.15 + A.8.3 + A.8.26) plus GDPR Article 32
+  and CCPA §1798.150 because the upstream risk narrative explicitly
+  flags personal data exfiltration.
+- **CPORTAL-005** (Pen testing) flips entirely to design-validation —
+  OWASP A04 + A05; SOC 2 CC4.1 (monitoring) + CC7.1; ISO A.8.8
+  (technical vulnerabilities) + A.8.29 (security testing); GDPR Article
+  32 (regular testing of effectiveness, explicit in the regulation
+  text). No HIPAA — the upstream YAML and badges don't connect this
+  process control to specific HIPAA citations.
+
 ### DATA — Data Protection
 
 Baseline varies by control because each control covers a distinct
@@ -109,6 +131,46 @@ aspect (detection, inventory, backup, history). See per-control
 entries. Common citations: HIPAA 164.310(d), SOC 2 CC6.1+CC6.7+A1.x,
 ISO A.5.12 (classification), A.8.10 (information deletion), A.8.12
 (DLP), A.8.13 (backup), GDPR Article 32 universally.
+
+### FDNS — Foundations
+
+**Baseline:** OWASP A04 + A05 — system-of-record is governance
+scaffolding, not access enforcement; HIPAA 164.308(a)(8) Evaluation +
+164.316(b) Documentation; SOC 2 CC1.4 (commitment to competence) +
+CC2.2 (internal communication) + CC4.1 (monitoring activities); ISO
+A.5.1 (policies) + A.5.36 (compliance) + A.5.37 (documented operating
+procedures); GDPR Article 5(2) (accountability principle — explicitly
+about being able to demonstrate compliance, which is exactly what a
+centralized SoR enables).
+
+Currently single-control category — the baseline is its own outlier.
+
+### FILE — File / Content Security
+
+**Baseline:** OWASP A01 + A04 — Public Content links are an access
+control surface external to standard Salesforce sharing; SOC 2 CC6.1 +
+CC6.6 (boundary protection); ISO A.5.10 (acceptable use of
+information) + A.5.13 (labelling of information) + A.8.12 (data leakage
+prevention); GDPR Article 32 across the board; CCPA §1798.100
+(consumer right of access — sloppy public links can leak personal
+information about California residents).
+
+**Outliers:**
+
+- **FILE-001** (Expiry dates) doesn't pull HIPAA — the upstream badges
+  don't claim HIPAA scope for the expiry-only control; expiry without
+  password is a content-lifetime concern, not an authentication one.
+  Picks up GDPR Article 5(1)(e) (storage limitation) explicitly.
+- **FILE-002** (Passwords on sensitive links) picks up A07
+  (Identification and Authentication Failures) on top of the baseline
+  because password protection is fundamentally an auth layer, plus the
+  full HIPAA Security Rule access-control set (164.308(a)(4) +
+  164.312(a)(1) + 164.312(a)(2)(iv) — encryption/decryption is the
+  closest HIPAA equivalent to "password-protected link") + SOC 2 CC6.7
+  (data-in-transit handling).
+- **FILE-003** (Periodic review) leans on accountability — adds GDPR
+  Article 5(2) to the baseline because periodic-review is exactly the
+  "demonstrate compliance" practice the article requires.
 
 ### DEP — Deployments / Change Management
 
@@ -143,6 +205,35 @@ different way:
 - **INT-003** (named credentials) — A05 + A07 + A08; credentials
   storage is auth-adjacent.
 - **INT-004** (event log retention) — A09 only; pure logging control.
+
+### MON — Monitoring / Detection
+
+**Baseline:** OWASP A09 (Security Logging and Monitoring Failures)
+exclusively — every MON control is fundamentally about whether the
+right telemetry exists and is reviewed. HIPAA 164.308(a)(1)(ii)(D)
+(information system activity review) + 164.312(b) (audit controls);
+SOC 2 CC7.2 (system monitoring) + CC7.3 (incident detection); ISO
+A.8.15 (logging) + A.8.16 (monitoring activities); GDPR Article 32
+universally (security-of-processing requires being able to detect
+breaches in time to comply with 72-hour notification).
+
+**Outliers:**
+
+- **MON-002** (Retention) adds HIPAA 164.316(b)(2)(i) (6-year retention)
+  because the control is specifically about _retention duration_ and
+  the HIPAA reg is the most-cited longest-retention floor in the
+  US health-data landscape.
+- **MON-003** (Suspicious logins) and **MON-004** (Suspicious API)
+  pick up CCPA §1798.100 because the upstream risk narrative
+  explicitly calls out unauthorized access to personal information
+  via these post-authentication channels.
+- **MON-005** (API limits) is closer to **availability/operations**
+  than detection — A05 (misconfiguration of monitoring threshold) +
+  A09; SOC 2 A1.1 (capacity management) + CC7.2; ISO A.8.6 (capacity
+  management) + A.8.16; no HIPAA / GDPR / CCPA — quota exhaustion is
+  an availability concern not a confidentiality/integrity one in the
+  primary risk narrative, and personal-data implications are
+  derivative not direct.
 
 ### OAUTH — Connected Apps
 
