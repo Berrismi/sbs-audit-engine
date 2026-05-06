@@ -53,6 +53,7 @@
 //   - SBS-ACS-005   Active users on standard profiles (custom-profile policy)
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
 //   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
+//   - SBS-FILE-002  ContentDistribution rows without password (sensitive-link auth)
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
 //   - SBS-INT-003   Named Credentials inventory
 //   - SBS-OAUTH-001 Connected Apps without managed-package namespace (tooling, field-gated)
@@ -198,6 +199,30 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     label: 'Public Content links lacking expiry dates',
     soql: 'SELECT Id, PreferencesExpires FROM ContentDistribution WHERE PreferencesExpires = false',
     appliesWhen: fieldsExist('ContentDistribution', ['Id', 'PreferencesExpires']),
+  },
+
+  // SBS-FILE-002 — Require Passwords on Public Content Links for Sensitive
+  // Content. Same surface as FILE-001 (ContentDistribution); different signal:
+  // `Password = null` rows are Public Content links a recipient can open with
+  // the URL alone, no auth layer in front. Audit procedure asks the consultant
+  // to verify that links to *sensitive* content are password-protected — but
+  // "is this content sensitive?" is org-level data classification (process),
+  // not a platform field. So this query enumerates the WHO (links lacking a
+  // password); the questionnaire still adjudicates sensitivity. Classification
+  // is `cli_corroborating`, not `cli_primary` — same shape as INT-002 /
+  // INT-003.
+  //
+  // Edition gate: same `fieldsExist` pattern as FILE-001. ContentDistribution
+  // is gated; `Password` is in WHERE so it MUST be in the gate even though
+  // we don't SELECT it. ContentDocumentId is intentionally NOT in the SELECT
+  // — same privacy posture as FILE-001: count + flag, never surface which
+  // file each non-password-protected link points to.
+  {
+    id: 'file-002-content-distributions-without-passwords',
+    controlIds: ['SBS-FILE-002'],
+    label: 'Public Content links lacking password protection',
+    soql: 'SELECT Id FROM ContentDistribution WHERE Password = null',
+    appliesWhen: fieldsExist('ContentDistribution', ['Id', 'Password']),
   },
 
   // SBS-OAUTH-001 — Require Formal Installation of Connected Apps.
