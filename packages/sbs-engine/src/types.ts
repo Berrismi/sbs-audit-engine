@@ -162,6 +162,7 @@ export type EvidenceSource =
   | 'soql'
   | 'code_analyzer'
   | 'health_check_api'
+  | 'limits_rest_api'
   | 'metadata_api';
 
 /**
@@ -182,6 +183,17 @@ export type Evidence =
     }
   | { source: 'code_analyzer'; engine: string; findings: CodeAnalyzerFinding[] }
   | { source: 'health_check_api'; risk_score: number; high_risk: HealthCheckSetting[] }
+  | {
+      source: 'limits_rest_api';
+      /** Salesforce REST API version used (e.g., '60.0'). The endpoint URL
+       * embeds it; preserved for observability + reproducibility. */
+      api_version: string;
+      /** Flat map of limit name → { max, remaining } as returned by
+       * `GET /services/data/v{N}/limits`. Examples: `DailyApiRequests`,
+       * `DailyBulkApiBatches`, `HourlyAsyncReportRuns`. Values are non-negative
+       * integers; the engine's evaluators pick the entries they care about. */
+      limits: Record<string, { max: number; remaining: number }>;
+    }
   | { source: 'metadata_api'; type: string; records: Record<string, unknown>[] };
 
 export type QuestionnaireAnswer =

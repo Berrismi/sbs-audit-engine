@@ -29,6 +29,12 @@ export interface ConnectionLike {
     query(soql: string): Promise<SoqlQueryResponse>;
     describeSObject?(name: string): Promise<DescribeSObjectResult>;
   };
+  /** Issue a REST GET against a Salesforce path (e.g., '/services/data/v60.0/limits').
+   * Returns parsed JSON. Optional in the structural type so SOQL-only tests
+   * don't have to provide it; the real @salesforce/core Connection always
+   * has it (delegates to jsforce). Used by the limits-rest-api evidence
+   * source. */
+  request?<T = unknown>(url: string): Promise<T>;
 }
 
 /**
@@ -128,7 +134,7 @@ export interface CollectEvidenceOptions {
   /** Restrict which evidence sources to collect. Defaults to all available
    * sources. SOQL + Health Check API run with just a Connection; Code
    * Analyzer also requires the `codeAnalyzer` option to be set. */
-  onlySources?: readonly ('soql' | 'health_check_api' | 'code_analyzer')[];
+  onlySources?: readonly ('soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api')[];
   /** Subscribe to per-query lifecycle events. */
   onProgress?: ProgressListener;
   /** Override the default SOQL query bundle (mainly for tests). */

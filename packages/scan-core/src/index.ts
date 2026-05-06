@@ -14,6 +14,7 @@ import type { EvidenceBundle } from '@hellomavens/security-review-for-salesforce
 import { assembleEvidenceBundle } from './assemble';
 import { runCodeAnalyzer, type CodeAnalyzerExecution } from './code-analyzer/runner';
 import { fetchHealthCheck, type HealthCheckResult } from './health-check/client';
+import { fetchLimits, type LimitsResult } from './limits/client';
 import { executeSoqlBundle } from './soql/executor';
 import { DEFAULT_SOQL_QUERIES } from './soql/queries';
 import type { CollectEvidenceOptions, QueryResult } from './types';
@@ -23,14 +24,17 @@ export interface ScanResult {
   queryResults: readonly QueryResult[];
   healthCheck?: HealthCheckResult;
   codeAnalyzer?: CodeAnalyzerExecution;
+  limits?: LimitsResult;
 }
 
 export async function collectEvidence(opts: CollectEvidenceOptions): Promise<ScanResult> {
-  const sourceAllowed = (source: 'soql' | 'health_check_api' | 'code_analyzer'): boolean =>
-    !opts.onlySources || opts.onlySources.includes(source);
+  const sourceAllowed = (
+    source: 'soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api',
+  ): boolean => !opts.onlySources || opts.onlySources.includes(source);
 
   let queryResults: QueryResult[] = [];
   let healthCheck: HealthCheckResult | undefined;
+  let limits: LimitsResult | undefined;
 
   if (sourceAllowed('soql')) {
     const queries = opts.soqlQueries ?? DEFAULT_SOQL_QUERIES;
@@ -39,6 +43,10 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
 
   if (sourceAllowed('health_check_api')) {
     healthCheck = await fetchHealthCheck(opts.connection);
+  }
+
+  if (sourceAllowed('limits_rest_api')) {
+    limits = await fetchLimits(opts.connection);
   }
 
   let codeAnalyzer: CodeAnalyzerExecution | undefined;
@@ -51,6 +59,7 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     queryResults,
     ...(healthCheck && { healthCheck }),
     ...(codeAnalyzer && { codeAnalyzer }),
+    ...(limits && { limits }),
   });
 
   return {
@@ -58,6 +67,7 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     queryResults,
     ...(healthCheck && { healthCheck }),
     ...(codeAnalyzer && { codeAnalyzer }),
+    ...(limits && { limits }),
   };
 }
 
@@ -85,3 +95,4 @@ export {
 export { makeExecaCodeAnalyzerSpawner } from './code-analyzer/spawner';
 export { makeNodeTmpdirManager } from './code-analyzer/tmpdir';
 export { parseCodeAnalyzerOutput } from './code-analyzer/parse';
+export { fetchLimits, type LimitEntry, type LimitsResult } from './limits/client';

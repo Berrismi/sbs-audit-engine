@@ -100,9 +100,10 @@ consultant credentials.
     const subjectInput = flags['client-email'] ?? alias;
     const subjectId = createHash('sha256').update(subjectInput).digest('hex').slice(0, 32);
 
-    const onlySources: ('soql' | 'health_check_api' | 'code_analyzer')[] = [
+    const onlySources: ('soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api')[] = [
       'soql',
       'health_check_api',
+      'limits_rest_api',
     ];
     if (flags['include-code-analyzer']) onlySources.push('code_analyzer');
 

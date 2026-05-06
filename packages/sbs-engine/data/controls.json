@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-06T19:04:33.194Z",
-  "engine_version": "0.0.0-alpha.12",
+  "fetched_at": "2026-05-06T21:43:00.475Z",
+  "engine_version": "0.0.0-alpha.13",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -2079,7 +2079,7 @@
           "soc2": ["A1.1", "CC7.2"],
           "iso27001": ["A.8.6", "A.8.16"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "API consumption is tracked against your daily limit with proactive alerts at 80-90% utilization, so a runaway integration or sudden spike gets triaged before the platform starts blocking calls and breaking core business processes."
       }
     },

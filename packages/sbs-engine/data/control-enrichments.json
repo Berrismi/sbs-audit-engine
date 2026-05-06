@@ -650,7 +650,7 @@
         "soc2": ["A1.1", "CC7.2"],
         "iso27001": ["A.8.6", "A.8.16"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "API consumption is tracked against your daily limit with proactive alerts at 80-90% utilization, so a runaway integration or sudden spike gets triaged before the platform starts blocking calls and breaking core business processes."
     }
   }

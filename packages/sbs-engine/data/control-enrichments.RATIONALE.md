@@ -254,6 +254,18 @@ breaches in time to comply with 72-hour notification).
   an availability concern not a confidentiality/integrity one in the
   primary risk narrative, and personal-data implications are
   derivative not direct.
+  **CLI evidence:** classified `cli_corroborating` as of engine
+  alpha.13 via the Salesforce Limits REST API
+  (`GET /services/data/v60.0/limits`). The
+  `corroboratingLimitsApiEvaluator` factory surfaces the
+  `DailyApiRequests` utilization snapshot (consumed / max + %
+  utilized); the questionnaire still adjudicates whether continuous
+  monitoring + proactive alerting is in place at 80–90% utilization,
+  and whether a documented incident-response plan exists. Audit
+  procedure step 1 ("review the daily API limit and current usage")
+  is now CLI-verified; steps 2–5 remain questionnaire territory. New
+  `Evidence` variant `limits_rest_api` shipped in this PR for the
+  engine type system.
 
 ### OAUTH — Connected Apps
 
