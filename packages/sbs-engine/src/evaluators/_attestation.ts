@@ -16,7 +16,7 @@
 // Underscore prefix => not exported through the package index. Per-control
 // files are the public surface.
 
-import type { Evaluator, Evidence, EvaluatorResult } from '../types';
+import type { Evaluator, Evidence, EvaluatorResult, EvidenceSource } from '../types';
 
 export interface AttestationConfig {
   /** Questionnaire question id this evaluator consumes (e.g., 'Q-ACS-001'). */
@@ -150,212 +150,116 @@ export function cliAttestationEvaluator(config: CliAttestationConfig): Evaluator
 }
 
 // ---------------------------------------------------------------------------
-// Corroborating Health Check evaluator (Phase 5 Block E.2).
+// Corroborating evaluator family (Phase 5 — Blocks E.2 / E.3 / alpha.13).
 //
-// For controls classified `cli_corroborating`: questionnaire decides the
-// pass/fail verdict, but Health Check evidence raises confidence + surfaces
-// observations alongside. Used by SECCONF-001 and SECCONF-002 where the
-// underlying control is process-shaped (deliberate baseline selection,
-// repeatable review cadence) and Health Check API data corroborates without
-// being decisive.
+// For controls classified `cli_corroborating`: the questionnaire decides the
+// pass/fail verdict, but a CLI-collected evidence source (Health Check API,
+// Code Analyzer, Limits REST API, ...) raises confidence and surfaces
+// observations alongside. Used by SECCONF-001/002 (HC), CODE-002 (CA), and
+// MON-005 (Limits).
+//
+// Behavior across all corroborating sources is identical and parameterized
+// by `source` + `observe` only:
+// - Both questionnaire + CLI present: questionnaire verdict, confidence
+//   bumps to 'high' (CLI corroborates), findings include both.
+// - CLI only: inconclusive+high with observations + a prompt to gather
+//   questionnaire input.
+// - Questionnaire only: standard low-confidence attestation result.
+// - Neither: standard no-evidence inconclusive.
+//
+// History: through alpha.12 this lived as 3 nearly-identical hand-rolled
+// helpers. alpha.14 collapsed them into the generic
+// `corroboratingEvaluator<S>` below. The 3 source-specific wrappers are kept
+// as thin convenience functions so call-sites and the public API surface
+// stay unchanged.
 // ---------------------------------------------------------------------------
 
+/**
+ * EvidenceSource values that the corroborating helper supports. Excludes
+ * `'questionnaire'` (it's the fallback, not a corroborator) and `'soql'`
+ * (SOQL evidence has the pass/fail/inconclusive shape handled by
+ * `cliAttestationEvaluator`, not the observe-only shape here).
+ */
+export type CorroboratingSource = Exclude<EvidenceSource, 'questionnaire' | 'soql'>;
+
+/** Generic config for the corroborating helper. The `observe` callback's
+ * evidence parameter is narrowed to the chosen source via discriminated-union
+ * `Extract`. */
+export interface CorroboratingConfig<S extends CorroboratingSource> extends AttestationConfig {
+  source: S;
+  observe: (evidence: Extract<Evidence, { source: S }>) => readonly string[];
+}
+
+/**
+ * Generic corroborating-evidence evaluator. Source-specific wrappers below
+ * are thin delegations to this. New cli_corroborating controls can either
+ * call this directly (passing `source` + `observe`) or add a wrapper if
+ * call-site ergonomics matter.
+ */
+export function corroboratingEvaluator<S extends CorroboratingSource>(
+  config: CorroboratingConfig<S>,
+): Evaluator {
+  return (input) => {
+    const { evidence } = input;
+    const found = evidence.find(
+      (e): e is Extract<Evidence, { source: S }> => e.source === config.source,
+    );
+
+    if (found) {
+      const observations = config.observe(found);
+      const baseResult = attestationEvaluator(config)(input);
+
+      if (baseResult.evidence_used.includes('questionnaire')) {
+        return {
+          status: baseResult.status,
+          confidence: 'high',
+          evidence_used: ['questionnaire', config.source],
+          findings: [...baseResult.findings, ...observations],
+        };
+      }
+
+      return {
+        status: 'inconclusive',
+        confidence: 'high',
+        evidence_used: [config.source],
+        findings: [
+          ...observations,
+          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
+        ],
+      };
+    }
+
+    return attestationEvaluator(config)(input);
+  };
+}
+
+// Source-specific wrapper configs: same as the generic but with `source`
+// pinned to the specific literal so callers get a sharper observe signature.
+
 export interface CorroboratingHealthCheckConfig extends AttestationConfig {
-  /** Pure function: given the health_check_api Evidence, return human-readable
-   * observation strings to append to findings. Never throws. */
   observe: (evidence: Extract<Evidence, { source: 'health_check_api' }>) => readonly string[];
 }
 
-/**
- * Build an evaluator where Health Check evidence corroborates (not overrides)
- * the questionnaire verdict.
- *
- * Behavior:
- * - Both questionnaire + HC present: questionnaire decides verdict, confidence
- *   bumps to 'high' (HC corroborates), findings include both.
- * - HC only: returns inconclusive+high with observations, prompting the
- *   consultant to gather questionnaire input.
- * - Questionnaire only: standard low-confidence attestation result.
- * - Neither: standard no-evidence inconclusive.
- */
 export function corroboratingHealthCheckEvaluator(
   config: CorroboratingHealthCheckConfig,
 ): Evaluator {
-  return (input) => {
-    const { evidence } = input;
-    const hc = evidence.find(
-      (e): e is Extract<Evidence, { source: 'health_check_api' }> =>
-        e.source === 'health_check_api',
-    );
-
-    if (hc) {
-      const observations = config.observe(hc);
-      const baseResult = attestationEvaluator(config)(input);
-
-      if (baseResult.evidence_used.includes('questionnaire')) {
-        // Both present: questionnaire verdict, high confidence, combined findings.
-        return {
-          status: baseResult.status,
-          confidence: 'high',
-          evidence_used: ['questionnaire', 'health_check_api'],
-          findings: [...baseResult.findings, ...observations],
-        };
-      }
-
-      // HC only: inconclusive verdict but high confidence in the observation.
-      return {
-        status: 'inconclusive',
-        confidence: 'high',
-        evidence_used: ['health_check_api'],
-        findings: [
-          ...observations,
-          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
-        ],
-      };
-    }
-
-    // No HC: fall through to standard attestation behavior.
-    return attestationEvaluator(config)(input);
-  };
+  return corroboratingEvaluator<'health_check_api'>({ ...config, source: 'health_check_api' });
 }
 
-// ---------------------------------------------------------------------------
-// Corroborating Code Analyzer evaluator (Phase 5 Block E.3).
-//
-// For controls where Code Analyzer findings INFORM but don't DECIDE the
-// verdict (e.g., CODE-002 — the audit asks about CI pipeline configuration
-// but Code Analyzer findings are circumstantial: many high-severity findings
-// imply CI scanning isn't catching them, but absence of findings doesn't
-// prove CI scanning IS in place). Same shape as corroboratingHealthCheckEvaluator
-// above: questionnaire adjudicates the verdict, Code Analyzer findings
-// raise confidence and add observations.
-//
-// Note: this helper is intentionally parallel to corroboratingHealthCheckEvaluator.
-// Both share the same pattern (find evidence by source, fall back to
-// attestation, surface observations when only CLI is present). The
-// unification refactor — collapsing all three corroborating helpers into a
-// generic `corroboratingEvaluator<S extends EvidenceSource>(...)` parameterized
-// by source + observe — is now triggered (we're at the third source as of
-// alpha.13's corroboratingLimitsApiEvaluator). Deferred to a follow-up PR
-// because the discriminated-union narrowing on the observe callback is
-// non-trivial in TypeScript and the parallel structure is easier to review
-// in this PR alongside the new evidence variant.
-// ---------------------------------------------------------------------------
-
 export interface CorroboratingCodeAnalyzerConfig extends AttestationConfig {
-  /** Pure function: given the code_analyzer Evidence, return human-readable
-   * observation strings to append to findings. Never throws. */
   observe: (evidence: Extract<Evidence, { source: 'code_analyzer' }>) => readonly string[];
 }
 
-/**
- * Build an evaluator where Code Analyzer evidence corroborates (not overrides)
- * the questionnaire verdict.
- *
- * Behavior:
- * - Both questionnaire + Code Analyzer present: questionnaire decides verdict,
- *   confidence bumps to 'high', findings include both.
- * - Code Analyzer only: returns inconclusive+high with observations + a
- *   prompt to gather questionnaire input.
- * - Questionnaire only: standard low-confidence attestation result.
- * - Neither: standard no-evidence inconclusive.
- */
 export function corroboratingCodeAnalyzerEvaluator(
   config: CorroboratingCodeAnalyzerConfig,
 ): Evaluator {
-  return (input) => {
-    const { evidence } = input;
-    const ca = evidence.find(
-      (e): e is Extract<Evidence, { source: 'code_analyzer' }> => e.source === 'code_analyzer',
-    );
-
-    if (ca) {
-      const observations = config.observe(ca);
-      const baseResult = attestationEvaluator(config)(input);
-
-      if (baseResult.evidence_used.includes('questionnaire')) {
-        return {
-          status: baseResult.status,
-          confidence: 'high',
-          evidence_used: ['questionnaire', 'code_analyzer'],
-          findings: [...baseResult.findings, ...observations],
-        };
-      }
-
-      return {
-        status: 'inconclusive',
-        confidence: 'high',
-        evidence_used: ['code_analyzer'],
-        findings: [
-          ...observations,
-          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
-        ],
-      };
-    }
-
-    return attestationEvaluator(config)(input);
-  };
+  return corroboratingEvaluator<'code_analyzer'>({ ...config, source: 'code_analyzer' });
 }
 
-// ---------------------------------------------------------------------------
-// Corroborating Limits REST API evaluator (Phase 5 / alpha.13).
-//
-// For controls where the Salesforce Limits REST API surfaces a quantitative
-// signal but the audit's deciding question is process-level (alerting setup,
-// IR plan, breach history). Used by SBS-MON-005. Same shape as
-// corroboratingHealthCheckEvaluator + corroboratingCodeAnalyzerEvaluator —
-// see the deferred-unification note above.
-// ---------------------------------------------------------------------------
-
 export interface CorroboratingLimitsApiConfig extends AttestationConfig {
-  /** Pure function: given the limits_rest_api Evidence, return human-readable
-   * observation strings to append to findings. Never throws. */
   observe: (evidence: Extract<Evidence, { source: 'limits_rest_api' }>) => readonly string[];
 }
 
-/**
- * Build an evaluator where Limits API evidence corroborates (not overrides)
- * the questionnaire verdict.
- *
- * Behavior:
- * - Both questionnaire + Limits API present: questionnaire decides verdict,
- *   confidence bumps to 'high', findings include both.
- * - Limits API only: returns inconclusive+high with observations + a prompt
- *   to gather questionnaire input.
- * - Questionnaire only: standard low-confidence attestation result.
- * - Neither: standard no-evidence inconclusive.
- */
 export function corroboratingLimitsApiEvaluator(config: CorroboratingLimitsApiConfig): Evaluator {
-  return (input) => {
-    const { evidence } = input;
-    const limits = evidence.find(
-      (e): e is Extract<Evidence, { source: 'limits_rest_api' }> => e.source === 'limits_rest_api',
-    );
-
-    if (limits) {
-      const observations = config.observe(limits);
-      const baseResult = attestationEvaluator(config)(input);
-
-      if (baseResult.evidence_used.includes('questionnaire')) {
-        return {
-          status: baseResult.status,
-          confidence: 'high',
-          evidence_used: ['questionnaire', 'limits_rest_api'],
-          findings: [...baseResult.findings, ...observations],
-        };
-      }
-
-      return {
-        status: 'inconclusive',
-        confidence: 'high',
-        evidence_used: ['limits_rest_api'],
-        findings: [
-          ...observations,
-          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
-        ],
-      };
-    }
-
-    return attestationEvaluator(config)(input);
-  };
+  return corroboratingEvaluator<'limits_rest_api'>({ ...config, source: 'limits_rest_api' });
 }

@@ -10,6 +10,7 @@ import { describe, expect, it } from 'vitest';
 import {
   attestationEvaluator,
   corroboratingCodeAnalyzerEvaluator,
+  corroboratingEvaluator,
   corroboratingHealthCheckEvaluator,
   corroboratingLimitsApiEvaluator,
 } from '../../src/evaluators/_attestation';
@@ -345,5 +346,48 @@ describe('corroboratingLimitsApiEvaluator', () => {
     expect(result.status).toBe('inconclusive');
     expect(result.confidence).toBe('low');
     expect(result.evidence_used).toEqual([]);
+  });
+});
+
+describe('corroboratingEvaluator (generic, used directly)', () => {
+  // Confirms the generic helper is callable without going through a
+  // source-specific wrapper. Each wrapper above already exercises this
+  // code path; this test pins direct-call ergonomics so future controls
+  // can adopt the generic without adding a wrapper.
+  const evaluateDirect = corroboratingEvaluator({
+    questionId: 'Q-MON-005',
+    passFinding: 'PASS',
+    failFinding: 'FAIL',
+    source: 'limits_rest_api',
+    observe: (e) => [`limits api_version=${e.api_version}`],
+  });
+
+  it('combines questionnaire + CLI evidence at HIGH confidence', () => {
+    const result = evaluateDirect({
+      control: makeControlFixture('SBS-MON-005'),
+      evidence: [
+        {
+          source: 'questionnaire',
+          question_id: 'Q-MON-005',
+          answer: { kind: 'boolean', value: true },
+        },
+        { source: 'limits_rest_api', api_version: '60.0', limits: {} },
+      ],
+    });
+    expect(result.status).toBe('pass');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['questionnaire', 'limits_rest_api']);
+    expect(result.findings[1]).toBe('limits api_version=60.0');
+  });
+
+  it('returns inconclusive+high when only CLI evidence is present', () => {
+    const result = evaluateDirect({
+      control: makeControlFixture('SBS-MON-005'),
+      evidence: [{ source: 'limits_rest_api', api_version: '59.0', limits: {} }],
+    });
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['limits_rest_api']);
+    expect(result.findings[0]).toBe('limits api_version=59.0');
   });
 });
