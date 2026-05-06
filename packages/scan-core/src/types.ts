@@ -29,6 +29,12 @@ export interface ConnectionLike {
     query(soql: string): Promise<SoqlQueryResponse>;
     describeSObject?(name: string): Promise<DescribeSObjectResult>;
   };
+  /** Issue a REST GET against a Salesforce path (e.g., '/services/data/v60.0/limits').
+   * Returns parsed JSON. Optional in the structural type so SOQL-only tests
+   * don't have to provide it; the real @salesforce/core Connection always
+   * has it (delegates to jsforce). Used by the limits-rest-api evidence
+   * source. */
+  request?<T = unknown>(url: string): Promise<T>;
 }
 
 /**
