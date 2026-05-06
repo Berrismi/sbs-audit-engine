@@ -232,9 +232,14 @@ export function corroboratingHealthCheckEvaluator(
 //
 // Note: this helper is intentionally parallel to corroboratingHealthCheckEvaluator.
 // Both share the same pattern (find evidence by source, fall back to
-// attestation, surface observations when only CLI is present). Future refactor
-// may unify them into a generic corroborating helper parameterized by source +
-// evidence-finder + observe; deferred until a third source needs the pattern.
+// attestation, surface observations when only CLI is present). The
+// unification refactor — collapsing all three corroborating helpers into a
+// generic `corroboratingEvaluator<S extends EvidenceSource>(...)` parameterized
+// by source + observe — is now triggered (we're at the third source as of
+// alpha.13's corroboratingLimitsApiEvaluator). Deferred to a follow-up PR
+// because the discriminated-union narrowing on the observe callback is
+// non-trivial in TypeScript and the parallel structure is easier to review
+// in this PR alongside the new evidence variant.
 // ---------------------------------------------------------------------------
 
 export interface CorroboratingCodeAnalyzerConfig extends AttestationConfig {
@@ -281,6 +286,69 @@ export function corroboratingCodeAnalyzerEvaluator(
         status: 'inconclusive',
         confidence: 'high',
         evidence_used: ['code_analyzer'],
+        findings: [
+          ...observations,
+          'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',
+        ],
+      };
+    }
+
+    return attestationEvaluator(config)(input);
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Corroborating Limits REST API evaluator (Phase 5 / alpha.13).
+//
+// For controls where the Salesforce Limits REST API surfaces a quantitative
+// signal but the audit's deciding question is process-level (alerting setup,
+// IR plan, breach history). Used by SBS-MON-005. Same shape as
+// corroboratingHealthCheckEvaluator + corroboratingCodeAnalyzerEvaluator —
+// see the deferred-unification note above.
+// ---------------------------------------------------------------------------
+
+export interface CorroboratingLimitsApiConfig extends AttestationConfig {
+  /** Pure function: given the limits_rest_api Evidence, return human-readable
+   * observation strings to append to findings. Never throws. */
+  observe: (evidence: Extract<Evidence, { source: 'limits_rest_api' }>) => readonly string[];
+}
+
+/**
+ * Build an evaluator where Limits API evidence corroborates (not overrides)
+ * the questionnaire verdict.
+ *
+ * Behavior:
+ * - Both questionnaire + Limits API present: questionnaire decides verdict,
+ *   confidence bumps to 'high', findings include both.
+ * - Limits API only: returns inconclusive+high with observations + a prompt
+ *   to gather questionnaire input.
+ * - Questionnaire only: standard low-confidence attestation result.
+ * - Neither: standard no-evidence inconclusive.
+ */
+export function corroboratingLimitsApiEvaluator(config: CorroboratingLimitsApiConfig): Evaluator {
+  return (input) => {
+    const { evidence } = input;
+    const limits = evidence.find(
+      (e): e is Extract<Evidence, { source: 'limits_rest_api' }> => e.source === 'limits_rest_api',
+    );
+
+    if (limits) {
+      const observations = config.observe(limits);
+      const baseResult = attestationEvaluator(config)(input);
+
+      if (baseResult.evidence_used.includes('questionnaire')) {
+        return {
+          status: baseResult.status,
+          confidence: 'high',
+          evidence_used: ['questionnaire', 'limits_rest_api'],
+          findings: [...baseResult.findings, ...observations],
+        };
+      }
+
+      return {
+        status: 'inconclusive',
+        confidence: 'high',
+        evidence_used: ['limits_rest_api'],
         findings: [
           ...observations,
           'Process attestation is required to fully score this control. Complete the questionnaire or interview the customer.',

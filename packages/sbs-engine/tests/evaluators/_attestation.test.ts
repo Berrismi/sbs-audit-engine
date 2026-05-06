@@ -11,6 +11,7 @@ import {
   attestationEvaluator,
   corroboratingCodeAnalyzerEvaluator,
   corroboratingHealthCheckEvaluator,
+  corroboratingLimitsApiEvaluator,
 } from '../../src/evaluators/_attestation';
 import { makeControlFixture } from '../fixtures/control';
 import type { Evidence, EvaluatorInput } from '../../src/types';
@@ -252,6 +253,95 @@ describe('corroboratingCodeAnalyzerEvaluator', () => {
 
   it('returns inconclusive+low when no evidence is provided at all', () => {
     const result = evaluateCorr(inputCa([]));
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('low');
+    expect(result.evidence_used).toEqual([]);
+  });
+});
+
+describe('corroboratingLimitsApiEvaluator', () => {
+  const evaluateCorr = corroboratingLimitsApiEvaluator({
+    questionId: 'Q-MON-005',
+    passFinding: 'PASS_MSG',
+    failFinding: 'FAIL_MSG',
+    observe: (e) => {
+      const daily = e.limits['DailyApiRequests'];
+      if (!daily) return ['no DailyApiRequests entry'];
+      return [`Daily API requests: ${daily.max - daily.remaining}/${daily.max}.`];
+    },
+  });
+
+  const inputCorr = (evidence: Evidence[]): EvaluatorInput => ({
+    control: makeControlFixture('SBS-MON-005'),
+    evidence,
+  });
+
+  const limitsEvidence = (max: number, remaining: number): Evidence => ({
+    source: 'limits_rest_api',
+    api_version: '60.0',
+    limits: { DailyApiRequests: { max, remaining } },
+  });
+
+  it('returns questionnaire pass with HIGH confidence + Limits observations when both are present', () => {
+    const result = evaluateCorr(
+      inputCorr([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-MON-005',
+          answer: { kind: 'boolean', value: true },
+        },
+        limitsEvidence(100000, 95000),
+      ]),
+    );
+    expect(result.status).toBe('pass');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['questionnaire', 'limits_rest_api']);
+    expect(result.findings[0]).toBe('PASS_MSG');
+    expect(result.findings[1]).toContain('5000/100000');
+  });
+
+  it('returns questionnaire fail with HIGH confidence + Limits observations when both are present', () => {
+    const result = evaluateCorr(
+      inputCorr([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-MON-005',
+          answer: { kind: 'boolean', value: false },
+        },
+        limitsEvidence(100000, 5000),
+      ]),
+    );
+    expect(result.status).toBe('fail');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['questionnaire', 'limits_rest_api']);
+  });
+
+  it('returns inconclusive+high with Limits observations when only Limits evidence is present', () => {
+    const result = evaluateCorr(inputCorr([limitsEvidence(100000, 70000)]));
+    expect(result.status).toBe('inconclusive');
+    expect(result.confidence).toBe('high');
+    expect(result.evidence_used).toEqual(['limits_rest_api']);
+    expect(result.findings.some((f) => f.includes('30000/100000'))).toBe(true);
+    expect(result.findings.some((f) => f.includes('questionnaire'))).toBe(true);
+  });
+
+  it('returns questionnaire-only verdict (low confidence) when Limits evidence is absent', () => {
+    const result = evaluateCorr(
+      inputCorr([
+        {
+          source: 'questionnaire',
+          question_id: 'Q-MON-005',
+          answer: { kind: 'boolean', value: true },
+        },
+      ]),
+    );
+    expect(result.status).toBe('pass');
+    expect(result.confidence).toBe('low');
+    expect(result.evidence_used).toEqual(['questionnaire']);
+  });
+
+  it('returns inconclusive+low when no evidence is provided at all', () => {
+    const result = evaluateCorr(inputCorr([]));
     expect(result.status).toBe('inconclusive');
     expect(result.confidence).toBe('low');
     expect(result.evidence_used).toEqual([]);
