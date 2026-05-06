@@ -6,20 +6,21 @@
 //
 // CLI evidence path: scan-core query
 // `file-002-content-distributions-without-passwords` returns
-// ContentDistribution rows where `Password = null` — Public Content links a
-// recipient can open with the URL alone, no auth layer in front. Pass = 0
-// rows (every link is password-protected, or the org has no Public Content
-// links at all). ≥1 rows = inconclusive: the platform tells us *which*
-// links lack passwords, but the audit_procedure asks whether the linked
-// content is *sensitive* — that classification is org-level process, not
-// a platform field.
+// ContentDistribution rows where `PreferencesPasswordRequired = false` —
+// Public Content links a recipient can open with the URL alone, no auth
+// layer in front. Pass = 0 rows (every link enforces password protection,
+// or the org has no Public Content links at all). ≥1 rows = inconclusive:
+// the platform tells us *which* links don't require passwords, but the
+// audit_procedure asks whether the linked content is *sensitive* — that
+// classification is org-level process, not a platform field.
 //
 // Classification: cli_corroborating. Same shape as INT-002 / INT-003 —
 // SOQL confirms the inventory + flags the exposed surface; questionnaire
 // adjudicates the process layer (sensitivity). When SOQL is present the
 // evaluator returns `inconclusive` with high confidence; questionnaire is
 // the fallback when the edition gate skips the query (Salesforce Files /
-// Content not enabled, e.g. on DE).
+// Content not enabled, e.g. on DE, or PreferencesPasswordRequired absent
+// on a degraded edition).
 
 import { cliAttestationEvaluator } from './_attestation';
 

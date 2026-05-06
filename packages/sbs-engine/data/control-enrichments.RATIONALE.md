@@ -178,12 +178,15 @@ PreferencesExpires = false`). The audit_procedure step 2 directly
   (data-in-transit handling).
   **CLI evidence:** classified `cli_corroborating` as of engine alpha.12
   via the `file-002-content-distributions-without-passwords` query
-  (`SELECT Id FROM ContentDistribution WHERE Password = null`). SOQL
-  enumerates the WHO (links without password protection); the
-  questionnaire still adjudicates sensitivity classification per link,
-  so SOQL evidence resolves to `inconclusive` with high confidence
-  whenever rows are present — same shape as INT-002 / INT-003.
-  Edition-gated on `ContentDistribution.Password` presence; falls back
+  (`SELECT Id FROM ContentDistribution WHERE PreferencesPasswordRequired
+= false`). SOQL enumerates the WHO (links not requiring a password);
+  the questionnaire still adjudicates sensitivity classification per
+  link, so SOQL evidence resolves to `inconclusive` with high confidence
+  whenever rows are present — same shape as INT-002 / INT-003. Filter
+  uses the `Preferences*` boolean family for parity with FILE-001
+  (`PreferencesExpires = false`), and to avoid the read-masking
+  semantics of the `Password` secret-value field. Edition-gated on
+  `ContentDistribution.PreferencesPasswordRequired` presence; falls back
   to questionnaire when Salesforce Files / Content isn't enabled.
 - **FILE-003** (Periodic review) leans on accountability — adds GDPR
   Article 5(2) to the baseline because periodic-review is exactly the

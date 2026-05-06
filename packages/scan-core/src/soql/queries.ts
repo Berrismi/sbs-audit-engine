@@ -203,20 +203,29 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
 
   // SBS-FILE-002 — Require Passwords on Public Content Links for Sensitive
   // Content. Same surface as FILE-001 (ContentDistribution); different signal:
-  // `Password = null` rows are Public Content links a recipient can open with
-  // the URL alone, no auth layer in front. Audit procedure asks the consultant
-  // to verify that links to *sensitive* content are password-protected — but
-  // "is this content sensitive?" is org-level data classification (process),
-  // not a platform field. So this query enumerates the WHO (links lacking a
-  // password); the questionnaire still adjudicates sensitivity. Classification
-  // is `cli_corroborating`, not `cli_primary` — same shape as INT-002 /
-  // INT-003.
+  // `PreferencesPasswordRequired = false` rows are Public Content links a
+  // recipient can open with the URL alone, no auth layer in front. Audit
+  // procedure asks the consultant to verify that links to *sensitive* content
+  // are password-protected — but "is this content sensitive?" is org-level
+  // data classification (process), not a platform field. So this query
+  // enumerates the WHO (links not requiring a password); the questionnaire
+  // still adjudicates sensitivity. Classification is `cli_corroborating`,
+  // not `cli_primary` — same shape as INT-002 / INT-003.
   //
-  // Edition gate: same `fieldsExist` pattern as FILE-001. ContentDistribution
-  // is gated; `Password` is in WHERE so it MUST be in the gate even though
-  // we don't SELECT it. ContentDocumentId is intentionally NOT in the SELECT
-  // — same privacy posture as FILE-001: count + flag, never surface which
-  // file each non-password-protected link points to.
+  // Field choice rationale: `PreferencesPasswordRequired` (boolean preference)
+  // is preferred over `WHERE Password = null` (the secret-value family) for
+  // two reasons. (1) Consistency with FILE-001's `PreferencesExpires = false`:
+  // both Public Content link controls now filter on the same Preferences*
+  // boolean family, mirroring how the Salesforce admin UI exposes these
+  // toggles. (2) The Password field's value is masked on read in some
+  // contexts; the Preferences* boolean is a less access-sensitive surface
+  // and a more direct expression of the audit question ("does this link
+  // enforce password protection?").
+  //
+  // Edition gate: same `fieldsExist` pattern as FILE-001. ContentDocumentId
+  // is intentionally NOT in the SELECT — same privacy posture as FILE-001:
+  // count + flag, never surface which file each non-password-protected link
+  // points to.
   {
     id: 'file-002-content-distributions-without-passwords',
     controlIds: ['SBS-FILE-002'],
