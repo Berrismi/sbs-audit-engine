@@ -154,7 +154,7 @@
         "soc2": ["CC6.1", "CC6.7"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "SSO bypass exceptions are documented and approved, so off-SSO accounts can't proliferate unnoticed and audit reviews have clean visibility into every authentication exception."
     },
     "SBS-AUTH-003": {
