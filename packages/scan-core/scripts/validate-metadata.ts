@@ -4,42 +4,39 @@
 // validate-metadata.ts — author-time validation that every Metadata API
 // probe in DEFAULT_METADATA_PROBES can list + read against a real org.
 //
-// Mirrors `validate-soql.ts`. Different mechanism (sf project retrieve
-// for metadata vs sf data query for SOQL) but same author-time discipline:
-// catch type-name typos and edition-gated unavailability before the PR
-// ships, not in customer scans.
+// alpha.26 refactor: switched from `sf project retrieve start` (which
+// depends on @salesforce/source-deploy-retrieve's hand-curated registry
+// of supported types — and that registry doesn't include Settings types
+// like SecuritySettings, OrgPreferenceSettings, etc.) to using
+// @salesforce/core's AuthInfo + Connection directly. This bypasses the
+// CLI registry entirely and exercises jsforce's full Metadata API
+// surface — same API path the runtime evidence collector uses, which
+// catches the same shape errors at author time without registry-gap
+// false negatives.
 //
-// Strategy: shell out to `sf org list metadata --metadata-type <Type>` to
-// validate `list()` works, then `sf project retrieve start --metadata
-// <Type>:<fullName>` for at least one fullName per probe. Both succeeding
-// means the probe is shape-correct against this org.
+// Strategy: load auth for the target alias, build a Connection, then
+// for each probe call connection.metadata.list() + connection.metadata.read()
+// directly. Three outcomes per probe:
 //
-// For probes with explicit fullNames, retrieve all of them. For
-// list-then-cap probes, retrieve only the first prioritized name (proves
-// list + read both work; we don't need to download every Profile to
-// confirm the probe is well-formed).
-//
-// Three outcomes per probe:
-//   PASS — list + read both succeeded with parseable JSON output
-//   SKIP — list returned no records (the type isn't present on this
-//          edition; the probe would runtime-skip the same way and
-//          fall back to questionnaire)
-//   FAIL — list or read threw, OR returned a non-JSON / empty response
-//          where one was expected
+//   PASS — list returns ≥1 record AND read of one fullName succeeds with
+//          a parseable object response
+//   SKIP — list returns 0 records (the type isn't present on this
+//          edition / org; the probe would runtime-skip the same way and
+//          fall back to questionnaire). Singleton types (SecuritySettings,
+//          OrgPreferenceSettings) provided via probe.fullNames bypass
+//          list and skip detection — those go straight to PASS or FAIL.
+//   FAIL — list or read threw, returned non-object response, or hit any
+//          schema error
 //
 // Usage:
-//   pnpm --filter @hellomavens/security-review-for-salesforce-scan-core \
-//     run validate:metadata --target-org hm-cli-validation
-//
-// Or from the workspace root:
 //   pnpm validate:metadata --target-org hm-cli-validation
 //
 // CI does NOT run this (no live org credentials in CI); it's an author-time
 // gate by convention paralleling validate:soql.
 
-import { execFileSync } from 'node:child_process';
-import { DEFAULT_METADATA_PROBES } from '../src/metadata/probes';
+import { AuthInfo, Connection, StateAggregator } from '@salesforce/core';
 import type { MetadataProbe } from '../src/metadata/client';
+import { DEFAULT_METADATA_PROBES } from '../src/metadata/probes';
 
 interface ValidationResult {
   probe: MetadataProbe;
@@ -62,162 +59,126 @@ function parseArgs(argv: readonly string[]): { targetOrg: string } {
   return { targetOrg };
 }
 
-interface SfListEntry {
-  fullName: string;
-  type?: string;
+async function buildConnection(targetOrg: string): Promise<Connection> {
+  // `--target-org` accepts either an alias or a username. Resolve via the
+  // StateAggregator's alias map first; fall back to treating the input
+  // as a literal username.
+  const stateAggregator = await StateAggregator.getInstance();
+  const username = stateAggregator.aliases.getUsername(targetOrg) ?? targetOrg;
+  const authInfo = await AuthInfo.create({ username });
+  return Connection.create({ authInfo });
 }
 
-interface SfListWrapper {
-  status: number;
-  result?: SfListEntry[] | null;
-  message?: string;
+interface MetadataNs {
+  list(query: { type: string; folder?: string }): Promise<unknown>;
+  read(type: string, fullNames: string | string[]): Promise<unknown>;
 }
 
-interface SfReadOk {
-  status: number;
-  result?: { files?: { fullName: string; type?: string }[] };
-  message?: string;
-}
+async function classify(probe: MetadataProbe, connection: Connection): Promise<ValidationResult> {
+  // The structural ConnectionLike.metadata in scan-core declares the
+  // narrow surface we use; @salesforce/core's Connection has a wider
+  // (and slightly differently-typed) metadata namespace. Cast through
+  // unknown to the script-local MetadataNs shape so we don't have to
+  // pull in the full @salesforce/core type surface.
+  const metadata = connection.metadata as unknown as MetadataNs;
 
-function runListMetadata(
-  type: string,
-  targetOrg: string,
-): { ok: true; entries: SfListEntry[] } | { ok: false; stderr: string } {
-  const args = [
-    'org',
-    'list',
-    'metadata',
-    '--metadata-type',
-    type,
-    '--target-org',
-    targetOrg,
-    '--json',
-  ];
-  try {
-    const out = execFileSync('sf', args, { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf-8' });
-    const parsed = JSON.parse(out) as SfListWrapper;
-    if (parsed.status !== 0) {
-      return { ok: false, stderr: parsed.message ?? 'unknown sf error' };
-    }
-    return { ok: true, entries: parsed.result ?? [] };
-  } catch (err) {
-    return { ok: false, stderr: stderrOf(err) };
-  }
-}
-
-function runRetrieveOne(
-  type: string,
-  fullName: string,
-  targetOrg: string,
-): { ok: true } | { ok: false; stderr: string } {
-  const args = [
-    'project',
-    'retrieve',
-    'start',
-    '--metadata',
-    `${type}:${fullName}`,
-    '--target-org',
-    targetOrg,
-    '--target-metadata-dir',
-    '/tmp/sbs-validate-metadata',
-    '--unzip',
-    '--json',
-  ];
-  try {
-    const out = execFileSync('sf', args, { stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf-8' });
-    const parsed = JSON.parse(out) as SfReadOk;
-    if (parsed.status !== 0) {
-      return { ok: false, stderr: parsed.message ?? 'unknown sf error' };
-    }
-    return { ok: true };
-  } catch (err) {
-    return { ok: false, stderr: stderrOf(err) };
-  }
-}
-
-function stderrOf(err: unknown): string {
-  const stderr =
-    err && typeof err === 'object' && 'stderr' in err
-      ? String((err as { stderr: unknown }).stderr ?? '')
-      : '';
-  const stdout =
-    err && typeof err === 'object' && 'stdout' in err
-      ? String((err as { stdout: unknown }).stdout ?? '')
-      : '';
-  return stderr + stdout;
-}
-
-function classify(probe: MetadataProbe, targetOrg: string): ValidationResult {
-  // Step 1: list (skip when fullNames are explicitly provided — list isn't
-  // exercised in that path).
-  if (!probe.fullNames || probe.fullNames.length === 0) {
-    const listed = runListMetadata(probe.type, targetOrg);
-    if (!listed.ok) {
-      return { probe, outcome: 'fail', message: `list failed: ${firstLine(listed.stderr)}` };
-    }
-    if (listed.entries.length === 0) {
+  // For probes with explicit fullNames (singletons like SecuritySettings),
+  // skip list() — they're not enumerable and list() may even error.
+  if (probe.fullNames && probe.fullNames.length > 0) {
+    const sample = probe.fullNames[0]!;
+    try {
+      const result = await metadata.read(probe.type, [sample]);
+      if (result === null || result === undefined) {
+        return {
+          probe,
+          outcome: 'fail',
+          message: `read('${probe.type}', '${sample}') returned null/undefined`,
+        };
+      }
+      // Read can return a single object (one fullName) or an array
+      // (multiple fullNames); both are valid PASS shapes.
       return {
         probe,
-        outcome: 'skip',
-        message: `list returned 0 entries for type '${probe.type}' on this org (would runtime-skip)`,
+        outcome: 'pass',
+        message: `read('${probe.type}', '${sample}') succeeded`,
+      };
+    } catch (err) {
+      return {
+        probe,
+        outcome: 'fail',
+        message: `read failed: ${shortError(err)}`,
       };
     }
   }
 
-  // Step 2: retrieve one fullName as a smoke test of read().
-  const sampleName =
-    probe.fullNames && probe.fullNames.length > 0
-      ? probe.fullNames[0]!
-      : pickSampleFullName(probe.type, targetOrg);
+  // List-then-read path for enumerable types (Profile, CustomObject, etc).
+  let listed: unknown;
+  try {
+    listed = await metadata.list({ type: probe.type });
+  } catch (err) {
+    return { probe, outcome: 'fail', message: `list failed: ${shortError(err)}` };
+  }
 
-  if (!sampleName) {
+  const entries = Array.isArray(listed) ? listed : listed ? [listed] : [];
+  if (entries.length === 0) {
     return {
       probe,
-      outcome: 'fail',
-      message: `could not pick a sample fullName for type '${probe.type}'`,
+      outcome: 'skip',
+      message: `list returned 0 entries for type '${probe.type}' on this org (would runtime-skip)`,
     };
   }
 
-  const retrieved = runRetrieveOne(probe.type, sampleName, targetOrg);
-  if (!retrieved.ok) {
-    return { probe, outcome: 'fail', message: `read failed: ${firstLine(retrieved.stderr)}` };
+  // Pick a sample fullName: prefer 'Admin' for Profile (universally
+  // present + informative); otherwise the first entry. Defensive against
+  // list entries with non-string fullName.
+  const fullNames = entries
+    .map((e) => (e as { fullName?: unknown }).fullName)
+    .filter((n): n is string => typeof n === 'string');
+  if (fullNames.length === 0) {
+    return {
+      probe,
+      outcome: 'fail',
+      message: `list returned ${entries.length} entries but none had a string fullName`,
+    };
   }
-  return { probe, outcome: 'pass', message: `list + read('${sampleName}') succeeded` };
-}
+  const sample = fullNames.includes('Admin') ? 'Admin' : fullNames[0]!;
 
-/**
- * For list-then-cap probes, run a quick list() to grab the first fullName
- * to use as the read() smoke-test sample. Returns undefined when list
- * fails (caller falls through to fail outcome).
- */
-function pickSampleFullName(type: string, targetOrg: string): string | undefined {
-  const listed = runListMetadata(type, targetOrg);
-  if (!listed.ok || listed.entries.length === 0) return undefined;
-  // Prefer 'Admin' if it's in the list — universally present + typically
-  // the most informative Profile. Otherwise take the first entry.
-  const admin = listed.entries.find((e) => e.fullName === 'Admin');
-  return admin?.fullName ?? listed.entries[0]?.fullName;
-}
-
-function firstLine(s: string): string {
-  for (const line of s.split('\n')) {
-    const trimmed = line.trim();
-    if (trimmed && !trimmed.startsWith('›') && !trimmed.startsWith('Warning:')) {
-      return trimmed.slice(0, 200);
+  try {
+    const result = await metadata.read(probe.type, [sample]);
+    if (result === null || result === undefined) {
+      return {
+        probe,
+        outcome: 'fail',
+        message: `read('${probe.type}', '${sample}') returned null/undefined`,
+      };
     }
+    return {
+      probe,
+      outcome: 'pass',
+      message: `list (${entries.length} entries) + read('${sample}') succeeded`,
+    };
+  } catch (err) {
+    return { probe, outcome: 'fail', message: `read failed: ${shortError(err)}` };
   }
-  return '(no stderr)';
 }
 
-function main(): void {
+function shortError(err: unknown): string {
+  const message = err instanceof Error ? err.message : String(err);
+  // Keep findings readable on a CI summary line.
+  return message.split('\n')[0]!.slice(0, 200);
+}
+
+async function main(): Promise<void> {
   const { targetOrg } = parseArgs(process.argv.slice(2));
   console.log(`validate-metadata: target org = ${targetOrg}`);
   console.log(`validate-metadata: ${DEFAULT_METADATA_PROBES.length} probe(s) to validate\n`);
 
+  const connection = await buildConnection(targetOrg);
+
   const results: ValidationResult[] = [];
   for (const probe of DEFAULT_METADATA_PROBES) {
     process.stdout.write(`  ${probe.id} ... `);
-    const r = classify(probe, targetOrg);
+    const r = await classify(probe, connection);
     results.push(r);
     const tag = r.outcome === 'pass' ? 'PASS' : r.outcome === 'skip' ? 'SKIP' : 'FAIL';
     console.log(`${tag} — ${r.message}`);
@@ -236,4 +197,7 @@ function main(): void {
   }
 }
 
-main();
+main().catch((err) => {
+  console.error('validate-metadata failed:', err);
+  process.exit(1);
+});

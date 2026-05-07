@@ -67,4 +67,22 @@ export const DEFAULT_METADATA_PROBES: readonly MetadataProbe[] = [
     type: 'CustomObject',
     cap: 100,
   },
+
+  // SecuritySettings (singleton) — used by SBS-AUTH-001 (alpha.26) org-wide
+  // SSO enforcement check. SecuritySettings is a singleton metadata type
+  // (only one record per org, fullName always 'SecuritySettings'). The
+  // record carries `singleSignOnSettings.isLoginWithSalesforceCredentialsDisabled`
+  // among many other org-level settings (sessionSettings, passwordPolicies,
+  // networkAccess, etc).
+  //
+  // alpha.26 unblocks AUTH-001 by switching validate-metadata from sf CLI
+  // (whose source-deploy-retrieve registry doesn't list SecuritySettings)
+  // to @salesforce/core's Connection.metadata directly. The runtime path
+  // (jsforce metadata.read) always supported this type; only the
+  // author-time validation gate was blocked.
+  {
+    id: 'security-settings',
+    type: 'SecuritySettings',
+    fullNames: ['SecuritySettings'],
+  },
 ];
