@@ -626,7 +626,7 @@
         "gdpr": ["Article 32"],
         "ccpa": ["§1798.100"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Anomalous login patterns — impossible travel, suspicious networks, off-hours access, brute-force precursors — trigger investigation in your monitoring stack, so a compromised credential surfaces as an alert instead of a quiet foothold."
     },
     "SBS-MON-004": {
