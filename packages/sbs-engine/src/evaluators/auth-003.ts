@@ -3,7 +3,7 @@
 //
 // SBS-AUTH-003: Prohibit Broad or Unrestricted Profile Login IP Ranges.
 //
-// CLI evidence path: shared `profiles-priority-100` Metadata API probe
+// CLI evidence path: shared `profiles-priority-200` Metadata API probe
 // returns each Profile's `loginIpRanges` array. The evaluator inspects
 // each range and flags any that effectively cover the whole IPv4 space
 // (the audit_procedure's worked example: `0.0.0.0–255.255.255.255`).

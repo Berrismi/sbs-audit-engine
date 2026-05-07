@@ -4,7 +4,7 @@
 // SBS-AUTH-002: Govern and Document All Users Permitted to Bypass Single
 // Sign-On.
 //
-// CLI evidence path: shared `profiles-priority-100` Metadata API probe
+// CLI evidence path: shared `profiles-priority-200` Metadata API probe
 // returns each Profile's `userPermissions` array. The evaluator inspects
 // the array for the `IsSsoEnabled` permission and identifies Profiles
 // where it is NOT enabled — those Profiles' assigned users CAN authenticate
