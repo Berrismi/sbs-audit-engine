@@ -35,16 +35,36 @@
 import type { MetadataProbe } from './client';
 
 export const DEFAULT_METADATA_PROBES: readonly MetadataProbe[] = [
-  // Canonical Profile probe — used by future Track B AUTH-001/002/003 +
-  // ACS-012 evaluators. Lists every Profile in the org, prioritizes
-  // standard + integration-shaped names, caps at 100 per Q3 of the
-  // Track B design review. Foundation PR ships this probe but no
-  // evaluator consumes it yet — the consuming evaluators land in the
-  // Track B control PRs (alpha.23+).
+  // Canonical Profile probe — used by Track B AUTH-002/003 evaluators.
+  // Lists every Profile in the org, prioritizes standard + integration-
+  // shaped names, caps at 100 per Q3 of the Track B design review.
+  // Consumed by:
+  //   - SBS-AUTH-002 (alpha.24): inspects userPermissions for IsSsoEnabled
+  //   - SBS-AUTH-003 (alpha.23): inspects loginIpRanges for overly-broad
+  //     ranges
   {
     id: 'profiles-priority-100',
     type: 'Profile',
     cap: 100,
     // prioritize defaults to prioritizeProfileNames for type === 'Profile'
+  },
+
+  // CustomObject probe — used by SBS-DATA-004 (alpha.25) field history
+  // tracking inventory. Lists every CustomObject in the org (including
+  // standard objects which are accessible via this metadata type), caps
+  // at 100. Each CustomObject record carries its child fields' metadata
+  // including `trackHistory` flags, so the DATA-004 evaluator can compute
+  // tracked-field counts without a separate CustomField probe.
+  //
+  // Default sort is alphabetical (no priority comparator) — there's no
+  // obvious "most sensitive object" pattern to prioritize the way Profile
+  // standardizes around Standard User / Admin. Consultants on large orgs
+  // may want a custom prioritizer that bumps standard CRM objects
+  // (Account, Contact, Opportunity, Case) to the top — left as a
+  // follow-up if cap-pressure shows up.
+  {
+    id: 'custom-objects-priority-100',
+    type: 'CustomObject',
+    cap: 100,
   },
 ];
