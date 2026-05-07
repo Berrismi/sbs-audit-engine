@@ -306,7 +306,7 @@
         "iso27001": ["A.8.15"],
         "gdpr": ["Article 32"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Field history tracking is on for sensitive fields, so unauthorized or accidental changes are detectable, investigatable, and accountable rather than silent."
     },
     "SBS-DEP-001": {

@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T13:27:25.948Z",
-  "engine_version": "0.0.0-alpha.24",
+  "fetched_at": "2026-05-07T13:37:58.329Z",
+  "engine_version": "0.0.0-alpha.25",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -1252,7 +1252,7 @@
           "iso27001": ["A.8.15"],
           "gdpr": ["Article 32"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Field history tracking is on for sensitive fields, so unauthorized or accidental changes are detectable, investigatable, and accountable rather than silent."
       }
     },
