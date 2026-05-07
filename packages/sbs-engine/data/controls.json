@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T13:12:11.491Z",
-  "engine_version": "0.0.0-alpha.23",
+  "fetched_at": "2026-05-07T13:27:25.948Z",
+  "engine_version": "0.0.0-alpha.24",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -589,7 +589,7 @@
           "soc2": ["CC6.1", "CC6.7"],
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "SSO bypass exceptions are documented and approved, so off-SSO accounts can't proliferate unnoticed and audit reviews have clean visibility into every authentication exception."
       }
     },
