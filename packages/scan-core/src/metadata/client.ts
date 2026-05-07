@@ -124,16 +124,39 @@ async function fetchOneProbe(
  * Wrap jsforce's `metadata.read()` to always return an array, even when
  * the underlying API returns a single object for a one-element fullName
  * list. Matches the inventory-shape evaluators expect.
+ *
+ * The Salesforce Metadata API caps each `read()` call at **10 fullNames**.
+ * Larger batches return `EXCEEDED_ID_LIMIT: record limit reached. cannot
+ * submit more than 10 records in this operation.` This helper chunks the
+ * input into groups of 10 and concatenates the per-chunk results so callers
+ * see a single flat array regardless of input size.
+ *
+ * Discovered empirically while running the multi-org verification on
+ * alpha.29 (validate:metadata succeeded because it only smoke-tested ONE
+ * fullName per probe; runtime reads of full Profile inventories failed).
+ * The cap isn't documented in the Salesforce Metadata API SOAP reference
+ * with a specific number — only as "limit reached" — but 10 is the
+ * empirically observed ceiling and matches several community forum reports.
  */
+const METADATA_READ_CHUNK_SIZE = 10;
+
 async function readRecords(
   m: NonNullable<ConnectionLike['metadata']>,
   type: string,
   fullNames: readonly string[],
 ): Promise<Record<string, unknown>[]> {
   if (fullNames.length === 0) return [];
-  const raw = await m.read<Record<string, unknown>>(type, [...fullNames]);
-  if (Array.isArray(raw)) return raw;
-  return [raw];
+  const out: Record<string, unknown>[] = [];
+  for (let i = 0; i < fullNames.length; i += METADATA_READ_CHUNK_SIZE) {
+    const chunk = fullNames.slice(i, i + METADATA_READ_CHUNK_SIZE);
+    const raw = await m.read<Record<string, unknown>>(type, [...chunk]);
+    if (Array.isArray(raw)) {
+      out.push(...raw);
+    } else {
+      out.push(raw);
+    }
+  }
+  return out;
 }
 
 /**

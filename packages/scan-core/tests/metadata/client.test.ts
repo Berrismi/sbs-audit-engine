@@ -112,6 +112,56 @@ describe('fetchMetadata', () => {
       expect(result.results[0]?.records).toHaveLength(1);
     }
   });
+
+  it('chunks reads into batches of 10 to respect the Metadata API record limit', async () => {
+    // Regression test for the alpha.30 chunking fix. The Salesforce Metadata
+    // API caps each `read()` call at 10 fullNames; larger batches return
+    // EXCEEDED_ID_LIMIT. Inventory probes (Profile, CustomObject) need to
+    // chunk reads when the cap is >10.
+    const callBatches: number[] = [];
+    const allProfiles: MetadataFileProperties[] = Array.from({ length: 25 }, (_, i) => ({
+      fullName: `Profile-${i}`,
+      type: 'Profile',
+    }));
+    const conn = makeFakeConnection({
+      list: async () => allProfiles,
+      read: async (_type: string, names: string | string[]) => {
+        const namesArr = Array.isArray(names) ? names : [names];
+        callBatches.push(namesArr.length);
+        return namesArr.map((n) => ({ fullName: n }));
+      },
+    });
+    const result = await fetchMetadata(conn, [{ id: 'profiles', type: 'Profile', cap: 25 }]);
+    expect(result.kind).toBe('ok');
+    if (result.kind === 'ok') {
+      // 25 records returned across 3 chunks (10 + 10 + 5)
+      expect(result.results[0]?.records).toHaveLength(25);
+      expect(callBatches).toEqual([10, 10, 5]);
+    }
+  });
+
+  it('chunks explicit-fullNames probes the same way (not just discovered ones)', async () => {
+    // SecuritySettings is a singleton (fullNames = ['SecuritySettings']) so
+    // it never trips the cap, but a probe with explicit fullNames > 10
+    // would. Defensive against future probes that hardcode large lists.
+    const callBatches: number[] = [];
+    const fullNames = Array.from({ length: 17 }, (_, i) => `Item-${i}`);
+    const conn = makeFakeConnection({
+      read: async (_type: string, names: string | string[]) => {
+        const namesArr = Array.isArray(names) ? names : [names];
+        callBatches.push(namesArr.length);
+        return namesArr.map((n) => ({ fullName: n }));
+      },
+    });
+    const result = await fetchMetadata(conn, [
+      { id: 'big-explicit', type: 'CustomObject', fullNames },
+    ]);
+    expect(result.kind).toBe('ok');
+    if (result.kind === 'ok') {
+      expect(result.results[0]?.records).toHaveLength(17);
+      expect(callBatches).toEqual([10, 7]);
+    }
+  });
 });
 
 describe('prioritizeProfileNames', () => {
