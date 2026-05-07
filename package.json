@@ -26,6 +26,7 @@
     "reuse:lint": "pipx run reuse lint",
     "sync:sbs": "pnpm --filter @hellomavens/security-review-for-salesforce-engine run sync:sbs",
     "validate:soql": "pnpm --filter @hellomavens/security-review-for-salesforce-scan-core run validate:soql",
+    "validate:metadata": "pnpm --filter @hellomavens/security-review-for-salesforce-scan-core run validate:metadata",
     "prepare": "husky"
   },
   "devDependencies": {

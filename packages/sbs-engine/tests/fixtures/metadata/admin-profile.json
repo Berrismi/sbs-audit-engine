@@ -1,0 +1,25 @@
+{
+  "_comment": "Hand-authored representative shape of jsforce's Metadata API response for `read('Profile', ['Admin'])`. Not a full Profile — only the fields Track B controls care about (loginIpRanges, loginHours, broad-perm flags). Used by metadataApiEvaluator helper tests + future Track B control tests.",
+  "fullName": "Admin",
+  "loginIpRanges": [
+    { "startAddress": "192.168.1.0", "endAddress": "192.168.1.255", "description": "Office VPN" },
+    {
+      "startAddress": "203.0.113.42",
+      "endAddress": "203.0.113.42",
+      "description": "Datacenter NAT"
+    }
+  ],
+  "loginHours": {
+    "mondayStart": "09:00",
+    "mondayEnd": "17:00",
+    "tuesdayStart": "09:00",
+    "tuesdayEnd": "17:00"
+  },
+  "userPermissions": [
+    { "name": "ViewAllData", "enabled": true },
+    { "name": "ModifyAllData", "enabled": true },
+    { "name": "ManageUsers", "enabled": true },
+    { "name": "AuthorApex", "enabled": true },
+    { "name": "CustomizeApplication", "enabled": true }
+  ]
+}

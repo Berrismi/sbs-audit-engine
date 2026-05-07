@@ -15,6 +15,8 @@ import { assembleEvidenceBundle } from './assemble';
 import { runCodeAnalyzer, type CodeAnalyzerExecution } from './code-analyzer/runner';
 import { fetchHealthCheck, type HealthCheckResult } from './health-check/client';
 import { fetchLimits, type LimitsResult } from './limits/client';
+import { fetchMetadata, type MetadataFetchResult } from './metadata/client';
+import { DEFAULT_METADATA_PROBES } from './metadata/probes';
 import { executeSoqlBundle } from './soql/executor';
 import { DEFAULT_SOQL_QUERIES } from './soql/queries';
 import type { CollectEvidenceOptions, QueryResult } from './types';
@@ -25,16 +27,18 @@ export interface ScanResult {
   healthCheck?: HealthCheckResult;
   codeAnalyzer?: CodeAnalyzerExecution;
   limits?: LimitsResult;
+  metadata?: MetadataFetchResult;
 }
 
 export async function collectEvidence(opts: CollectEvidenceOptions): Promise<ScanResult> {
   const sourceAllowed = (
-    source: 'soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api',
+    source: 'soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api' | 'metadata_api',
   ): boolean => !opts.onlySources || opts.onlySources.includes(source);
 
   let queryResults: QueryResult[] = [];
   let healthCheck: HealthCheckResult | undefined;
   let limits: LimitsResult | undefined;
+  let metadata: MetadataFetchResult | undefined;
 
   if (sourceAllowed('soql')) {
     const queries = opts.soqlQueries ?? DEFAULT_SOQL_QUERIES;
@@ -49,6 +53,13 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     limits = await fetchLimits(opts.connection);
   }
 
+  if (sourceAllowed('metadata_api')) {
+    const probes = opts.metadataProbes ?? DEFAULT_METADATA_PROBES;
+    if (probes.length > 0) {
+      metadata = await fetchMetadata(opts.connection, probes);
+    }
+  }
+
   let codeAnalyzer: CodeAnalyzerExecution | undefined;
   if (sourceAllowed('code_analyzer') && opts.codeAnalyzer) {
     codeAnalyzer = await runCodeAnalyzer(opts.codeAnalyzer);
@@ -60,6 +71,7 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     ...(healthCheck && { healthCheck }),
     ...(codeAnalyzer && { codeAnalyzer }),
     ...(limits && { limits }),
+    ...(metadata && { metadata }),
   });
 
   return {
@@ -68,6 +80,7 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     ...(healthCheck && { healthCheck }),
     ...(codeAnalyzer && { codeAnalyzer }),
     ...(limits && { limits }),
+    ...(metadata && { metadata }),
   };
 }
 
@@ -96,3 +109,11 @@ export { makeExecaCodeAnalyzerSpawner } from './code-analyzer/spawner';
 export { makeNodeTmpdirManager } from './code-analyzer/tmpdir';
 export { parseCodeAnalyzerOutput } from './code-analyzer/parse';
 export { fetchLimits, type LimitEntry, type LimitsResult } from './limits/client';
+export {
+  fetchMetadata,
+  prioritizeProfileNames,
+  type MetadataFetchResult,
+  type MetadataFetchTypeResult,
+  type MetadataProbe,
+} from './metadata/client';
+export { DEFAULT_METADATA_PROBES } from './metadata/probes';
