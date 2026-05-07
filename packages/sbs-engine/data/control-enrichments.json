@@ -81,7 +81,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.9", "A.5.16", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "You have a current inventory of non-human identities, so automated access can be reviewed, orphaned credentials can be retired, and security incidents involving integrations are actually investigable."
     },
     "SBS-ACS-008": {
@@ -91,7 +91,7 @@
         "soc2": ["CC6.1", "CC6.3"],
         "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Non-human identities aren't carrying broad privileges by default, so a compromised API key or OAuth token can't bypass sharing rules or trigger administrative operations org-wide."
     },
     "SBS-ACS-009": {
