@@ -167,7 +167,7 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.17", "A.8.5", "A.8.20"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_primary",
       "pass_narrative": "Profile login IP ranges are scoped, not wide-open, so authentication can't happen from arbitrary locations on the internet — a defense-in-depth layer if a credential ever leaks."
     },
     "SBS-AUTH-004": {
