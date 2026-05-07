@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T13:02:44.252Z",
-  "engine_version": "0.0.0-alpha.22",
+  "fetched_at": "2026-05-07T13:12:11.491Z",
+  "engine_version": "0.0.0-alpha.23",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -634,7 +634,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.17", "A.8.5", "A.8.20"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_primary",
         "pass_narrative": "Profile login IP ranges are scoped, not wide-open, so authentication can't happen from arbitrary locations on the internet — a defense-in-depth layer if a credential ever leaks."
       }
     },
