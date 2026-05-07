@@ -69,6 +69,11 @@
 //                   Evaluator merges. Avoids the 3-semi-join SOQL limit.
 //   - SBS-ACS-005   Active users on standard profiles (custom-profile policy)
 //   - SBS-ACS-006   Active users with Use Any API Client (via permset assignment)
+//   - SBS-ACS-007   NHI inventory: API-Only-profile users with internal UserType,
+//                   inline Profile broad-perm flags (also used by ACS-008)
+//   - SBS-ACS-008   NHI broad-permset grants: explicit Permission Set /
+//                   Permission Set Group assignments to NHIs that grant any
+//                   of the 5 broad-privilege booleans
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
 //   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
 //   - SBS-FILE-002  ContentDistribution rows without password (sensitive-link auth)
@@ -384,6 +389,109 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     appliesWhen: fieldsExist('PermissionSet', [
       'Id',
       'PermissionsUseAnyApiClient',
+      'IsOwnedByProfile',
+    ]),
+  },
+
+  // SBS-ACS-007 — Maintain Inventory of Non-Human Identities. Surfaces
+  // active users whose Profile carries `PermissionsApiUserOnly = true`
+  // (the canonical platform signal for "this user can only authenticate
+  // via API — no UI sessions") and whose UserType is internal-shaped
+  // (Standard or CsnOnly — excludes portal/community/external user types).
+  //
+  // Why API-only-profile rather than name-pattern heuristics: the
+  // audit_procedure lists OR-clauses on username substrings ("integration",
+  // "api", "bot", "automation", "service") and on Einstein Bot
+  // associations. Substring matching is inherently noisy — orgs that name
+  // integration users `crm_sync@...` or `marketo-conn@...` get missed,
+  // and orgs that have a human user named `service.thompson@...` get false
+  // positives. The API-Only profile flag is unambiguous: it's a platform
+  // primitive and an org consciously toggles it on. Profile-API-Only
+  // captures the high-precision NHI population; the questionnaire still
+  // adjudicates whether the inventory is COMPLETE (e.g., bots, automation
+  // users, OAuth-only integrations the customer manages out-of-band).
+  //
+  // Includes Profile-level broad-permission booleans inline so the
+  // companion ACS-008 evaluator (which consumes BOTH this query and the
+  // companion permset query below) can flag NHI users whose profile
+  // already grants View All / Modify All / Manage Users / Author Apex /
+  // Customize Application without needing a third roundtrip.
+  //
+  // Field-gate is defensive: PermissionsApiUserOnly + the 5 broad-perm
+  // booleans are universal across editions today, but the gate matches
+  // the F.4 Bug C pattern as a forward-looking shield.
+  {
+    id: 'acs-007-nhi-inventory',
+    controlIds: ['SBS-ACS-007', 'SBS-ACS-008'],
+    label: 'Active non-human identities (API-Only profile users with internal UserType)',
+    soql:
+      'SELECT Id, Username, Name, UserType, LastLoginDate, ' +
+      'Profile.Name, Profile.PermissionsViewAllData, Profile.PermissionsModifyAllData, ' +
+      'Profile.PermissionsManageUsers, Profile.PermissionsAuthorApex, ' +
+      'Profile.PermissionsCustomizeApplication ' +
+      'FROM User ' +
+      'WHERE IsActive = true AND Profile.PermissionsApiUserOnly = true ' +
+      "AND UserType IN ('Standard', 'CsnOnly') " +
+      'ORDER BY Username',
+    appliesWhen: fieldsExist('Profile', [
+      'PermissionsApiUserOnly',
+      'PermissionsViewAllData',
+      'PermissionsModifyAllData',
+      'PermissionsManageUsers',
+      'PermissionsAuthorApex',
+      'PermissionsCustomizeApplication',
+    ]),
+  },
+
+  // SBS-ACS-008 — Restrict Broad Privileges for Non-Human Identities.
+  // Companion to acs-007-nhi-inventory: enumerates explicit (non-profile-
+  // owned) Permission Set / Permission Set Group assignments that grant
+  // any of the 5 broad-privilege booleans (View All Data, Modify All Data,
+  // Manage Users, Author Apex, Customize Application) to a user that
+  // ALSO matches the NHI inventory criteria.
+  //
+  // Profile-level broad perms are surfaced by the inventory query above
+  // (Profile.PermissionsViewAllData et al inline), so the evaluator
+  // unions across both rows-sets. This split is necessary because the
+  // inventory query returns one row per User while broad-permset grants
+  // require relationship traversal on PermissionSetAssignment — different
+  // root sObjects.
+  //
+  // `PermissionSet.IsOwnedByProfile = false` excludes the implicit
+  // backing permset that every Profile has — those are already covered
+  // by the inventory's Profile.* booleans. Counting them again here
+  // would double-count.
+  //
+  // Field-gate is defensive (universal fields today). Same shape as
+  // ACS-004's permset path, which is the reference for relationship-
+  // traversal-not-semi-join queries.
+  {
+    id: 'acs-008-nhi-broad-permset-grants',
+    controlIds: ['SBS-ACS-008'],
+    label:
+      'Permission Set / Permission Set Group grants of broad privileges to non-human identities',
+    soql:
+      'SELECT AssigneeId, Assignee.Username, Assignee.Profile.Name, ' +
+      'PermissionSet.Label, ' +
+      'PermissionSet.PermissionsViewAllData, PermissionSet.PermissionsModifyAllData, ' +
+      'PermissionSet.PermissionsManageUsers, PermissionSet.PermissionsAuthorApex, ' +
+      'PermissionSet.PermissionsCustomizeApplication ' +
+      'FROM PermissionSetAssignment ' +
+      'WHERE Assignee.IsActive = true ' +
+      'AND Assignee.Profile.PermissionsApiUserOnly = true ' +
+      "AND Assignee.UserType IN ('Standard', 'CsnOnly') " +
+      'AND PermissionSet.IsOwnedByProfile = false ' +
+      'AND (PermissionSet.PermissionsViewAllData = true ' +
+      'OR PermissionSet.PermissionsModifyAllData = true ' +
+      'OR PermissionSet.PermissionsManageUsers = true ' +
+      'OR PermissionSet.PermissionsAuthorApex = true ' +
+      'OR PermissionSet.PermissionsCustomizeApplication = true)',
+    appliesWhen: fieldsExist('PermissionSet', [
+      'PermissionsViewAllData',
+      'PermissionsModifyAllData',
+      'PermissionsManageUsers',
+      'PermissionsAuthorApex',
+      'PermissionsCustomizeApplication',
       'IsOwnedByProfile',
     ]),
   },

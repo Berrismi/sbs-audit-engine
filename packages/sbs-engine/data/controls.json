@@ -2,7 +2,7 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T03:29:44.090Z",
+  "fetched_at": "2026-05-07T04:56:16.997Z",
   "engine_version": "0.0.0-alpha.17",
   "controls": [
     {
@@ -296,7 +296,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.9", "A.5.16", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "You have a current inventory of non-human identities, so automated access can be reviewed, orphaned credentials can be retired, and security incidents involving integrations are actually investigable."
       }
     },
@@ -338,7 +338,7 @@
           "soc2": ["CC6.1", "CC6.3"],
           "iso27001": ["A.5.15", "A.5.18", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Non-human identities aren't carrying broad privileges by default, so a compromised API key or OAuth token can't bypass sharing rules or trigger administrative operations org-wide."
       }
     },
