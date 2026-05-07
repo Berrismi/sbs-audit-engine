@@ -70,15 +70,26 @@ function appsFromEcaRows(rows: ReadonlyArray<Record<string, unknown>>): AdHocApp
   return out;
 }
 
-function buildSoqlResult(apps: AdHocApp[]): EvaluatorResult {
+function buildSoqlResult(
+  apps: AdHocApp[],
+  surveyed: { connectedApps: boolean; ecas: boolean },
+): EvaluatorResult {
   if (apps.length === 0) {
+    // Phrase the pass message in terms of the surfaces actually queried —
+    // never overstate "both clean" when only one ran. The other surface
+    // either field-gate-skipped (capability gap on this org) or the runtime
+    // never executed it.
+    const passMessage =
+      surveyed.connectedApps && surveyed.ecas
+        ? 'No ad-hoc Connected Apps or External Client Applications detected. Every OAuth integration in the org came from a managed or unmanaged package install.'
+        : surveyed.connectedApps
+          ? 'No ad-hoc Connected Apps detected. Every Connected App in the org came from a package install. (External Client Application surface was not queried on this scan — gated-skipped or absent.)'
+          : 'No ad-hoc External Client Applications detected. Every ECA in the org came from a package install. (Connected Application surface was not queried on this scan — gated-skipped or absent.)';
     return {
       status: 'pass',
       confidence: 'high',
       evidence_used: ['soql'],
-      findings: [
-        'No ad-hoc Connected Apps or External Client Applications detected. Every OAuth integration in the org came from a managed or unmanaged package install.',
-      ],
+      findings: [passMessage],
     };
   }
 
@@ -128,7 +139,10 @@ export const evaluate: Evaluator = (input) => {
   if (connectedApps || ecas) {
     const fromCAs = connectedApps ? appsFromConnectedAppRows(connectedApps.rows) : [];
     const fromECAs = ecas ? appsFromEcaRows(ecas.rows) : [];
-    return buildSoqlResult([...fromCAs, ...fromECAs]);
+    return buildSoqlResult([...fromCAs, ...fromECAs], {
+      connectedApps: connectedApps !== undefined,
+      ecas: ecas !== undefined,
+    });
   }
 
   return baseAttestation(input);

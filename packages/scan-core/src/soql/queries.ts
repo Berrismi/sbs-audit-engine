@@ -426,11 +426,11 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // `IsQueryable = true`, but only via the standard endpoint. `source:
   // 'tooling'` is intentionally NOT set on these queries.
   //
-  // Validated against ProdProksel (`berris@prokselconsulting.com`), which
-  // carries 1 live ECA ("Wengrow CRM Sync") with a 24-year refresh token and
-  // self-service authorization — exactly the kind of misconfiguration the
-  // OAUTH/DEP audits target. DE returns 0 rows for every ECA query (no apps
-  // installed), which is the correct trivially-compliant outcome.
+  // Validated against the `ProdProksel` org alias, which carries 1 live ECA
+  // ("Wengrow CRM Sync") with a 24-year refresh token and self-service
+  // authorization — exactly the kind of misconfiguration the OAUTH/DEP audits
+  // target. DE returns 0 rows for every ECA query (no apps installed), which
+  // is the correct trivially-compliant outcome.
   //
   // Authoring rule: every existing OAUTH/DEP control with a Connected
   // Application query SHOULD ship a parallel ECA query so customer migrations

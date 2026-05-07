@@ -78,15 +78,22 @@ function appsFromEcaRows(rows: ReadonlyArray<Record<string, unknown>>): SelfServ
   return out;
 }
 
-function buildSoqlResult(apps: SelfServiceApp[]): EvaluatorResult {
+function buildSoqlResult(
+  apps: SelfServiceApp[],
+  surveyed: { connectedApps: boolean; ecas: boolean },
+): EvaluatorResult {
   if (apps.length === 0) {
+    const passMessage =
+      surveyed.connectedApps && surveyed.ecas
+        ? 'No Connected Apps or External Client Applications allow self-service authorization. Every installed OAuth app requires admin approval — profile/permset assignment gates access.'
+        : surveyed.connectedApps
+          ? 'No Connected Apps allow self-service authorization. Every installed Connected App requires admin approval. (External Client Application surface was not queried on this scan — gated-skipped or absent.)'
+          : 'No External Client Applications allow self-service authorization. Every installed ECA requires admin approval. (Connected Application surface was not queried on this scan — gated-skipped or absent.)';
     return {
       status: 'pass',
       confidence: 'high',
       evidence_used: ['soql'],
-      findings: [
-        'No Connected Apps or External Client Applications allow self-service authorization. Every installed OAuth app requires admin approval — profile/permset assignment gates access.',
-      ],
+      findings: [passMessage],
     };
   }
 
@@ -131,7 +138,10 @@ export const evaluate: Evaluator = (input) => {
   if (connectedApps || ecas) {
     const fromCAs = connectedApps ? appsFromConnectedAppRows(connectedApps.rows) : [];
     const fromECAs = ecas ? appsFromEcaRows(ecas.rows) : [];
-    return buildSoqlResult([...fromCAs, ...fromECAs]);
+    return buildSoqlResult([...fromCAs, ...fromECAs], {
+      connectedApps: connectedApps !== undefined,
+      ecas: ecas !== undefined,
+    });
   }
 
   return baseAttestation(input);

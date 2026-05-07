@@ -110,6 +110,32 @@ describe('SBS-OAUTH-002 evaluator (SOQL evidence path)', () => {
     );
   });
 
+  it('pass message reflects only the surveyed surface when only the legacy CA query ran', () => {
+    const result = evaluate({
+      control,
+      evidence: [{ source: 'soql', query: '...', query_id: CA_QUERY_ID, rows: [] }],
+    });
+    expect(result.status).toBe('pass');
+    expect(result.findings[0]).toContain('No Connected Apps allow self-service authorization');
+    expect(result.findings[0]).toContain(
+      'External Client Application surface was not queried on this scan',
+    );
+  });
+
+  it('pass message reflects only the surveyed surface when only the ECA query ran', () => {
+    const result = evaluate({
+      control,
+      evidence: [{ source: 'soql', query: '...', query_id: ECA_QUERY_ID, rows: [] }],
+    });
+    expect(result.status).toBe('pass');
+    expect(result.findings[0]).toContain(
+      'No External Client Applications allow self-service authorization',
+    );
+    expect(result.findings[0]).toContain(
+      'Connected Application surface was not queried on this scan',
+    );
+  });
+
   it('falls back to questionnaire low-confidence when no SOQL evidence is present', () => {
     const result = evaluate({
       control,

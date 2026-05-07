@@ -155,15 +155,22 @@ function ecaViolationsFromRows(rows: ReadonlyArray<Record<string, unknown>>): Po
   return out;
 }
 
-function buildSoqlResult(violations: PolicyViolation[]): EvaluatorResult {
+function buildSoqlResult(
+  violations: PolicyViolation[],
+  surveyed: { connectedApps: boolean; ecas: boolean },
+): EvaluatorResult {
   if (violations.length === 0) {
+    const passMessage =
+      surveyed.connectedApps && surveyed.ecas
+        ? 'No Connected Apps or External Client Applications carry token policies that violate the 90-day refresh / 15-minute session audit thresholds.'
+        : surveyed.connectedApps
+          ? 'No Connected Apps carry token policies that violate the 90-day refresh / 15-minute session audit thresholds. (External Client Application surface was not queried on this scan — gated-skipped or absent.)'
+          : 'No External Client Applications carry token policies that violate the 90-day refresh / 15-minute session audit thresholds. (Connected Application surface was not queried on this scan — gated-skipped or absent.)';
     return {
       status: 'pass',
       confidence: 'high',
       evidence_used: ['soql'],
-      findings: [
-        'No Connected Apps or External Client Applications carry token policies that violate the 90-day refresh / 15-minute session audit thresholds.',
-      ],
+      findings: [passMessage],
     };
   }
 
@@ -219,7 +226,10 @@ export const evaluate: Evaluator = (input) => {
   if (connectedApps || ecas) {
     const fromCAs = connectedApps ? caViolationsFromRows(connectedApps.rows) : [];
     const fromECAs = ecas ? ecaViolationsFromRows(ecas.rows) : [];
-    return buildSoqlResult([...fromCAs, ...fromECAs]);
+    return buildSoqlResult([...fromCAs, ...fromECAs], {
+      connectedApps: connectedApps !== undefined,
+      ecas: ecas !== undefined,
+    });
   }
 
   return baseAttestation(input);
