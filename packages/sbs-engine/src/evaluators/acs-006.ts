@@ -43,13 +43,7 @@ export const evaluate = cliAttestationEvaluator({
         ],
       };
     }
-    const { profileDerived, permsetDerived } = countByOwnership(rows);
-    const breakdown =
-      profileDerived === 0
-        ? `${permsetDerived} via Permission Set / Permission Set Group`
-        : permsetDerived === 0
-          ? `${profileDerived} via Profile (backing permission set)`
-          : `${profileDerived} via Profile (backing permission set), ${permsetDerived} via Permission Set / Permission Set Group`;
+    const breakdown = formatBreakdown(countByOwnership(rows));
     return {
       status: 'inconclusive',
       findings: [
@@ -65,15 +59,18 @@ export const evaluate = cliAttestationEvaluator({
 // Tally rows by their PermissionSet.IsOwnedByProfile flag. A profile-derived
 // row is one whose PermissionSet is the implicit set backing a Profile (every
 // Profile in Salesforce has one); a permset-derived row is an explicit
-// Permission Set or Permission Set Group assignment. Returns zeros for rows
-// whose ownership flag is missing rather than throwing — matches the
-// "degrade gracefully" posture across the evaluator family.
+// Permission Set or Permission Set Group assignment. Rows whose IsOwnedByProfile
+// flag is missing (older bundles, partial-shape evidence) are tallied
+// separately as `unknown` rather than silently dropped — keeps the
+// breakdown count consistent with the row total.
 function countByOwnership(rows: Record<string, unknown>[]): {
   profileDerived: number;
   permsetDerived: number;
+  unknown: number;
 } {
   let profileDerived = 0;
   let permsetDerived = 0;
+  let unknown = 0;
   for (const row of rows) {
     const ps = row['PermissionSet'];
     const ownedByProfile =
@@ -82,6 +79,32 @@ function countByOwnership(rows: Record<string, unknown>[]): {
         : undefined;
     if (ownedByProfile === true) profileDerived++;
     else if (ownedByProfile === false) permsetDerived++;
+    else unknown++;
   }
-  return { profileDerived, permsetDerived };
+  return { profileDerived, permsetDerived, unknown };
+}
+
+// Build a human-readable breakdown string from the ownership counts. Skips
+// any bucket with 0 rows so the phrasing stays clean (a single non-zero
+// bucket reads as "N via X"; multiple buckets join with commas). The sum of
+// the buckets always equals the original row count, so the breakdown never
+// understates the inventory.
+function formatBreakdown(counts: {
+  profileDerived: number;
+  permsetDerived: number;
+  unknown: number;
+}): string {
+  const parts: string[] = [];
+  if (counts.profileDerived > 0) {
+    parts.push(`${counts.profileDerived} via Profile (backing permission set)`);
+  }
+  if (counts.permsetDerived > 0) {
+    parts.push(`${counts.permsetDerived} via Permission Set / Permission Set Group`);
+  }
+  if (counts.unknown > 0) {
+    parts.push(
+      `${counts.unknown} of unknown ownership (PermissionSet.IsOwnedByProfile not present in evidence)`,
+    );
+  }
+  return parts.join(', ');
 }
