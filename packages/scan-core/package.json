@@ -38,6 +38,7 @@
     "execa": "^9"
   },
   "devDependencies": {
+    "@salesforce/core": "^8",
     "tsx": "^4.21.0"
   }
 }
