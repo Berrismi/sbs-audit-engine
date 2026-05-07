@@ -822,4 +822,47 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'SessionTimeoutInMinutes',
     ]),
   },
+
+  // SBS-MON-003 — Monitor for Suspicious Logins. Inventory of
+  // TransactionSecurityPolicy (Tooling) records, with EventType filter
+  // surfacing whether login-event monitoring is configured at the platform
+  // layer.
+  //
+  // The audit_procedure asks for a continuous SIEM/analytics solution
+  // monitoring login anomalies (impossible travel, suspicious networks,
+  // off-hours patterns, brute-force precursors). External SIEM integration
+  // is questionnaire territory; the CLI evidence path surfaces Salesforce's
+  // INTERNAL Transaction Security Policy as a corroborating signal:
+  //   - 0 TSPs configured → no internal monitoring policies (defer to
+  //     questionnaire whether external SIEM exists)
+  //   - N TSPs configured but none for EventType='Login' → internal
+  //     monitoring exists for other event types but not specifically
+  //     for login anomalies
+  //   - N TSPs with EventType='Login' → internal login monitoring exists
+  //     at the platform layer; questionnaire confirms external SIEM
+  //     scope + investigation procedures
+  //
+  // EventType picklist (verified via DE describe): AuditTrail, Login,
+  // Entity, DataExport, AccessResource. Pull all 5 — the evaluator
+  // separates the Login-specific count from the rest.
+  //
+  // TransactionSecurityPolicy is queryable via Tooling on every edition
+  // that ships TSP infrastructure (Enterprise+); the appliesWhen gate
+  // covers edition-stripped DE/Essentials.
+  {
+    id: 'mon-003-transaction-security-policies',
+    controlIds: ['SBS-MON-003'],
+    label: 'Transaction Security Policies (internal anomaly-monitoring infrastructure)',
+    source: 'tooling',
+    soql:
+      'SELECT Id, DeveloperName, MasterLabel, Type, State, EventType, EventName ' +
+      'FROM TransactionSecurityPolicy',
+    appliesWhen: toolingFieldsExist('TransactionSecurityPolicy', [
+      'Id',
+      'DeveloperName',
+      'Type',
+      'State',
+      'EventType',
+    ]),
+  },
 ];

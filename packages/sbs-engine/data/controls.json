@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T17:00:20.068Z",
-  "engine_version": "0.0.0-alpha.26",
+  "fetched_at": "2026-05-07T17:27:46.815Z",
+  "engine_version": "0.0.0-alpha.27",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -1993,7 +1993,7 @@
           "gdpr": ["Article 32"],
           "ccpa": ["§1798.100"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Anomalous login patterns — impossible travel, suspicious networks, off-hours access, brute-force precursors — trigger investigation in your monitoring stack, so a compromised credential surfaces as an alert instead of a quiet foothold."
       }
     },
