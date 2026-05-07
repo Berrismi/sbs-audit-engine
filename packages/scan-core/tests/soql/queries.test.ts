@@ -117,11 +117,13 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(result).toEqual({ applies: false, reason: 'field_unavailable' });
   });
 
-  it('acs-012 query gates on Profile login-hours field availability', () => {
+  it('acs-012 SOQL query was retired in alpha.32 — Profile.loginHours moved to Metadata API', () => {
+    // Multi-org verification (DE + 2 prod) confirmed Profile.LoginHours*Start/End
+    // SOQL columns are absent on every edition; alpha.32 migrated ACS-012 to the
+    // Metadata API path (see packages/sbs-engine/src/evaluators/acs-012.ts). This
+    // test guards against accidental reintroduction.
     const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'acs-012-profiles-with-login-hours');
-    expect(q).toBeDefined();
-    expect(q!.source ?? 'regular').toBe('regular');
-    expect(q!.appliesWhen).toBeDefined();
+    expect(q).toBeUndefined();
   });
 
   describe('acs-004 split into permset path + profile path (F.4 Bug C)', () => {
@@ -178,7 +180,7 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(ids.has('int-003-named-credentials-inventory')).toBe(true);
     // Block E.4 additions (3 more controls):
     expect(ids.has('acs-005-active-users-on-standard-profiles')).toBe(true);
-    expect(ids.has('acs-012-profiles-with-login-hours')).toBe(true);
+    // acs-012 SOQL query was retired in alpha.32 — see retirement test above.
     expect(ids.has('oauth-001-ad-hoc-connected-apps')).toBe(true);
   });
 });

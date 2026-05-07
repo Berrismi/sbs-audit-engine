@@ -74,7 +74,9 @@
 //   - SBS-ACS-008   NHI broad-permset grants: explicit Permission Set /
 //                   Permission Set Group assignments to NHIs that grant any
 //                   of the 5 broad-privilege booleans
-//   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
+//   (SBS-ACS-012 used to live here as a SOQL query against Profile.LoginHours*
+//    fields — alpha.32 migrated to Metadata API after multi-org verification
+//    showed those columns are absent on every edition. See evaluators/acs-012.ts.)
 //   - SBS-DATA-002  Long Text Area + Rich Text Area field inventory by entity
 //                   (EntityDefinition.Fields subquery, customizable entities)
 //   - SBS-DEP-001 +
@@ -191,31 +193,16 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       "AND Profile.Name IN ('Standard User', 'Marketing User', 'Solution Manager', 'Contract Manager', 'Read Only')",
   },
 
-  // SBS-ACS-012 — Classify Users for Login Hours Restrictions. Profiles
-  // with at least one Login Hours window configured. The seven LoginHours*Start
-  // fields are conditional across editions (DE doesn't have them). When the
-  // fields are absent the query is skipped → evaluator falls back to
-  // questionnaire attestation.
-  {
-    id: 'acs-012-profiles-with-login-hours',
-    controlIds: ['SBS-ACS-012'],
-    label: 'Profiles with Login Hours restrictions configured',
-    soql:
-      'SELECT Id, Name FROM Profile ' +
-      'WHERE LoginHoursMondayStart != null OR LoginHoursTuesdayStart != null ' +
-      'OR LoginHoursWednesdayStart != null OR LoginHoursThursdayStart != null ' +
-      'OR LoginHoursFridayStart != null OR LoginHoursSaturdayStart != null ' +
-      'OR LoginHoursSundayStart != null',
-    appliesWhen: fieldsExist('Profile', [
-      'LoginHoursMondayStart',
-      'LoginHoursTuesdayStart',
-      'LoginHoursWednesdayStart',
-      'LoginHoursThursdayStart',
-      'LoginHoursFridayStart',
-      'LoginHoursSaturdayStart',
-      'LoginHoursSundayStart',
-    ]),
-  },
+  // SBS-ACS-012 was previously a SOQL query against Profile.LoginHours*Start
+  // fields. alpha.31 multi-org verification (DE hm-cli-validation, prod
+  // ProdProksel, prod loan-maven) confirmed those fields are NOT present on
+  // Profile in any modern Salesforce org — Profile.describe returns 0
+  // LoginHours* columns across editions. The previous fieldsExist gate
+  // therefore field-skipped on every consumer scan since the original
+  // authoring, silently degrading the control to questionnaire-only.
+  // alpha.32 migrates ACS-012 to the Metadata API (Profile.loginHours
+  // sub-element) — see packages/sbs-engine/src/evaluators/acs-012.ts.
+  // No SOQL query remains for this control.
 
   // SBS-FILE-001 — Require Expiry Dates on Public Content Links.
   //

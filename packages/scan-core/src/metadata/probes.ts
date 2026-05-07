@@ -42,6 +42,8 @@ export const DEFAULT_METADATA_PROBES: readonly MetadataProbe[] = [
   //   - SBS-AUTH-002 (alpha.24): inspects userPermissions for IsSsoEnabled
   //   - SBS-AUTH-003 (alpha.23): inspects loginIpRanges for overly-broad
   //     ranges
+  //   - SBS-ACS-012 (alpha.32): inspects loginHours sub-element for any
+  //     configured day*Start/day*End values (replaces the dead SOQL path)
   {
     id: 'profiles-priority-100',
     type: 'Profile',
