@@ -823,66 +823,44 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     ]),
   },
 
-  // SBS-AUTH-004 — Enforce Strong MFA for External Users with Substantial
-  // Access to Sensitive Data. Surfaces active external users (UserType IN
-  // the portal/community-shaped values) along with their Profile-level
-  // `PermissionsForceTwoFactor` flag inline. The companion permset query
-  // below catches users granted PermissionsForceTwoFactor via permission
-  // set override.
+  // SBS-CPORTAL-002 — Restrict Guest User Record Access. Surfaces every
+  // ObjectPermissions row whose Parent profile is a Guest profile (UserType
+  // = 'Guest') and grants any permission (Read/Create/Edit/Delete/ViewAll/
+  // ModifyAll) on a business object.
   //
-  // External UserTypes (verified via DE describe of User.UserType):
-  //   PowerCustomerSuccess, CustomerSuccess, CspLitePortal, PowerPartner.
-  // (Other external-shaped values like Guest are excluded — guests
-  // shouldn't authenticate at all per CPORTAL-002.)
+  // Audit_procedure: guest user profiles must have all business-object
+  // permissions disabled, with permissions exclusively for authentication
+  // flows (login, registration, password reset). The "business-related"
+  // distinction is customer-policy territory (auth-flow objects vary by
+  // implementation: some orgs use Account/Contact for self-service
+  // registration, which is a permitted exception). CLI surfaces the
+  // inventory of guest-profile object permissions; questionnaire confirms
+  // which are necessary for auth flows vs. over-broad.
   //
-  // Classification: cli_corroborating. The audit_procedure scopes to
-  // external users with "substantial access to sensitive data" — the
-  // SUBSTANTIAL-ACCESS classification is customer-defined (their data
-  // taxonomy + access policy) and stays in the questionnaire. CLI
-  // surfaces the inventory of external users + their MFA enforcement
-  // state; questionnaire confirms whether the classification of "in-scope
-  // users" matches the inventory and whether the questionnaire population
-  // includes any users this query missed (e.g., partner federation users
-  // routed through unusual UserType values).
+  // Pass = 0 rows (no guest profile grants any object permission).
+  // Inconclusive = N rows (defer to questionnaire whether each is an
+  // intentional auth-flow exception or an over-broad grant).
   //
-  // The actual permission name is `PermissionsForceTwoFactor` (verified
-  // via Profile + PermissionSet describe) — Salesforce internally calls
-  // this "Multi-Factor Authentication for User Interface Logins" in the
-  // UI. Don't confuse with `PermissionsBypassMFAForUiLogins` (the OPPOSITE
-  // — exempts user from MFA); a more thorough evaluator would check both,
-  // but for the foundation cli_corroborating verdict the FORCE flag alone
-  // is the canonical signal.
+  // ObjectPermissions parents to PermissionSet (the implicit one backing
+  // every Profile); we traverse Parent.Profile.UserType = 'Guest' to
+  // restrict to guest profiles only.
+  //
+  // The query is bounded by the Guest UserType filter — bare DE returns 0
+  // rows (no community installed); production orgs with communities have
+  // a small fixed set of guest profiles, so the result set stays tractable.
   {
-    id: 'auth-004-external-users-mfa',
-    controlIds: ['SBS-AUTH-004'],
-    label: 'Active external (community / portal) users with Profile MFA-force flag inline',
+    id: 'cportal-002-guest-profile-object-permissions',
+    controlIds: ['SBS-CPORTAL-002'],
+    label: 'Object permissions granted to Guest profiles (Experience Cloud guest users)',
     soql:
-      'SELECT Id, Username, Name, UserType, ' +
-      'Profile.Name, Profile.PermissionsForceTwoFactor ' +
-      'FROM User ' +
-      'WHERE IsActive = true ' +
-      "AND UserType IN ('PowerCustomerSuccess', 'CustomerSuccess', 'CspLitePortal', 'PowerPartner')",
-  },
-
-  // SBS-AUTH-004 (permset override path) — explicit permission set or
-  // permission set group grants of PermissionsForceTwoFactor to external
-  // users. Mirrors the ACS-004 super-admin pattern: union with the inventory
-  // query above to determine effective MFA enforcement per user.
-  //
-  // Excludes profile-backed permsets (`IsOwnedByProfile = false`) so we
-  // don't double-count Profile-level grants the inventory query already
-  // surfaces.
-  {
-    id: 'auth-004-external-users-mfa-via-permsets',
-    controlIds: ['SBS-AUTH-004'],
-    label: 'Permission set / permset-group grants of MFA-force to external users',
-    soql:
-      'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
-      'FROM PermissionSetAssignment ' +
-      'WHERE Assignee.IsActive = true ' +
-      "AND Assignee.UserType IN ('PowerCustomerSuccess', 'CustomerSuccess', 'CspLitePortal', 'PowerPartner') " +
-      'AND PermissionSet.IsOwnedByProfile = false ' +
-      'AND PermissionSet.PermissionsForceTwoFactor = true',
+      'SELECT Id, Parent.Profile.Name, SobjectType, ' +
+      'PermissionsRead, PermissionsCreate, PermissionsEdit, PermissionsDelete, ' +
+      'PermissionsViewAllRecords, PermissionsModifyAllRecords ' +
+      'FROM ObjectPermissions ' +
+      "WHERE Parent.Profile.UserType = 'Guest' " +
+      'AND (PermissionsRead = true OR PermissionsCreate = true OR PermissionsEdit = true ' +
+      'OR PermissionsDelete = true OR PermissionsViewAllRecords = true ' +
+      'OR PermissionsModifyAllRecords = true)',
   },
 
   // SBS-MON-003 — Monitor for Suspicious Logins. Inventory of
