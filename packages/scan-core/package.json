@@ -29,10 +29,14 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:soql": "tsx scripts/validate-soql.ts"
   },
   "dependencies": {
     "@hellomavens/security-review-for-salesforce-engine": "workspace:*",
     "execa": "^9"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }

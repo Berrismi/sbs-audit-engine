@@ -45,6 +45,20 @@
 //    gates pass at runtime then fail mid-query with NO_SUCH_COLUMN. F.4 Bug
 //    C tightened this for int-002 + oauth-001.
 //
+// 7. **Validate against a live org before merging.** Before opening a PR
+//    that adds or modifies a query, run:
+//
+//      pnpm validate:soql --target-org hm-cli-validation
+//
+//    The script appends `LIMIT 0` to each query and dry-executes it via
+//    `sf data query`. NO_SUCH_COLUMN / NO_SUCH_OBJECT errors are caught at
+//    the Salesforce parser before the PR ships. Queries with `appliesWhen`
+//    are allowed to fail with a shape error (the runtime gate would skip
+//    them too); queries WITHOUT `appliesWhen` MUST pass on the target org.
+//    This is the regression guard for the alpha.14 + alpha.15 fabricated-
+//    field-name bug class fixed in alpha.16. CI doesn't run this — author
+//    discipline. See `packages/scan-core/scripts/validate-soql.ts`.
+//
 // Today's verified set:
 //   - SBS-ACS-001   Custom permission sets inventory (model documentation)
 //   - SBS-ACS-002   Active users with API-Enabled (via permset assignment)
