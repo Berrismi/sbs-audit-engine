@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { RunCodeAnalyzerOptions } from './code-analyzer/runner';
+import type { MetadataProbe } from './metadata/client';
 
 /**
  * Structural subset of @salesforce/core's Connection that scan-core depends
@@ -35,6 +36,32 @@ export interface ConnectionLike {
    * has it (delegates to jsforce). Used by the limits-rest-api evidence
    * source. */
   request?<T = unknown>(url: string): Promise<T>;
+  /** Metadata API namespace. Optional in the structural type so SOQL-only
+   * tests don't have to provide it; the real @salesforce/core Connection
+   * always has it (delegates to jsforce.metadata). Used by the metadata_api
+   * evidence source (Phase 3c Track B). The two methods we need are
+   * `list` (per-type fullName inventory) and `read` (retrieve N records by
+   * type + fullNames). The full jsforce MetadataApi has many more methods
+   * (create/update/delete/deploy/retrieve) — they are intentionally NOT
+   * declared here so scan-core can't accidentally mutate org config. */
+  metadata?: {
+    list(query: { type: string; folder?: string }): Promise<MetadataFileProperties[]>;
+    read<T = unknown>(type: string, fullNames: string | string[]): Promise<T | T[]>;
+  };
+}
+
+/**
+ * Subset of jsforce's `MetadataFileProperties` that scan-core uses. The
+ * actual jsforce shape includes createdDate, lastModifiedDate, createdById,
+ * etc — kept out of this declaration so the structural type stays minimal
+ * and tests can fake it with `{ fullName, type }`.
+ */
+export interface MetadataFileProperties {
+  fullName: string;
+  type: string;
+  /** Salesforce internal id; not stable across orgs. Optional in structural
+   * type for ergonomics; jsforce always populates it. */
+  id?: string;
 }
 
 /**
@@ -132,13 +159,24 @@ export interface CollectEvidenceOptions {
   /** Subject id (audit subject) — copied through to the EvidenceBundle. */
   subjectId: string;
   /** Restrict which evidence sources to collect. Defaults to all available
-   * sources. SOQL + Health Check API run with just a Connection; Code
-   * Analyzer also requires the `codeAnalyzer` option to be set. */
-  onlySources?: readonly ('soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api')[];
+   * sources. SOQL + Health Check API + Limits REST API + Metadata API run
+   * with just a Connection; Code Analyzer also requires the `codeAnalyzer`
+   * option to be set. */
+  onlySources?: readonly (
+    | 'soql'
+    | 'health_check_api'
+    | 'code_analyzer'
+    | 'limits_rest_api'
+    | 'metadata_api'
+  )[];
   /** Subscribe to per-query lifecycle events. */
   onProgress?: ProgressListener;
   /** Override the default SOQL query bundle (mainly for tests). */
   soqlQueries?: readonly SoqlQueryDef[];
+  /** Override the default Metadata API probe registry (mainly for tests).
+   * When unset, scan-core uses `DEFAULT_METADATA_PROBES`. An empty array
+   * skips Metadata API collection without disabling the source. */
+  metadataProbes?: readonly MetadataProbe[];
   /** Code Analyzer options (alias + spawner + tmpdir). When unset, the
    * code_analyzer source is skipped even if it's in onlySources. The
    * plugin (Block A's run command) wires the production execa spawner +

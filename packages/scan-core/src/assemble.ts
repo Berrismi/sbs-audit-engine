@@ -5,6 +5,7 @@ import type { Evidence, EvidenceBundle } from '@hellomavens/security-review-for-
 import type { CodeAnalyzerExecution } from './code-analyzer/runner';
 import type { HealthCheckResult } from './health-check/client';
 import type { LimitsResult } from './limits/client';
+import type { MetadataFetchResult } from './metadata/client';
 import type { QueryResult } from './types';
 
 export interface AssembleOptions {
@@ -20,6 +21,11 @@ export interface AssembleOptions {
   /** Limits REST API result, if collected. Omitted (or unsupported/failed) →
    * no limits_rest_api Evidence variant in the bundle. */
   limits?: LimitsResult;
+  /** Metadata API result, if collected. Omitted (or unsupported/failed) →
+   * no metadata_api Evidence variant in the bundle. One Evidence row is
+   * emitted per per-type result (so a Profile + SecuritySettings probe
+   * produces two rows). */
+  metadata?: MetadataFetchResult;
   /** Injectable clock for deterministic testing. Defaults to `() => new Date()`. */
   now?: () => Date;
 }
@@ -78,9 +84,27 @@ export function assembleEvidenceBundle(opts: AssembleOptions): EvidenceBundle {
         ]
       : [];
 
+  // One metadata_api Evidence row per per-type result. Keeps the bundle
+  // shape consistent with the existing `{ source: 'metadata_api'; type;
+  // records }` evidence variant in engine/src/types.ts.
+  const metadataEvidence: Evidence[] =
+    opts.metadata?.kind === 'ok'
+      ? opts.metadata.results.map((r) => ({
+          source: 'metadata_api',
+          type: r.type,
+          records: r.records,
+        }))
+      : [];
+
   return {
     subject_id: opts.subjectId,
     collected_at: now().toISOString(),
-    evidence: [...soqlEvidence, ...healthCheckEvidence, ...codeAnalyzerEvidence, ...limitsEvidence],
+    evidence: [
+      ...soqlEvidence,
+      ...healthCheckEvidence,
+      ...codeAnalyzerEvidence,
+      ...limitsEvidence,
+      ...metadataEvidence,
+    ],
   };
 }

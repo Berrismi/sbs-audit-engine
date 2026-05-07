@@ -30,7 +30,8 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "validate:soql": "tsx scripts/validate-soql.ts"
+    "validate:soql": "tsx scripts/validate-soql.ts",
+    "validate:metadata": "tsx scripts/validate-metadata.ts"
   },
   "dependencies": {
     "@hellomavens/security-review-for-salesforce-engine": "workspace:*",
