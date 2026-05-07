@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T01:47:48.444Z",
-  "engine_version": "0.0.0-alpha.16",
+  "fetched_at": "2026-05-07T03:29:44.090Z",
+  "engine_version": "0.0.0-alpha.17",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -1517,7 +1517,7 @@
           "soc2": ["CC6.1"],
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Your CLI Connected App has token expiration policies, so a stolen laptop's token files don't grant indefinite access to production — the credential exposure window is bounded."
       }
     },
