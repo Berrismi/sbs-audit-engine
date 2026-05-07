@@ -54,9 +54,9 @@ describe('DEFAULT_SOQL_QUERIES', () => {
     expect(q!.appliesWhen).toBeDefined();
   });
 
-  it('int-002 appliesWhen returns field_unavailable when MasterLabel is missing on RemoteProxy', async () => {
+  it('int-002 appliesWhen returns field_unavailable when SiteName is missing on RemoteProxy', async () => {
     const q = DEFAULT_SOQL_QUERIES.find((q) => q.id === 'int-002-remote-site-settings-inventory')!;
-    // RemoteProxy exists but the MasterLabel field doesn't (simulating an org
+    // RemoteProxy exists but the SiteName field doesn't (simulating an org
     // where the object is described but the column we select isn't present).
     const conn: ConnectionLike = {
       query: vi.fn(),
@@ -84,7 +84,7 @@ describe('DEFAULT_SOQL_QUERIES', () => {
             { name: 'Id' },
             { name: 'EndpointUrl' },
             { name: 'IsActive' },
-            { name: 'MasterLabel' },
+            { name: 'SiteName' },
           ],
         }),
       },
