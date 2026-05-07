@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T17:45:47.223Z",
-  "engine_version": "0.0.0-alpha.28",
+  "fetched_at": "2026-05-07T18:31:47.189Z",
+  "engine_version": "0.0.0-alpha.29",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -677,7 +677,7 @@
           "iso27001": ["A.5.16", "A.5.17", "A.8.5"],
           "gdpr": ["Article 32"]
         },
-        "cli_evidence_class": "cli_corroborating",
+        "cli_evidence_class": "questionnaire_only",
         "pass_narrative": "MFA is enforced for external users with substantial data access, so a stolen password alone can't sign someone in — phishing and credential-stuffing lose their main path to your sensitive data."
       }
     },
@@ -945,7 +945,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.15", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Guest users have minimal record access, so unauthenticated traffic can't quietly enumerate organizational data through your customer-portal trust boundary."
       }
     },

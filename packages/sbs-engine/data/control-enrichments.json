@@ -178,7 +178,7 @@
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"],
         "gdpr": ["Article 32"]
       },
-      "cli_evidence_class": "cli_corroborating",
+      "cli_evidence_class": "questionnaire_only",
       "pass_narrative": "MFA is enforced for external users with substantial data access, so a stolen password alone can't sign someone in — phishing and credential-stuffing lose their main path to your sensitive data."
     },
     "SBS-CODE-001": {
@@ -258,7 +258,7 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Guest users have minimal record access, so unauthenticated traffic can't quietly enumerate organizational data through your customer-portal trust boundary."
     },
     "SBS-DATA-001": {
