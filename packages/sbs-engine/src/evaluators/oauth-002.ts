@@ -5,10 +5,10 @@
 //
 // CLI evidence path: scan-core query
 // `oauth-002-connected-apps-without-admin-approval` returns Connected Apps
-// where `OptionsAdminApprovalRequired = false`. When that flag is false,
-// any authenticated user can self-authorize the app (no profile/permset
-// gating). Audit_procedure step 2 asks the consultant to verify access
-// scoping; this query surfaces apps that lack the platform-enforced
+// where `OptionsAllowAdminApprovedUsersOnly = false`. When that flag is
+// false, any authenticated user can self-authorize the app (no profile /
+// permset gating). Audit_procedure step 2 asks the consultant to verify
+// access scoping; this query surfaces apps that lack the platform-enforced
 // scoping toggle.
 //
 // Classification: cli_corroborating per the roadmap. SOQL identifies
@@ -16,7 +16,9 @@
 // intentional self-service (e.g., a managed-package app designed that way)
 // or a misconfiguration. 0 rows = pass (every app requires admin
 // approval); ≥1 rows = inconclusive (intent verification deferred to
-// questionnaire). Field-gated on `OptionsAdminApprovalRequired`.
+// questionnaire). Field-gated on `OptionsAllowAdminApprovedUsersOnly`
+// (defensive; alpha.15 shipped this against a fabricated field name,
+// alpha.16 corrected after live Tooling-API validation).
 
 import { cliAttestationEvaluator } from './_attestation';
 
