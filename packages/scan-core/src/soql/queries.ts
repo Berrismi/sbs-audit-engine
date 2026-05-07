@@ -75,6 +75,8 @@
 //                   Permission Set Group assignments to NHIs that grant any
 //                   of the 5 broad-privilege booleans
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
+//   - SBS-DATA-002  Long Text Area + Rich Text Area field inventory by entity
+//                   (EntityDefinition.Fields subquery, customizable entities)
 //   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
 //   - SBS-FILE-002  ContentDistribution rows without password (sensitive-link auth)
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
@@ -494,6 +496,63 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'PermissionsCustomizeApplication',
       'IsOwnedByProfile',
     ]),
+  },
+
+  // SBS-DATA-002 — Maintain an Inventory of Long Text Area Fields Containing
+  // Regulated Data. Surfaces every (EntityDefinition × FieldDefinition) pair
+  // where the field is a Long Text Area or Rich Text Area type. These two
+  // DataTypes are the long-form free-text containers Salesforce admins
+  // most often use to store unstructured commentary — exactly where PII
+  // and other regulated data tends to leak in unmanaged-text flows
+  // (Case.Description holding SSNs, custom Notes__c carrying birthdays,
+  // EmailMessage.HtmlBody capturing copy-pasted account info, ...).
+  //
+  // ============================================================================
+  // GOTCHA: FieldDefinition queries cannot run unbounded.
+  // ============================================================================
+  // Salesforce requires every FieldDefinition query to filter on
+  // EntityDefinition (either via parent-relationship traversal as we do
+  // here, or via WHERE EntityDefinition.QualifiedApiName = ...) — bare
+  // `SELECT ... FROM FieldDefinition WHERE DataType LIKE '...'` returns
+  // a Salesforce 400 ("filter operator is not valid for the filter field
+  // EntityDefinitionId" or similar). We use the parent-side EntityDefinition
+  // query with an inline `(SELECT ... FROM Fields ...)` subquery, which
+  // is the supported pattern for cross-entity field inventory.
+  //
+  // GOTCHA: DataType is an OPAQUE STRING, not a normalized enum.
+  // ============================================================================
+  // The DataType column on FieldDefinition returns formatted strings like
+  // `"Long Text Area(32000)"` and `"Rich Text Area(32000)"` — the length
+  // is concatenated into the type label. Equality matching against
+  // `'LongTextArea'` or `'Html'` (the metadata-API enum names) returns 0
+  // rows. The empirical correct match is `LIKE 'Long Text Area%'` and
+  // `LIKE 'Rich Text Area%'` (DE-validated). Salesforce does not expose
+  // the DataType picklist via describe (the `picklistValues` array is
+  // empty), so this is a discover-empirically situation — see the project
+  // memory `feedback_describe_first_authoring.md` for the discipline rule.
+  //
+  // ============================================================================
+  // Filter scope: `IsCustomizable = true` on EntityDefinition restricts to
+  // entities admins can extend (standard objects + custom objects), excluding
+  // platform-internal entities (audit trails, async-job tracking, system
+  // log objects). On bare DE this returns 214 EntityDefinition rows, of
+  // which 77 hold ≥1 LTA/Rich Text field (mostly the standard `.Description`
+  // pattern). On a real production org with custom objects, expect the
+  // count to expand to 100s of fields.
+  //
+  // The evaluator filters out entities with 0 LTA/Rich rows and reports
+  // (entity_count, total_field_count) as the inventory size; the documented
+  // inventory verification is questionnaire territory.
+  {
+    id: 'data-002-lta-rich-text-field-inventory',
+    controlIds: ['SBS-DATA-002'],
+    label: 'Inventory of Long Text Area + Rich Text Area fields by entity',
+    soql:
+      'SELECT QualifiedApiName, Label, ' +
+      '(SELECT QualifiedApiName, Label, DataType, Length FROM Fields ' +
+      "WHERE DataType LIKE 'Long Text Area%' OR DataType LIKE 'Rich Text Area%') " +
+      'FROM EntityDefinition WHERE IsCustomizable = true',
+    appliesWhen: fieldsExist('EntityDefinition', ['QualifiedApiName', 'Label', 'IsCustomizable']),
   },
 
   // SBS-OAUTH-002 — Require Profile or Permission Set Access Control for

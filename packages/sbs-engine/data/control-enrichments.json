@@ -281,7 +281,7 @@
         "iso27001": ["A.5.9", "A.5.12", "A.8.10"],
         "gdpr": ["Article 30"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Your inventory of regulated-data fields is current, so you know exactly where personal data lives and can enforce protection, retention, and deletion obligations without scrambling to find it."
     },
     "SBS-DATA-003": {

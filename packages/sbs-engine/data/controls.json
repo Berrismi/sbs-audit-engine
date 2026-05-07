@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T05:06:20.300Z",
-  "engine_version": "0.0.0-alpha.18",
+  "fetched_at": "2026-05-07T12:07:20.739Z",
+  "engine_version": "0.0.0-alpha.19",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -1164,7 +1164,7 @@
           "iso27001": ["A.5.9", "A.5.12", "A.8.10"],
           "gdpr": ["Article 30"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Your inventory of regulated-data fields is current, so you know exactly where personal data lives and can enforce protection, retention, and deletion obligations without scrambling to find it."
       }
     },
