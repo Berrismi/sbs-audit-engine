@@ -148,21 +148,21 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // RemoteProxy. The active list is the inventory; the audit procedure asks
   // the consultant to verify each is documented + justified (questionnaire).
   //
-  // F.4 Bug C: gate widened from `toolingObjectExists` to `toolingFieldsExist`
-  // because some org tiers expose the RemoteProxy object but not the
-  // MasterLabel column we select.
+  // Field shape: RemoteProxy has 15 fields across DE + production orgs;
+  // the human-readable label is `SiteName`, not `MasterLabel`. The original
+  // F.4 Bug C widening (toolingObjectExists → toolingFieldsExist) hid an
+  // authoring bug — `MasterLabel` doesn't exist on RemoteProxy on any tier,
+  // so the gate field-skipped everywhere and INT-002 never produced CLI
+  // evidence. Multi-org verification (hm-cli-validation, ProdProksel,
+  // loan-maven, alpha.30) confirmed the 15-field schema is identical across
+  // editions; `SiteName` is the correct label field.
   {
     id: 'int-002-remote-site-settings-inventory',
     controlIds: ['SBS-INT-002'],
     label: 'Active remote site settings (outbound endpoints from Apex)',
     source: 'tooling',
-    soql: 'SELECT Id, EndpointUrl, IsActive, MasterLabel FROM RemoteProxy WHERE IsActive = true',
-    appliesWhen: toolingFieldsExist('RemoteProxy', [
-      'Id',
-      'EndpointUrl',
-      'IsActive',
-      'MasterLabel',
-    ]),
+    soql: 'SELECT Id, EndpointUrl, IsActive, SiteName FROM RemoteProxy WHERE IsActive = true',
+    appliesWhen: toolingFieldsExist('RemoteProxy', ['Id', 'EndpointUrl', 'IsActive', 'SiteName']),
   },
 
   // SBS-INT-003 — Inventory and Justification of Named Credentials.
