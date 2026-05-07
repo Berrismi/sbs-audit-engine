@@ -320,7 +320,7 @@
         "soc2": ["CC8.1"],
         "iso27001": ["A.5.15", "A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Metadata changes go through a designated deployment identity, so production changes are attributable and unauthorized direct edits stand out instead of blending into routine admin activity."
     },
     "SBS-DEP-002": {
@@ -347,7 +347,7 @@
         "soc2": ["CC7.2", "CC8.1"],
         "iso27001": ["A.8.15", "A.8.16", "A.8.32"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Unauthorized changes to high-risk metadata trigger alerts, so malicious or accidental drift gets surfaced quickly instead of persisting for weeks before being noticed."
     },
     "SBS-DEP-004": {

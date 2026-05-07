@@ -77,6 +77,11 @@
 //   - SBS-ACS-012   Profiles with Login Hours configured (gated on field presence)
 //   - SBS-DATA-002  Long Text Area + Rich Text Area field inventory by entity
 //                   (EntityDefinition.Fields subquery, customizable entities)
+//   - SBS-DEP-001 +
+//   - SBS-DEP-003   Recent SetupAuditTrail (180-day window, capped 2000 rows).
+//                   Single shared query; per-control evaluators apply the
+//                   high-risk Section filter client-side because Section is
+//                   not server-filterable.
 //   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
 //   - SBS-FILE-002  ContentDistribution rows without password (sensitive-link auth)
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
@@ -553,6 +558,51 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       "WHERE DataType LIKE 'Long Text Area%' OR DataType LIKE 'Rich Text Area%') " +
       'FROM EntityDefinition WHERE IsCustomizable = true',
     appliesWhen: fieldsExist('EntityDefinition', ['QualifiedApiName', 'Label', 'IsCustomizable']),
+  },
+
+  // SBS-DEP-001 + SBS-DEP-003 — Deployment-identity attribution + monitoring
+  // of high-risk metadata changes. Both controls share the same SetupAuditTrail
+  // window; the per-control evaluators differ only in how they interpret the
+  // same row set.
+  //
+  // ============================================================================
+  // GOTCHAS discovered against DE describe (record for future audit-trail work):
+  // ============================================================================
+  // - `Section` is **not filterable** server-side. SetupAuditTrail.Section
+  //   carries the Setup-area name (e.g. "Apex Class", "Permission Set Group",
+  //   "Manage Users") but the field is `filterable: false` in the describe.
+  //   You CAN select it; you CANNOT WHERE-clause on it. Attempting
+  //   `WHERE Section IN (...)` returns "field 'Section' can not be filtered
+  //   in a query call". The supported pattern is to pull rows by date and
+  //   filter the high-risk subset in the evaluator.
+  // - `Action` looks like an enum but its describe is `type: string` with
+  //   an empty `picklistValues` array. The internal action strings are
+  //   stable ("createdApexClass", "PermSetCreate", "changedpassword", ...)
+  //   but Salesforce does not expose the enum, so we cannot safely
+  //   server-side-filter on Action either without a brittle hand-curated
+  //   IN clause.
+  // - Default retention varies by edition (180 days standard, longer with
+  //   Field Audit Trail). LAST_N_DAYS:180 is the safe upper bound; the
+  //   query LIMIT 2000 is the runtime safety cap (busy orgs have thousands
+  //   of audit rows in 180 days). The evaluators surface a "result may be
+  //   capped" caveat when the row count hits the limit.
+  // ============================================================================
+  //
+  // The query is intentionally broad (no Section filter, no Action filter)
+  // because both restrictions above force evaluator-side filtering anyway.
+  // The high-risk Section list lives in the evaluator (`packages/sbs-engine/
+  // src/evaluators/_high-risk-sections.ts`), shared by DEP-001 + DEP-003 so
+  // the two controls always use the identical scope.
+  {
+    id: 'dep-setup-audit-trail-recent',
+    controlIds: ['SBS-DEP-001', 'SBS-DEP-003'],
+    label: 'Recent Setup Audit Trail entries (180-day window, capped at 2000 rows)',
+    soql:
+      'SELECT Id, Action, Section, CreatedById, CreatedBy.Username, CreatedDate ' +
+      'FROM SetupAuditTrail ' +
+      'WHERE CreatedDate = LAST_N_DAYS:180 ' +
+      'ORDER BY CreatedDate DESC ' +
+      'LIMIT 2000',
   },
 
   // SBS-OAUTH-002 — Require Profile or Permission Set Access Control for
