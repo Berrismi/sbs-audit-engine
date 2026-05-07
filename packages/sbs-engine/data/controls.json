@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T12:13:48.253Z",
-  "engine_version": "0.0.0-alpha.20",
+  "fetched_at": "2026-05-07T12:24:32.476Z",
+  "engine_version": "0.0.0-alpha.21",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -1866,7 +1866,7 @@
           "soc2": ["CC7.2"],
           "iso27001": ["A.8.15", "A.8.16"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "API Total Usage logs are retained for 30 days, so you have visibility into REST/SOAP/Bulk API activity — anomalous behavior is detectable and incident scope is actually determinable."
       }
     },
@@ -1908,7 +1908,7 @@
           "iso27001": ["A.8.15", "A.8.16"],
           "gdpr": ["Article 32"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Event Monitoring log storage is enabled for the event types your security policy requires, so investigations have the telemetry to reconstruct what happened — file downloads, API calls, report exports, all retained instead of silently dropped."
       }
     },
@@ -1950,7 +1950,7 @@
           "iso27001": ["A.8.15", "A.8.16"],
           "gdpr": ["Article 32"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Event logs persist for your required retention period, exported when Salesforce native retention falls short and protected from administrative deletion, so a slow-burn incident can still be reconstructed weeks or months after the fact."
       }
     },

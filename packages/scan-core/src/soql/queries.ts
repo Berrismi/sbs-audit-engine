@@ -82,6 +82,11 @@
 //                   Single shared query; per-control evaluators apply the
 //                   high-risk Section filter client-side because Section is
 //                   not server-filterable.
+//   - SBS-MON-001 +
+//   - SBS-MON-002 +
+//   - SBS-INT-004   EventLogFile capability detection — distinct EventTypes
+//                   with COUNT + MIN/MAX(LogDate) for tier inference (free
+//                   baseline vs Event Monitoring add-on vs extended retention).
 //   - SBS-FILE-001  ContentDistribution rows without expiry (file-share lifetime)
 //   - SBS-FILE-002  ContentDistribution rows without password (sensitive-link auth)
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
@@ -603,6 +608,52 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'WHERE CreatedDate = LAST_N_DAYS:180 ' +
       'ORDER BY CreatedDate DESC ' +
       'LIMIT 2000',
+  },
+
+  // SBS-MON-001 + SBS-MON-002 + SBS-INT-004 — EventLogFile capability
+  // detection. Three controls share one query against the EventLogFile
+  // dataset; per-control evaluators interpret the same row set differently.
+  //
+  // The capability tier model (per Salesforce Event Monitoring docs):
+  //
+  //   Free baseline (Enterprise/Unlimited/Performance edition, no add-on):
+  //     - Event types: Login, Logout, ApiTotalUsage (limited set)
+  //     - Retention: 1 day (logs purged after 24h)
+  //
+  //   Event Monitoring add-on:
+  //     - Event types: 50+ including ApexExecution, ReportExport, FileDownload,
+  //       URI, LightningInteraction, etc.
+  //     - Retention: 30 days standard, up to 1 year with extended retention
+  //
+  //   Edition-gated (e.g. Essentials, Professional without add-on):
+  //     - EventLogFile object may not be queryable at all
+  //
+  // The query GROUPs by EventType and returns COUNT + MIN(LogDate) +
+  // MAX(LogDate). Three signals fall out:
+  //   1. Number of distinct EventTypes (1-3 = free; 5+ = add-on)
+  //   2. LogDate spread per EventType (~1 day = free; 30+ days = add-on)
+  //   3. Presence/absence of specific high-value EventTypes (ApiTotalUsage
+  //      for INT-004; LightningInteraction et al for MON-001)
+  //
+  // The query carries no WHERE filter so we get the complete inventory of
+  // what's been generated + retained. Bare DE returns 0 rows (no API
+  // activity); a busy org returns one row per EventType. The aggregate
+  // GROUP BY caps the result at the number of distinct event types
+  // (~50 max), so no LIMIT is needed.
+  //
+  // Field-gate is defensive: EventLogFile + EventType are universal where
+  // EventLogFile exists, but the gate matches the F.4 Bug C pattern as a
+  // forward-looking shield against edition-gated field changes.
+  {
+    id: 'event-log-file-capability',
+    controlIds: ['SBS-MON-001', 'SBS-MON-002', 'SBS-INT-004'],
+    label: 'Event Monitoring capability detection — EventType counts + retention spread',
+    soql:
+      'SELECT EventType, COUNT(Id) cnt, MIN(LogDate) earliest, MAX(LogDate) latest ' +
+      'FROM EventLogFile ' +
+      'GROUP BY EventType ' +
+      'ORDER BY EventType',
+    appliesWhen: fieldsExist('EventLogFile', ['EventType', 'LogDate']),
   },
 
   // SBS-OAUTH-002 — Require Profile or Permission Set Access Control for
