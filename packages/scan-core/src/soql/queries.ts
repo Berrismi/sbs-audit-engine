@@ -375,6 +375,15 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // sample DE org had API Access Control off → gate-skipped silently);
   // alpha.16 enriched the SELECT and documented the conditional-field
   // semantics so future-us doesn't mistake "skip" for "broken."
+  //
+  // alpha.33 verification: re-probed PermissionSet describe across DE
+  // hm-cli-validation, prod ProdProksel, and prod loan-maven. None of the
+  // 3 orgs has any `*UseAnyApiClient*` or `*ApiClient*` field on
+  // PermissionSet (557 / 609 / 489 fields total respectively). The
+  // feature-gated framing above holds — these orgs simply haven't filed
+  // the API Access Control case with Salesforce Support, which is the
+  // expected default. No code change; this stamp records the verification
+  // so we don't keep re-investigating.
   {
     id: 'acs-006-use-any-api-client-via-permsets',
     controlIds: ['SBS-ACS-006'],
@@ -876,6 +885,16 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // TransactionSecurityPolicy is queryable via Tooling on every edition
   // that ships TSP infrastructure (Enterprise+); the appliesWhen gate
   // covers edition-stripped DE/Essentials.
+  //
+  // alpha.33 verification: re-probed TransactionSecurityPolicy Tooling
+  // describe across all 3 orgs.
+  //   - DE hm-cli-validation: 26 fields, all 7 needed present (PASS)
+  //   - prod loan-maven: 26 fields, all 7 needed present (PASS)
+  //   - prod ProdProksel: TSP entity entirely absent ("requested resource
+  //     does not exist") — likely Shield / Real-Time Event Monitoring
+  //     edition gap, not a field gap. The toolingFieldsExist gate's
+  //     describe-rejects-as-object_unavailable path correctly catches
+  //     this and the executor reports kind: 'skipped'. No code change.
   {
     id: 'mon-003-transaction-security-policies',
     controlIds: ['SBS-MON-003'],

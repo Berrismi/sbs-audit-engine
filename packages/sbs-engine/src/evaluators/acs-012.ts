@@ -3,7 +3,7 @@
 //
 // SBS-ACS-012: Classify Users for Login Hours Restrictions.
 //
-// CLI evidence path: shared `profiles-priority-100` Metadata API probe
+// CLI evidence path: shared `profiles-priority-200` Metadata API probe
 // returns each Profile's `loginHours` sub-element when configured. The
 // evaluator counts Profiles that carry any of the 14 day*Start/day*End
 // values; presence of at least one such Profile suggests the org has
@@ -20,7 +20,7 @@
 // the migration to the metadata_api evidence path is the only viable
 // CLI signal for this control.
 //
-// Cap context: the profiles-priority-100 probe retrieves up to N Profiles
+// Cap context: the profiles-priority-200 probe retrieves up to N Profiles
 // per Q3 of the Track B design review, prioritized by
 // `prioritizeProfileNames` (standard + integration-shaped names first).
 // Login hours are typically configured on standard or named-Custom

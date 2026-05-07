@@ -44,7 +44,7 @@ export type MetadataFetchResult =
 /** One metadata-type probe — the unit `validate-metadata` validates and
  *  the unit `collectEvidence` retrieves. */
 export interface MetadataProbe {
-  /** Stable id for telemetry + tests (e.g. 'profiles-priority-100'). */
+  /** Stable id for telemetry + tests (e.g. 'profiles-priority-200'). */
   id: string;
   /** Metadata type name as Salesforce expects it: 'Profile',
    * 'SecuritySettings', 'CustomObject'. */

@@ -3,7 +3,7 @@
 //
 // SBS-DATA-004: Require Field History Tracking for Sensitive Fields.
 //
-// CLI evidence path: shared `custom-objects-priority-100` Metadata API
+// CLI evidence path: shared `custom-objects-priority-500` Metadata API
 // probe returns each CustomObject's `enableHistory` flag + child fields'
 // `trackHistory` flags. The evaluator surfaces the inventory of objects
 // with field history infrastructure enabled + count of fields with
