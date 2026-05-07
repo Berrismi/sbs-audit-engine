@@ -293,9 +293,18 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // SBS-ACS-003 — Documented Justification for Approve Uninstalled Connected
   // Apps Permission. Same pattern as ACS-002: surface the inventory of users
   // granted this permission via permset; questionnaire confirms each is
-  // justified + restricted to admin/integration personas. Field-gated because
-  // the boolean field name varies across editions; if the gate fires the
-  // evaluator falls back to questionnaire attestation.
+  // justified + restricted to admin/integration personas.
+  //
+  // The Salesforce metadata-API name for this permission is
+  // `PermissionsCanApproveUninstalledApps` ("Approve Uninstalled Connected
+  // Apps" in the Setup UI). alpha.14 shipped a fabricated name
+  // (`PermissionsApprovedConnectedAppsAccess`) that doesn't exist on any
+  // edition; the field-gate caught it everywhere → silent questionnaire
+  // fallback for every consumer. Corrected in alpha.16 against the live DE
+  // describe (557 PermissionSet fields enumerated).
+  //
+  // Field-gate retained as a defensive measure for future field-deprecation
+  // events.
   {
     id: 'acs-003-approve-uninstalled-connected-apps-via-permsets',
     controlIds: ['SBS-ACS-003'],
@@ -303,28 +312,66 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
     soql:
       'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
       'FROM PermissionSetAssignment ' +
-      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsApprovedConnectedAppsAccess = true',
-    appliesWhen: fieldsExist('PermissionSet', ['Id', 'PermissionsApprovedConnectedAppsAccess']),
+      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsCanApproveUninstalledApps = true',
+    appliesWhen: fieldsExist('PermissionSet', ['Id', 'PermissionsCanApproveUninstalledApps']),
   },
 
   // SBS-ACS-006 — Documented Justification for Use Any API Client Permission.
   // Same pattern as ACS-002 / ACS-003. Surfacing the WHO; questionnaire
   // adjudicates the WHY. The Use Any API Client permission bypasses Connected
-  // App allow-listing, so misuse is a high-impact integration risk — the
-  // evaluator inventory is direct value to the audit.
+  // App allow-listing — misuse is high-impact integration risk.
+  //
+  // ============================================================================
+  // CONDITIONAL FIELD — feature-gated, not edition-gated.
+  // ============================================================================
+  // The `PermissionsUseAnyApiClient` field only materializes on PermissionSet
+  // when "API Access Control" is enabled on the org. API Access Control is
+  // NOT a self-service Setup toggle — it requires a case to Salesforce
+  // Support to turn on. When the feature is OFF, the permission cannot exist
+  // anywhere on the org schema, so the field-gate skip is the CORRECT
+  // semantic outcome: there is literally no inventory to maintain.
+  //
+  // (Salesforce briefly announced deprecation of "Use Any API Client" but
+  // reversed course on 2025-11-19; the permission stays, with reduced
+  // capability — it no longer permits connecting brand-new Connected Apps
+  // for newly-created assignments.)
+  //
+  // Today the gate-skip degrades to questionnaire fallback like every other
+  // skip reason. The richer "feature-not-enabled → N/A" UX is a future
+  // SkipRule.kind enhancement (tracked separately).
+  // ============================================================================
+  //
+  // Query shape: includes `PermissionSet.IsOwnedByProfile` so the evaluator
+  // can separate profile-derived assignments (every profile has a backing
+  // permission set, IsOwnedByProfile = true) from explicit Permission Set /
+  // Permission Set Group assignments (false). Audit_procedure asks for both
+  // pathways to be inventoried.
+  //
+  // Field-gate covers `IsOwnedByProfile` and `Assignee.Name` for completeness;
+  // those are universal but defensive listing matches the F.4 Bug C pattern.
+  // alpha.14 shipped this query but it never ran (right field name, but the
+  // sample DE org had API Access Control off → gate-skipped silently);
+  // alpha.16 enriched the SELECT and documented the conditional-field
+  // semantics so future-us doesn't mistake "skip" for "broken."
   {
     id: 'acs-006-use-any-api-client-via-permsets',
     controlIds: ['SBS-ACS-006'],
     label: 'Active users granted Use Any API Client via permission set',
     soql:
-      'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
+      'SELECT AssigneeId, Assignee.Name, Assignee.Username, ' +
+      'PermissionSet.Name, PermissionSet.Label, PermissionSet.IsOwnedByProfile ' +
       'FROM PermissionSetAssignment ' +
-      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsUseAnyApiClient = true',
-    appliesWhen: fieldsExist('PermissionSet', ['Id', 'PermissionsUseAnyApiClient']),
+      'WHERE Assignee.IsActive = true AND PermissionSet.PermissionsUseAnyApiClient = true ' +
+      'ORDER BY Assignee.Name',
+    appliesWhen: fieldsExist('PermissionSet', [
+      'Id',
+      'PermissionsUseAnyApiClient',
+      'IsOwnedByProfile',
+    ]),
   },
 
   // SBS-OAUTH-002 — Require Profile or Permission Set Access Control for
-  // Connected Apps. ConnectedApplication's `OptionsAdminApprovalRequired`
+  // Connected Apps. ConnectedApplication's `OptionsAllowAdminApprovedUsersOnly`
   // flag is the platform-side signal for "admin approved users are
   // pre-authorized" — when true, only assigned profiles/permsets can use
   // the app. When false, any authenticated user can self-authorize. The
@@ -339,20 +386,25 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
   // requires admin approval); ≥1 rows = inconclusive (deferring intent
   // verification to questionnaire).
   //
-  // Field-gated on `OptionsAdminApprovalRequired` because some org tiers
-  // expose ConnectedApplication but not this column; gate fires →
-  // questionnaire fallback.
+  // alpha.15 shipped this query against the field name
+  // `OptionsAdminApprovalRequired` which doesn't exist on ConnectedApplication
+  // (Tooling or standard); the field-gate caught it everywhere → silent
+  // questionnaire fallback for every consumer. The actual field is
+  // `OptionsAllowAdminApprovedUsersOnly`, verified via Tooling-API
+  // ConnectedApplication describe (34 fields enumerated). Corrected in
+  // alpha.16; field-gate retained as defensive shield against future Tooling
+  // column drift.
   {
     id: 'oauth-002-connected-apps-without-admin-approval',
     controlIds: ['SBS-OAUTH-002'],
     label:
       'Connected applications not requiring admin approval (self-service authorization allowed)',
     source: 'tooling',
-    soql: 'SELECT Id, Name FROM ConnectedApplication WHERE OptionsAdminApprovalRequired = false',
+    soql: 'SELECT Id, Name FROM ConnectedApplication WHERE OptionsAllowAdminApprovedUsersOnly = false',
     appliesWhen: toolingFieldsExist('ConnectedApplication', [
       'Id',
       'Name',
-      'OptionsAdminApprovalRequired',
+      'OptionsAllowAdminApprovedUsersOnly',
     ]),
   },
 ];

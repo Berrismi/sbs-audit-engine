@@ -11,8 +11,10 @@
 //
 // Classification: cli_corroborating. Same shape as ACS-002 — surface the
 // inventory; questionnaire confirms documented justification + persona fit.
-// Field-gated (`PermissionsApprovedConnectedAppsAccess` may be absent on
-// degraded editions); falls back to questionnaire when the gate fires.
+// Field-gated on `PermissionsCanApproveUninstalledApps` (defensive — the
+// field is universal but the gate guards against future Salesforce field
+// drift; alpha.14 originally shipped a fabricated field name, alpha.16
+// corrected after live DE validation).
 
 import { cliAttestationEvaluator } from './_attestation';
 
