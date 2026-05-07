@@ -61,7 +61,11 @@
 //   - SBS-INT-002   Remote Site Settings inventory (tooling, RemoteProxy, field-gated)
 //   - SBS-INT-003   Named Credentials inventory
 //   - SBS-OAUTH-001 Connected Apps without managed-package namespace (tooling, field-gated)
+//                   + (alpha.17) ECA equivalent: ExternalClientApplication.NamespacePrefix
 //   - SBS-OAUTH-002 Connected Apps not requiring admin approval (tooling, field-gated)
+//                   + (alpha.17) ECA equivalent: ExtlClntAppOauthPlcyCnfg.PermittedUsersPolicyType
+//   - SBS-DEP-006   (alpha.17) Connected Apps + ECAs with token policies that fail the
+//                   90-day refresh / 15-minute session audit thresholds (multi-query)
 
 import { fieldsExist, toolingFieldsExist } from './applies-when';
 import type { SoqlQueryDef } from '../types';
@@ -405,6 +409,135 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'Id',
       'Name',
       'OptionsAllowAdminApprovedUsersOnly',
+    ]),
+  },
+
+  // ============================================================================
+  // ECA layer (alpha.17) — External Client Apps are Salesforce's modern
+  // replacement for Connected Apps; net-new integrations from Spring '26 are
+  // expected to use ECAs. Token policies, admin-gating, and IP restrictions
+  // live on a separate set of standard SOQL entities (`ExternalClientApplication`
+  // + `ExtlClntApp*`), NOT on the legacy Tooling `ConnectedApplication` surface.
+  //
+  // Architectural note: every ECA entity here is queryable via the STANDARD
+  // SOQL endpoint, not Tooling. We mistakenly went through `--use-tooling-api`
+  // initially and got "sObject type not supported" errors for every
+  // ExtlClntApp* entity — the EntityDefinition catalog lists them as
+  // `IsQueryable = true`, but only via the standard endpoint. `source:
+  // 'tooling'` is intentionally NOT set on these queries.
+  //
+  // Validated against ProdProksel (`berris@prokselconsulting.com`), which
+  // carries 1 live ECA ("Wengrow CRM Sync") with a 24-year refresh token and
+  // self-service authorization — exactly the kind of misconfiguration the
+  // OAUTH/DEP audits target. DE returns 0 rows for every ECA query (no apps
+  // installed), which is the correct trivially-compliant outcome.
+  //
+  // Authoring rule: every existing OAUTH/DEP control with a Connected
+  // Application query SHOULD ship a parallel ECA query so customer migrations
+  // from CA → ECA don't regress evidence coverage.
+  // ============================================================================
+
+  // SBS-OAUTH-001 (ECA path) — Require Formal Installation of Connected Apps,
+  // applied to External Client Applications. Same shape as the
+  // ConnectedApplication query above: enumerate entries WITHOUT a managed-
+  // package namespace (`NamespacePrefix = null` = ad-hoc / org-local). Pass =
+  // 0 rows; fail = N rows. The evaluator merges this with the Tooling
+  // ConnectedApplication query for a unified ad-hoc inventory finding.
+  {
+    id: 'oauth-001-ad-hoc-external-client-apps',
+    controlIds: ['SBS-OAUTH-001'],
+    label: 'External Client Applications without a managed-package namespace (ad-hoc)',
+    soql:
+      'SELECT Id, MasterLabel, DeveloperName, NamespacePrefix ' +
+      'FROM ExternalClientApplication WHERE NamespacePrefix = null',
+    appliesWhen: fieldsExist('ExternalClientApplication', [
+      'Id',
+      'MasterLabel',
+      'DeveloperName',
+      'NamespacePrefix',
+    ]),
+  },
+
+  // SBS-OAUTH-002 (ECA path) — Require Profile or Permission Set Access
+  // Control for External Client Applications. The ECA equivalent of
+  // `ConnectedApplication.OptionsAllowAdminApprovedUsersOnly` is
+  // `ExtlClntAppOauthPlcyCnfg.PermittedUsersPolicyType`, a picklist:
+  //   - `AllSelfAuthorized` — any user can self-authorize → fails the audit
+  //   - `AdminApprovedPreAuthorized` — only assigned profiles/permsets →
+  //     passes the audit
+  //
+  // The query surfaces ECAs in the AllSelfAuthorized state and joins back to
+  // the parent ECA for naming. Evaluator merges with the Tooling
+  // ConnectedApplication query for a unified inconclusive finding.
+  {
+    id: 'oauth-002-eca-without-admin-approval',
+    controlIds: ['SBS-OAUTH-002'],
+    label: 'External Client Apps not requiring admin approval (self-service authorization allowed)',
+    soql:
+      'SELECT Id, ExternalClientApplicationId, PermittedUsersPolicyType ' +
+      "FROM ExtlClntAppOauthPlcyCnfg WHERE PermittedUsersPolicyType = 'AllSelfAuthorized'",
+    appliesWhen: fieldsExist('ExtlClntAppOauthPlcyCnfg', [
+      'Id',
+      'ExternalClientApplicationId',
+      'PermittedUsersPolicyType',
+    ]),
+  },
+
+  // SBS-DEP-006 (legacy ConnectedApplication path) — Configure Salesforce
+  // CLI Connected App with Token Expiration Policies. Audit asks that
+  // refresh-token validity be ≤90 days and session timeout ≤15 minutes.
+  //
+  // The Tooling `ConnectedApplication.RefreshTokenValidityPeriod` field is
+  // an `int` with no separate unit field exposed via SOQL. Salesforce
+  // ConnectedApp metadata XML uses `<refreshTokenValidityPeriodUnit>` (days
+  // by default), but the SOQL int doesn't surface that unit, so we cannot
+  // safely emit a numeric "exceeds 90 days" comparison from this field
+  // alone — the unit could be hours, days, months depending on the app's
+  // metadata. Conservative semantic: enumerate apps where the field IS
+  // NULL (unambiguous "no explicit expiry policy") and let the consultant
+  // verify numeric values in Setup. The evaluator surfaces this caveat in
+  // the finding.
+  //
+  // The corresponding ECA query below DOES surface a precise unit + period
+  // pair, so for ECA-only customers this control is fully numeric.
+  {
+    id: 'dep-006-connected-apps-without-token-expiry',
+    controlIds: ['SBS-DEP-006'],
+    label: 'Connected Applications with no explicit refresh-token expiry policy set',
+    source: 'tooling',
+    soql: 'SELECT Id, Name FROM ConnectedApplication WHERE RefreshTokenValidityPeriod = null',
+    appliesWhen: toolingFieldsExist('ConnectedApplication', [
+      'Id',
+      'Name',
+      'RefreshTokenValidityPeriod',
+    ]),
+  },
+
+  // SBS-DEP-006 (ECA path) — pull every ECA's OAuth policy configuration so
+  // the evaluator can classify each against the audit thresholds:
+  //   - `RefreshTokenPolicyType = 'Infinite'` → fails (never expires)
+  //   - `RefreshTokenPolicyType = 'SpecificLifetime'` AND validity > 90 days
+  //     (after `RefreshTokenValidityUnit` conversion) → fails
+  //   - `SessionTimeoutInMinutes > 15` → fails
+  //
+  // No WHERE clause filtering: pull every policy config and let the
+  // evaluator do the threshold logic. This makes the inventory complete and
+  // lets us also enumerate compliant apps in the finding when useful.
+  {
+    id: 'dep-006-eca-token-policies',
+    controlIds: ['SBS-DEP-006'],
+    label: 'External Client App OAuth policy configurations (refresh-token + session timeout)',
+    soql:
+      'SELECT Id, ExternalClientApplicationId, RefreshTokenPolicyType, ' +
+      'RefreshTokenValidityPeriod, RefreshTokenValidityUnit, SessionTimeoutInMinutes ' +
+      'FROM ExtlClntAppOauthPlcyCnfg',
+    appliesWhen: fieldsExist('ExtlClntAppOauthPlcyCnfg', [
+      'Id',
+      'ExternalClientApplicationId',
+      'RefreshTokenPolicyType',
+      'RefreshTokenValidityPeriod',
+      'RefreshTokenValidityUnit',
+      'SessionTimeoutInMinutes',
     ]),
   },
 ];

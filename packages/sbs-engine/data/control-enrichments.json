@@ -385,7 +385,7 @@
         "soc2": ["CC6.1"],
         "iso27001": ["A.5.16", "A.5.17", "A.8.5"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Your CLI Connected App has token expiration policies, so a stolen laptop's token files don't grant indefinite access to production — the credential exposure window is bounded."
     },
     "SBS-INT-001": {

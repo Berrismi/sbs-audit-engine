@@ -14,26 +14,31 @@ describeBooleanEvaluator({
 
 describe('SBS-OAUTH-002 evaluator (SOQL evidence path)', () => {
   const control = makeControlFixture('SBS-OAUTH-002');
-  const QUERY_ID = 'oauth-002-connected-apps-without-admin-approval';
+  const CA_QUERY_ID = 'oauth-002-connected-apps-without-admin-approval';
+  const ECA_QUERY_ID = 'oauth-002-eca-without-admin-approval';
 
-  it('returns pass+high when no Connected Apps allow self-service authorization', () => {
+  it('returns pass+high when both surfaces are empty', () => {
     const result = evaluate({
       control,
-      evidence: [{ source: 'soql', query: '...', query_id: QUERY_ID, rows: [] }],
+      evidence: [
+        { source: 'soql', query: '...', query_id: CA_QUERY_ID, rows: [] },
+        { source: 'soql', query: '...', query_id: ECA_QUERY_ID, rows: [] },
+      ],
     });
     expect(result.status).toBe('pass');
     expect(result.confidence).toBe('high');
     expect(result.evidence_used).toEqual(['soql']);
+    expect(result.findings[0]).toContain('No Connected Apps or External Client Applications');
   });
 
-  it('returns inconclusive+high when self-service Connected Apps exist (questionnaire confirms intent)', () => {
+  it('returns inconclusive+high when self-service Connected Apps exist (legacy surface)', () => {
     const result = evaluate({
       control,
       evidence: [
         {
           source: 'soql',
           query: '...',
-          query_id: QUERY_ID,
+          query_id: CA_QUERY_ID,
           rows: [
             { Id: '0H4xx1', Name: 'Custom App A' },
             { Id: '0H4xx2', Name: 'Custom App B' },
@@ -42,32 +47,73 @@ describe('SBS-OAUTH-002 evaluator (SOQL evidence path)', () => {
       ],
     });
     expect(result.status).toBe('inconclusive');
-    expect(result.confidence).toBe('high');
-    expect(result.evidence_used).toEqual(['soql']);
-    expect(result.findings[0]).toContain('2 Connected App');
+    expect(result.findings[0]).toContain('2 OAuth app');
+    expect(result.findings[0]).toContain('2 via ConnectedApplication (legacy)');
   });
 
-  it('SOQL evidence wins over questionnaire when both are present', () => {
+  it('returns inconclusive+high when ECA policy configs are AllSelfAuthorized (modern surface)', () => {
     const result = evaluate({
       control,
       evidence: [
         {
-          source: 'questionnaire',
-          question_id: 'Q-OAUTH-002',
-          answer: { kind: 'boolean', value: true },
+          source: 'soql',
+          query: '...',
+          query_id: ECA_QUERY_ID,
+          rows: [
+            {
+              Id: '0yOPq000000065RMAQ',
+              ExternalClientApplicationId: '0xIPq0000000XyTMAU',
+              PermittedUsersPolicyType: 'AllSelfAuthorized',
+            },
+          ],
         },
-        { source: 'soql', query: '...', query_id: QUERY_ID, rows: [] },
       ],
     });
-    expect(result.confidence).toBe('high');
-    expect(result.evidence_used).toEqual(['soql']);
+    expect(result.status).toBe('inconclusive');
+    expect(result.findings[0]).toContain('1 OAuth app');
+    expect(result.findings[0]).toContain('1 via ExternalClientApplication policy config');
   });
 
-  it('falls back to questionnaire low-confidence when SOQL evidence has different query_id', () => {
+  it('merges both surfaces and breaks down the count when both contribute', () => {
     const result = evaluate({
       control,
       evidence: [
-        { source: 'soql', query: '...', query_id: 'some-other-query', rows: [] },
+        {
+          source: 'soql',
+          query: '...',
+          query_id: CA_QUERY_ID,
+          rows: [{ Id: 'ca1', Name: 'Legacy CA' }],
+        },
+        {
+          source: 'soql',
+          query: '...',
+          query_id: ECA_QUERY_ID,
+          rows: [
+            {
+              Id: 'plc1',
+              ExternalClientApplicationId: 'eca1',
+              PermittedUsersPolicyType: 'AllSelfAuthorized',
+            },
+            {
+              Id: 'plc2',
+              ExternalClientApplicationId: 'eca2',
+              PermittedUsersPolicyType: 'AllSelfAuthorized',
+            },
+          ],
+        },
+      ],
+    });
+    expect(result.status).toBe('inconclusive');
+    expect(result.findings[0]).toContain('3 OAuth app');
+    expect(result.findings[0]).toContain(
+      '1 via ConnectedApplication (legacy), 2 via ExternalClientApplication policy config',
+    );
+  });
+
+  it('falls back to questionnaire low-confidence when no SOQL evidence is present', () => {
+    const result = evaluate({
+      control,
+      evidence: [
         {
           source: 'questionnaire',
           question_id: 'Q-OAUTH-002',
