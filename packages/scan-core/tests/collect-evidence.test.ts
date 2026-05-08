@@ -116,12 +116,15 @@ describe('collectEvidence', () => {
 
   it('runs Code Analyzer and includes the findings in the bundle when codeAnalyzer option is set', async () => {
     const okJsonOutput = JSON.stringify({
-      results: [
+      version: '5.12.0',
+      violations: [
         {
           engine: 'pmd',
           rule: 'ApexCSRF',
           severity: 1,
-          primaryLocation: { file: '/abs/x.cls', startLine: 1 },
+          tags: ['Recommended', 'Security', 'Apex'],
+          locations: [{ file: '/abs/x.cls', startLine: 1 }],
+          primaryLocationIndex: 0,
           message: 'm',
         },
       ],

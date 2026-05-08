@@ -107,14 +107,18 @@ export async function runCodeAnalyzer(
 
   const dir = await tmpdirMgr.create();
   try {
+    // sf project retrieve start expects one --metadata flag per type.
+    // Comma-joined values trip the metadata-registry parser (it tries to
+    // resolve the whole comma-string as a single fullName) — alpha.37
+    // fixes this by emitting `--metadata <type>` per type.
+    const metadataFlags = metadataTypes.flatMap((t) => ['--metadata', t]);
     const retrieveResult = await spawner('sf', [
       'project',
       'retrieve',
       'start',
       '--target-org',
       opts.alias,
-      '--metadata',
-      metadataTypes.join(','),
+      ...metadataFlags,
       '--output-dir',
       dir,
     ]);
