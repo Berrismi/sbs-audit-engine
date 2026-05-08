@@ -15,12 +15,14 @@ const mockScanCore = vi.hoisted(() => ({
   makeExecaCodeAnalyzerSpawner: vi.fn(() => ({})),
   makeNodeTmpdirManager: vi.fn(() => ({})),
 }));
+const mockEngine = vi.hoisted(() => ({ score: vi.fn() }));
 
 vi.mock('../../../../src/lib/preflight', () => mockPreflight);
 vi.mock('../../../../src/lib/sf-runner', () => mockRunner);
 vi.mock('../../../../src/lib/consultant-key', () => mockKey);
 vi.mock('../../../../src/lib/upload-client', () => mockClient);
 vi.mock('@hellomavens/security-review-for-salesforce-scan-core', () => mockScanCore);
+vi.mock('@hellomavens/security-review-for-salesforce-engine', () => mockEngine);
 
 import SecurityReviewRun from '../../../../src/commands/security/review/run';
 
@@ -28,6 +30,18 @@ const FAKE_BUNDLE = {
   subject_id: 'subj-1',
   collected_at: '2026-05-04T00:00:00Z',
   evidence: [{ source: 'soql' as const, query: 'SELECT Id FROM User', rows: [], query_id: 'q-1' }],
+};
+
+const FAKE_REPORT = {
+  overall_score: 85,
+  risk_grade: 'B',
+  critical_fail_count: 0,
+  inconclusive_percent: 20,
+  evidence_sufficiency: 'sufficient',
+  by_category: [],
+  control_results: [],
+  sbs_version: 'v0.4.1+d4304e1',
+  engine_version: '0.0.0-alpha.41',
 };
 
 const FAKE_CREDS = {
@@ -52,13 +66,10 @@ function fakeOrg(alias = 'client-prod') {
 
 /**
  * Spy `parse` so we don't invoke oclif's flag resolution (which hits
- * @salesforce/core for real Org auth lookup). The test calls
- * SecurityReviewRun.run([]), but the parsed flags are whatever we return.
+ * @salesforce/core for real Org auth lookup). Tests pre-stub the
+ * parsed flags via this helper.
  */
 function stubParse(flags: Record<string, unknown>): void {
-  // `parse` is protected on SfCommand; vi.spyOn's signature only accepts
-  // public method names. Cast through `any` so the spy is installed at
-  // runtime — the typecheck can't see protected methods on the prototype.
   vi.spyOn(
     SecurityReviewRun.prototype as unknown as { parse: () => unknown },
     'parse',
@@ -78,9 +89,12 @@ beforeEach(async () => {
     mockKey.loadCredentials,
     mockClient.uploadBundle,
     mockScanCore.collectEvidence,
+    mockEngine.score,
   ]) {
     m.mockReset();
   }
+  // Default scoring stub — individual tests override with .mockReturnValue.
+  mockEngine.score.mockReturnValue(FAKE_REPORT);
 });
 
 afterEach(async () => {
@@ -92,28 +106,40 @@ afterEach(async () => {
 });
 
 describe('sf security review run', () => {
-  it('errors if --client-email is missing without --no-upload', async () => {
+  it('local mode: scans, scores, emits findings.json + report.json, no upload', async () => {
     stubParse({
-      'target-org': fakeOrg(),
-      'no-upload': false,
+      'target-org': fakeOrg('client-prod'),
+      'output-dir': tempDir,
       'include-code-analyzer': false,
+      // upload is undefined → auto-detect from creds (which return null below)
     });
     mockPreflight.runPreflight.mockResolvedValue({ ok: true });
+    mockKey.loadCredentials.mockResolvedValue(null); // OSS user — no creds
+    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
 
-    await expect(SecurityReviewRun.run([])).rejects.toThrow(/--client-email is required/i);
-    expect(mockScanCore.collectEvidence).not.toHaveBeenCalled();
+    const result = await SecurityReviewRun.run([]);
+
+    expect(result.uploadMode).toBe('local');
+    expect(result.findingsPath).toBe(join(tempDir, 'findings.json'));
+    expect(result.reportPath).toBe(join(tempDir, 'report.json'));
+    expect(result.reportUrl).toBeUndefined();
+    expect(mockClient.uploadBundle).not.toHaveBeenCalled();
+
+    // Files actually written
+    expect(JSON.parse(await readFile(result.findingsPath, 'utf8'))).toEqual(FAKE_BUNDLE);
+    expect(JSON.parse(await readFile(result.reportPath, 'utf8'))).toEqual(FAKE_REPORT);
   });
 
-  it('runs preflight → collectEvidence → upload and returns reportUrl on success', async () => {
+  it('upload mode (auto-detect): creds present + client-email passed → upload + local emission', async () => {
     stubParse({
       'target-org': fakeOrg('client-prod'),
       'client-email': 'c@x.com',
-      'no-upload': false,
+      'output-dir': tempDir,
       'include-code-analyzer': false,
     });
     mockPreflight.runPreflight.mockResolvedValue({ ok: true });
+    mockKey.loadCredentials.mockResolvedValue(FAKE_CREDS); // HM consultant — creds exist
     mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
-    mockKey.loadCredentials.mockResolvedValue(FAKE_CREDS);
     mockClient.uploadBundle.mockResolvedValue({
       ok: true,
       reportId: 'r-1',
@@ -122,39 +148,77 @@ describe('sf security review run', () => {
 
     const result = await SecurityReviewRun.run([]);
 
-    expect(result.preflightOk).toBe(true);
+    expect(result.uploadMode).toBe('upload');
     expect(result.reportUrl).toBe('https://app.example/audit/report/r-1');
-    expect(result.bundlePath).toBeUndefined();
-
-    const passed = mockScanCore.collectEvidence.mock.calls[0]![0];
-    expect(passed.onlySources).toEqual(['soql', 'health_check_api', 'limits_rest_api']);
-    expect(passed.codeAnalyzer).toBeUndefined();
+    // Local files still written even when uploading
+    expect((await stat(result.findingsPath)).size).toBeGreaterThan(0);
+    expect((await stat(result.reportPath)).size).toBeGreaterThan(0);
     expect(mockClient.uploadBundle).toHaveBeenCalledWith(
       expect.objectContaining({
         bundle: FAKE_BUNDLE,
         clientEmail: 'c@x.com',
-        consultantConsent: FAKE_CREDS.consultantConsent,
         apiKey: FAKE_CREDS.apiKey,
-        apiBaseUrl: FAKE_CREDS.apiBaseUrl,
       }),
     );
+  });
+
+  it('explicit --no-upload skips upload even when creds are present', async () => {
+    stubParse({
+      'target-org': fakeOrg(),
+      'output-dir': tempDir,
+      upload: false,
+      'include-code-analyzer': false,
+    });
+    mockPreflight.runPreflight.mockResolvedValue({ ok: true });
+    mockKey.loadCredentials.mockResolvedValue(FAKE_CREDS); // creds present, but --no-upload wins
+    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
+
+    const result = await SecurityReviewRun.run([]);
+
+    expect(result.uploadMode).toBe('local');
+    expect(mockClient.uploadBundle).not.toHaveBeenCalled();
+  });
+
+  it('explicit --upload errors when creds are missing', async () => {
+    stubParse({
+      'target-org': fakeOrg(),
+      'client-email': 'c@x.com',
+      'output-dir': tempDir,
+      upload: true,
+      'include-code-analyzer': false,
+    });
+    mockPreflight.runPreflight.mockResolvedValue({ ok: true });
+    mockKey.loadCredentials.mockResolvedValue(null);
+
+    await expect(SecurityReviewRun.run([])).rejects.toThrow(
+      /no consultant credentials are stored/i,
+    );
+    expect(mockScanCore.collectEvidence).not.toHaveBeenCalled();
+  });
+
+  it('upload mode errors when --client-email is missing', async () => {
+    stubParse({
+      'target-org': fakeOrg(),
+      'output-dir': tempDir,
+      upload: true,
+      'include-code-analyzer': false,
+    });
+    mockPreflight.runPreflight.mockResolvedValue({ ok: true });
+    mockKey.loadCredentials.mockResolvedValue(FAKE_CREDS);
+
+    await expect(SecurityReviewRun.run([])).rejects.toThrow(/--client-email is required/i);
+    expect(mockScanCore.collectEvidence).not.toHaveBeenCalled();
   });
 
   it('--include-code-analyzer toggles onlySources + supplies codeAnalyzer opts', async () => {
     stubParse({
       'target-org': fakeOrg('client-prod'),
-      'client-email': 'c@x.com',
-      'no-upload': false,
+      'output-dir': tempDir,
+      upload: false,
       'include-code-analyzer': true,
     });
     mockPreflight.runPreflight.mockResolvedValue({ ok: true });
     mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
-    mockKey.loadCredentials.mockResolvedValue(FAKE_CREDS);
-    mockClient.uploadBundle.mockResolvedValue({
-      ok: true,
-      reportId: 'r-1',
-      reportUrl: 'https://x',
-    });
 
     await SecurityReviewRun.run([]);
 
@@ -164,62 +228,26 @@ describe('sf security review run', () => {
     expect(passed.codeAnalyzer.alias).toBe('client-prod');
   });
 
-  it('--no-upload writes the bundle to --output and returns bundlePath, no upload', async () => {
-    const outputPath = join(tempDir, 'out.json');
-    stubParse({
-      'target-org': fakeOrg('client-prod'),
-      'no-upload': true,
-      output: outputPath,
-      'include-code-analyzer': false,
-    });
-    mockPreflight.runPreflight.mockResolvedValue({ ok: true });
-    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
-
-    const result = await SecurityReviewRun.run([]);
-
-    expect(result.bundlePath).toBe(outputPath);
-    expect(result.reportUrl).toBeUndefined();
-    expect(mockClient.uploadBundle).not.toHaveBeenCalled();
-    const written = JSON.parse(await readFile(outputPath, 'utf8'));
-    expect(written).toEqual(FAKE_BUNDLE);
-    // Sanity: file actually exists
-    expect((await stat(outputPath)).size).toBeGreaterThan(0);
-  });
-
   it('errors when upload fails', async () => {
     stubParse({
       'target-org': fakeOrg(),
       'client-email': 'c@x.com',
-      'no-upload': false,
+      'output-dir': tempDir,
+      upload: true,
       'include-code-analyzer': false,
     });
     mockPreflight.runPreflight.mockResolvedValue({ ok: true });
-    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
     mockKey.loadCredentials.mockResolvedValue(FAKE_CREDS);
+    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
     mockClient.uploadBundle.mockResolvedValue({ ok: false, status: 500, error: 'boom' });
 
     await expect(SecurityReviewRun.run([])).rejects.toThrow(/500.*boom/);
   });
 
-  it('errors when uploading without stored credentials', async () => {
-    stubParse({
-      'target-org': fakeOrg(),
-      'client-email': 'c@x.com',
-      'no-upload': false,
-      'include-code-analyzer': false,
-    });
-    mockPreflight.runPreflight.mockResolvedValue({ ok: true });
-    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
-    mockKey.loadCredentials.mockResolvedValue(null);
-
-    await expect(SecurityReviewRun.run([])).rejects.toThrow(/sf security review login/i);
-  });
-
   it('propagates preflight failures', async () => {
     stubParse({
       'target-org': fakeOrg(),
-      'client-email': 'c@x.com',
-      'no-upload': false,
+      'output-dir': tempDir,
       'include-code-analyzer': false,
     });
     mockPreflight.runPreflight.mockResolvedValue({
@@ -231,5 +259,24 @@ describe('sf security review run', () => {
 
     await expect(SecurityReviewRun.run([])).rejects.toThrow(/No active auth/);
     expect(mockScanCore.collectEvidence).not.toHaveBeenCalled();
+  });
+
+  it('always includes metadata_api in onlySources by default (alpha.41+)', async () => {
+    stubParse({
+      'target-org': fakeOrg(),
+      'output-dir': tempDir,
+      upload: false,
+      'include-code-analyzer': false,
+    });
+    mockPreflight.runPreflight.mockResolvedValue({ ok: true });
+    mockScanCore.collectEvidence.mockResolvedValue({ bundle: FAKE_BUNDLE });
+
+    await SecurityReviewRun.run([]);
+
+    const passed = mockScanCore.collectEvidence.mock.calls[0]![0];
+    expect(passed.onlySources).toContain('metadata_api');
+    expect(passed.onlySources).toContain('soql');
+    expect(passed.onlySources).toContain('health_check_api');
+    expect(passed.onlySources).toContain('limits_rest_api');
   });
 });
