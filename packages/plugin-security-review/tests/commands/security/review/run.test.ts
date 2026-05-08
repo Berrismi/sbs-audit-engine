@@ -68,13 +68,18 @@ function fakeOrg(alias = 'client-prod') {
  * Spy `parse` so we don't invoke oclif's flag resolution (which hits
  * @salesforce/core for real Org auth lookup). Tests pre-stub the
  * parsed flags via this helper.
+ *
+ * Defaults `no-questionnaire: true` so existing tests don't trip the
+ * non-TTY guard added in alpha.43. Override per-test by passing
+ * `'no-questionnaire': false` (and providing `questionnaire` or relying
+ * on stdin.isTTY in test isolation).
  */
 function stubParse(flags: Record<string, unknown>): void {
   vi.spyOn(
     SecurityReviewRun.prototype as unknown as { parse: () => unknown },
     'parse',
   ).mockResolvedValue({
-    flags,
+    flags: { 'no-questionnaire': true, ...flags },
     args: {},
     argv: [],
     raw: [],
