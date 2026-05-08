@@ -47,6 +47,7 @@ import { makeExecaSfRunner } from '../../../lib/sf-runner';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
 import { clickableLink } from '../../../lib/clickable-link';
+import { renderMarkdown } from '../../../lib/render-markdown';
 
 export type SecurityReviewRunResult = {
   preflightOk: boolean;
@@ -57,6 +58,8 @@ export type SecurityReviewRunResult = {
   findingsPath: string;
   /** Absolute path to report.json (ScoredReport). Always written. */
   reportPath: string;
+  /** Absolute path to report.md (Markdown rendering). Always written. */
+  reportMarkdownPath: string;
   /** Branded report URL — only set in upload mode. */
   reportUrl?: string;
   /** Consultant preview URL — only set in upload mode. */
@@ -211,17 +214,21 @@ required, no upload, no email.
     this.log('· Scoring bundle locally...');
     const report = score(bundle);
 
-    // 5. Always emit findings.json + report.json to --output-dir.
+    // 5. Always emit findings.json + report.json + report.md to --output-dir.
     const outputDir = resolve(flags['output-dir']);
     await mkdir(outputDir, { recursive: true });
     const findingsPath = join(outputDir, 'findings.json');
     const reportPath = join(outputDir, 'report.json');
+    const reportMarkdownPath = join(outputDir, 'report.md');
+    const generatedAt = new Date().toISOString();
     await writeFile(findingsPath, JSON.stringify(bundle, null, 2));
     await writeFile(reportPath, JSON.stringify(report, null, 2));
+    await writeFile(reportMarkdownPath, renderMarkdown(report, { generatedAt, alias }));
     this.log(`✓ findings.json written to ${findingsPath}`);
     this.log(
       `✓ report.json written to ${reportPath}  (overall: ${report.overall_score}/100, grade ${report.risk_grade})`,
     );
+    this.log(`✓ report.md written to ${reportMarkdownPath}`);
 
     // 6. Upload if in upload mode.
     if (uploadMode === 'local') {
@@ -231,6 +238,7 @@ required, no upload, no email.
         uploadMode: 'local',
         findingsPath,
         reportPath,
+        reportMarkdownPath,
       };
     }
 
@@ -256,6 +264,7 @@ required, no upload, no email.
       uploadMode: 'upload',
       findingsPath,
       reportPath,
+      reportMarkdownPath,
       reportUrl: uploadResult.reportUrl,
     };
     if (uploadResult.consultantPreviewUrl)
