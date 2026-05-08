@@ -52,6 +52,7 @@ import { makeExecaSfRunner } from '../../../lib/sf-runner';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
 import { clickableLink } from '../../../lib/clickable-link';
+import { renderHtml } from '../../../lib/render-html';
 import { renderMarkdown } from '../../../lib/render-markdown';
 import { runQuestionnaire } from '../../../lib/questionnaire-runner';
 import { loadAnswersFromYaml } from '../../../lib/questionnaire-loader';
@@ -68,6 +69,8 @@ export type SecurityReviewRunResult = {
   reportPath: string;
   /** Absolute path to report.md (Markdown rendering). Always written. */
   reportMarkdownPath: string;
+  /** Absolute path to report.html (browser/print rendering). Always written. */
+  reportHtmlPath: string;
   /** Branded report URL — only set in upload mode. */
   reportUrl?: string;
   /** Consultant preview URL — only set in upload mode. */
@@ -294,15 +297,18 @@ required, no upload, no email.
     const findingsPath = join(outputDir, 'findings.json');
     const reportPath = join(outputDir, 'report.json');
     const reportMarkdownPath = join(outputDir, 'report.md');
+    const reportHtmlPath = join(outputDir, 'report.html');
     const generatedAt = new Date().toISOString();
     await writeFile(findingsPath, JSON.stringify(bundle, null, 2));
     await writeFile(reportPath, JSON.stringify(report, null, 2));
     await writeFile(reportMarkdownPath, renderMarkdown(report, { generatedAt, alias }));
+    await writeFile(reportHtmlPath, renderHtml(report, { generatedAt, alias }));
     this.log(`✓ findings.json written to ${findingsPath}`);
     this.log(
       `✓ report.json written to ${reportPath}  (overall: ${report.overall_score}/100, grade ${report.risk_grade})`,
     );
     this.log(`✓ report.md written to ${reportMarkdownPath}`);
+    this.log(`✓ report.html written to ${reportHtmlPath}`);
 
     // 6. Upload if in upload mode.
     if (uploadMode === 'local') {
@@ -313,6 +319,7 @@ required, no upload, no email.
         findingsPath,
         reportPath,
         reportMarkdownPath,
+        reportHtmlPath,
       };
     }
 
@@ -339,6 +346,7 @@ required, no upload, no email.
       findingsPath,
       reportPath,
       reportMarkdownPath,
+      reportHtmlPath,
       reportUrl: uploadResult.reportUrl,
     };
     if (uploadResult.consultantPreviewUrl)
