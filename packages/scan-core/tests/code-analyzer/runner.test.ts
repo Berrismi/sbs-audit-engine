@@ -165,4 +165,45 @@ describe('runCodeAnalyzer', () => {
     const retrieveCall = calls[0];
     expect(retrieveCall?.join(' ')).toContain('ApexClass,CustomObject');
   });
+
+  it('passes --rule-selector Security to code-analyzer by default (alpha.36+)', async () => {
+    const calls: string[][] = [];
+    const trackingSpawner: CodeAnalyzerSpawner = async (_b, args) => {
+      calls.push([...args]);
+      return { stdout: '', stderr: '', exitCode: 0 };
+    };
+
+    await runCodeAnalyzer({
+      alias: 'client-prod',
+      spawner: trackingSpawner,
+      tmpdir: makeOkTmpdir(),
+    });
+
+    // Second invocation is the analyzer (first is retrieve).
+    const analyzeCall = calls[1];
+    expect(analyzeCall).toBeDefined();
+    expect(analyzeCall![0]).toBe('code-analyzer');
+    expect(analyzeCall).toContain('--rule-selector');
+    const selectorIdx = analyzeCall!.indexOf('--rule-selector');
+    expect(analyzeCall![selectorIdx + 1]).toBe('Security');
+  });
+
+  it('forwards an explicit ruleSelector option to code-analyzer', async () => {
+    const calls: string[][] = [];
+    const trackingSpawner: CodeAnalyzerSpawner = async (_b, args) => {
+      calls.push([...args]);
+      return { stdout: '', stderr: '', exitCode: 0 };
+    };
+
+    await runCodeAnalyzer({
+      alias: 'client-prod',
+      spawner: trackingSpawner,
+      tmpdir: makeOkTmpdir(),
+      ruleSelector: 'Recommended',
+    });
+
+    const analyzeCall = calls[1];
+    const selectorIdx = analyzeCall!.indexOf('--rule-selector');
+    expect(analyzeCall![selectorIdx + 1]).toBe('Recommended');
+  });
 });
