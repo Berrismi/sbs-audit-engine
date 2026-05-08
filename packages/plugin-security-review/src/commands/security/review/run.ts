@@ -42,12 +42,20 @@ import {
   type ProgressEvent,
 } from '@hellomavens/security-review-for-salesforce-scan-core';
 import { score } from '@hellomavens/security-review-for-salesforce-engine';
+import {
+  REGISTRY,
+  toQuestionnaireSubmission,
+  type AnswerSet,
+} from '@hellomavens/security-review-for-salesforce-engine/questionnaire';
 import { runPreflight } from '../../../lib/preflight';
 import { makeExecaSfRunner } from '../../../lib/sf-runner';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
 import { clickableLink } from '../../../lib/clickable-link';
 import { renderMarkdown } from '../../../lib/render-markdown';
+import { runQuestionnaire } from '../../../lib/questionnaire-runner';
+import { loadAnswersFromYaml } from '../../../lib/questionnaire-loader';
+import { saveAnswers } from '../../../lib/questionnaire-storage';
 
 export type SecurityReviewRunResult = {
   preflightOk: boolean;
@@ -121,6 +129,17 @@ required, no upload, no email.
       summary: 'Opt in to running Salesforce Code Analyzer (slow — 1-5 min on real orgs).',
       default: false,
     }),
+    questionnaire: Flags.file({
+      summary:
+        'Path to a YAML answer file (load instead of prompting). Produced by a previous interactive run; useful for CI replay.',
+      exists: true,
+      required: false,
+    }),
+    'no-questionnaire': Flags.boolean({
+      summary:
+        'Skip the questionnaire entirely. Controls that need operator input will be reported as inconclusive.',
+      default: false,
+    }),
   };
 
   public async run(): Promise<SecurityReviewRunResult> {
@@ -141,6 +160,40 @@ required, no upload, no email.
       throw new Error(`${preflight.message}\n\nRemediation: ${preflight.remediation}`);
     }
     this.log('✓ Preflight passed.');
+
+    // 1.5. Questionnaire — interactive (TTY default), file (--questionnaire),
+    //      or skipped (--no-questionnaire). Runs before the scan so the
+    //      operator does the attentive part first; the long evidence
+    //      collection happens after they can walk away.
+    let answers: AnswerSet | null = null;
+    if (flags['no-questionnaire']) {
+      this.log(
+        '· Questionnaire skipped (--no-questionnaire). Operator-only controls will be inconclusive.',
+      );
+    } else if (flags.questionnaire) {
+      const loaded = await loadAnswersFromYaml(flags.questionnaire);
+      answers = loaded.answers;
+      this.log(
+        `✓ Loaded ${Object.keys(answers).length} questionnaire answer(s) from ${flags.questionnaire}`,
+      );
+    } else if (process.stdin.isTTY) {
+      this.log('');
+      this.log('· Questionnaire — answer the next set of short questions to corroborate CLI');
+      this.log('  evidence. Press Ctrl-C to abort.');
+      answers = await runQuestionnaire({ log: (line) => this.log(line) });
+      const savedPath = await saveAnswers({
+        alias,
+        registryVersion: REGISTRY.version,
+        sbsVersion: REGISTRY.sbsVersion,
+        answers,
+      });
+      this.log(`✓ Answers saved to ${savedPath}`);
+      this.log(`  Re-run non-interactively with: --questionnaire ${savedPath}`);
+    } else {
+      throw new Error(
+        'Cannot prompt interactively in a non-TTY environment. Pass --questionnaire <path-to.yml> to load saved answers, or --no-questionnaire to skip.',
+      );
+    }
 
     // 2. Resolve upload mode.
     const explicitUpload = flags.upload;
@@ -206,7 +259,28 @@ required, no upload, no email.
     }
 
     this.log('· Collecting evidence...');
-    const { bundle } = await collectEvidence(collectOpts);
+    const collectResult = await collectEvidence(collectOpts);
+    let bundle = collectResult.bundle;
+
+    // 3.5. Merge questionnaire-derived evidence into the CLI bundle. The
+    //      engine's score() consumes the union — questionnaire-only controls
+    //      need it for primary evidence, and cli_corroborating controls use
+    //      it as a second signal alongside CLI findings.
+    if (answers) {
+      const submission = toQuestionnaireSubmission({
+        subjectId,
+        answers,
+        registry: REGISTRY,
+        collectedAt: new Date().toISOString(),
+      });
+      bundle = {
+        ...bundle,
+        evidence: [...submission.bundle.evidence, ...bundle.evidence],
+      };
+      this.log(
+        `✓ Merged ${submission.bundle.evidence.length} questionnaire answer(s) into bundle.`,
+      );
+    }
 
     // 4. Score locally with the open-source engine. Same scoring runs
     //    server-side in upload mode — these should match. (Determinism

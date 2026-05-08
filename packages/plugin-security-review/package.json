@@ -35,10 +35,14 @@
   "dependencies": {
     "@hellomavens/security-review-for-salesforce-engine": "workspace:*",
     "@hellomavens/security-review-for-salesforce-scan-core": "workspace:*",
+    "@inquirer/checkbox": "^2.5.0",
+    "@inquirer/input": "^2.3.0",
+    "@inquirer/select": "^2.5.0",
     "@oclif/core": "^4",
     "@salesforce/core": "^8",
     "@salesforce/sf-plugins-core": "^11",
-    "execa": "^9"
+    "execa": "^9",
+    "yaml": "^2.7.0"
   },
   "oclif": {
     "bin": "sf",

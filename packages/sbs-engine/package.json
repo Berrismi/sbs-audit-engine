@@ -1,6 +1,6 @@
 {
   "name": "@hellomavens/security-review-for-salesforce-engine",
-  "version": "0.0.0-alpha.42",
+  "version": "0.0.0-alpha.43",
   "description": "Open source scoring engine implementing the Security Benchmark for Salesforce (SBS) standard.",
   "license": "MIT",
   "type": "module",
@@ -17,6 +17,11 @@
       "types": "./dist/types.d.ts",
       "import": "./dist/types.js",
       "default": "./dist/types.js"
+    },
+    "./questionnaire": {
+      "types": "./dist/questionnaire/index.d.ts",
+      "import": "./dist/questionnaire/index.js",
+      "default": "./dist/questionnaire/index.js"
     },
     "./package.json": "./package.json"
   },
