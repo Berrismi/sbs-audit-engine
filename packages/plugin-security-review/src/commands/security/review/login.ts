@@ -23,7 +23,7 @@ with an unbranded report) is planned for Phase 8 of the project
 roadmap. Watch the sbs-audit-engine repo for progress.`;
 
   public static override readonly examples = [
-    '$ sf security review login --api-base-url https://app.hellomavens.com',
+    '$ sf security review login --api-base-url https://audit.hellomavens.com',
   ];
 
   public static override readonly flags = {

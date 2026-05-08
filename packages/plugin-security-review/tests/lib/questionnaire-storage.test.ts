@@ -97,4 +97,22 @@ describe('saveAnswers', () => {
     const loaded = await loadAnswersFromYaml(path, { registry: REGISTRY });
     expect(loaded.answers).toEqual(original);
   });
+
+  it('falls back to HM_CONFIG_DIR env var when rootDir is unset', async () => {
+    const envDir = await mkdtemp(join(tmpdir(), 'hm-q-store-env-'));
+    const prev = process.env['HM_CONFIG_DIR'];
+    process.env['HM_CONFIG_DIR'] = envDir;
+    try {
+      const path = await saveAnswers({
+        alias: 'env-test',
+        registryVersion: 'v1',
+        sbsVersion: '0.4.1',
+        answers: {},
+      });
+      expect(path.startsWith(envDir + '/questionnaire/')).toBe(true);
+    } finally {
+      if (prev === undefined) delete process.env['HM_CONFIG_DIR'];
+      else process.env['HM_CONFIG_DIR'] = prev;
+    }
+  });
 });

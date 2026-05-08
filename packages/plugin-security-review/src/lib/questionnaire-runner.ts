@@ -40,11 +40,14 @@ export interface PromptAdapter {
   input: (args: { message: string; description?: string }) => Promise<string>;
 }
 
+/* c8 ignore start — defaultAdapter delegates to real @inquirer prompts which
+   require a TTY; untestable in unit tests. Tests inject a stub adapter. */
 const defaultAdapter: PromptAdapter = {
   select: (args) => select(args),
   checkbox: (args) => checkbox(args),
   input: (args) => input(args),
 };
+/* c8 ignore stop */
 
 export interface RunQuestionnaireOptions {
   /** Override the bundled engine registry (tests). */

@@ -301,4 +301,224 @@ describe('runQuestionnaire — section ordering and chrome', () => {
 
     expect(Object.keys(answers)).toEqual(['Q-ACS-001']);
   });
+
+  it('renders a group sub-heading the first time a groupId appears in the stream', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-A',
+          section: 'ACS',
+          controlId: 'SBS-A',
+          groupId: 'group-1',
+          text: '',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+        {
+          id: 'Q-B',
+          section: 'ACS',
+          controlId: 'SBS-B',
+          groupId: 'group-1',
+          text: '',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+        {
+          // groupless question after a grouped one — exercises the
+          // `else if (!q.groupId)` branch.
+          id: 'Q-C',
+          section: 'ACS',
+          controlId: 'SBS-C',
+          text: '',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ select: ['yes', 'yes', 'no'] });
+    const lines: string[] = [];
+
+    const answers = await runQuestionnaire({
+      registry,
+      prompts,
+      log: (line) => lines.push(line),
+    });
+
+    expect(Object.keys(answers)).toEqual(['Q-A', 'Q-B', 'Q-C']);
+    // The group title falls back to the groupId when no GROUP_TITLES entry exists.
+    expect(lines.some((l) => l.includes('group-1'))).toBe(true);
+  });
+});
+
+describe('runQuestionnaire — allowIdk=false coverage', () => {
+  it('omits the IDK option for boolean questions when allowIdk=false', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-PROFILE-X',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: false,
+          kind: 'boolean',
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ select: ['no'] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-PROFILE-X': { kind: 'boolean', value: false } });
+  });
+
+  it('omits the IDK option for choice questions when allowIdk=false', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-PROFILE-001',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: false,
+          kind: 'choice',
+          options: [{ value: 'mid', label: 'Mid' }],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ select: ['mid'] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-PROFILE-001': { kind: 'choice', value: 'mid' } });
+  });
+
+  it('omits the IDK option for numeric_range questions when allowIdk=false', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-NR',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: false,
+          kind: 'numeric_range',
+          options: [{ value: '0', label: '0' }],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ select: ['0'] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-NR': { kind: 'numeric_range', value: '0' } });
+  });
+
+  it('omits the IDK option for multi_choice questions when allowIdk=false', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-MC',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [{ value: 'a', label: 'A' }],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ checkbox: [['a']] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-MC': { kind: 'multi_choice', values: ['a'] } });
+  });
+});
+
+describe('runQuestionnaire — multi_choice IDK semantics', () => {
+  it('treats a sole IDK pseudo-selection as kind:idk', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-MC',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: true,
+          kind: 'multi_choice',
+          options: [
+            { value: 'a', label: 'A' },
+            { value: 'b', label: 'B' },
+          ],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ checkbox: [['__hm_idk__']] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-MC': { kind: 'idk' } });
+  });
+
+  it('filters out the IDK pseudo-value when mixed with real selections', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-MC',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: true,
+          kind: 'multi_choice',
+          options: [
+            { value: 'a', label: 'A' },
+            { value: 'b', label: 'B' },
+          ],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ checkbox: [['a', '__hm_idk__']] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-MC': { kind: 'multi_choice', values: ['a'] } });
+  });
+});
+
+describe('runQuestionnaire — free_text edge cases', () => {
+  it('treats empty input as kind:idk when allowIdk=true', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-FT',
+          section: 'profile',
+          controlId: null,
+          text: '',
+          allowIdk: true,
+          kind: 'free_text',
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ input: ['   '] });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    expect(answers).toEqual<AnswerSet>({ 'Q-FT': { kind: 'idk' } });
+  });
+});
+
+describe('runQuestionnaire — helpText surfaces as description', () => {
+  it('passes helpText through to the adapter as `description`', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-HELP',
+          section: 'profile',
+          controlId: null,
+          text: 'Pick one',
+          helpText: 'Supplemental guidance for the operator.',
+          allowIdk: false,
+          kind: 'choice',
+          options: [{ value: 'a', label: 'A' }],
+        },
+      ],
+    });
+    let received: { description?: string } | undefined;
+    const adapter: PromptAdapter = {
+      select: async (args) => {
+        received = args;
+        return 'a';
+      },
+      checkbox: async () => [],
+      input: async () => '',
+    };
+    await runQuestionnaire({ registry, prompts: adapter, log: () => {} });
+    expect(received?.description).toBe('Supplemental guidance for the operator.');
+  });
 });

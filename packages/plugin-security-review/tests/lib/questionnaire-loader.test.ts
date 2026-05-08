@@ -210,4 +210,100 @@ describe('loadAnswersFromYaml — validation errors', () => {
       /has 2 error\(s\)/,
     );
   });
+
+  it('rejects an answer that is an array rather than an object', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-ACS-001': ['boolean', true] },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /must be a mapping with a "kind" field/,
+    );
+  });
+
+  it('rejects an answer that is null', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-ACS-001': null },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /must be a mapping with a "kind" field/,
+    );
+  });
+
+  it('rejects numeric_range values that are not in the bucket list', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-ACS-005': { kind: 'numeric_range', value: '500-9999' } },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /not one of the allowed buckets/,
+    );
+  });
+
+  it('rejects numeric_range values that are not strings', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-ACS-005': { kind: 'numeric_range', value: 5 } },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /value to be a string/,
+    );
+  });
+
+  it('rejects free_text values that are not strings', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-PROFILE-002': { kind: 'free_text', value: 42 } },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /value to be a string/,
+    );
+  });
+
+  it('rejects free_text whose kind does not match', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-PROFILE-002': { kind: 'boolean', value: true } },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /expected kind "free_text", got "boolean"/,
+    );
+  });
+
+  it('rejects choice values that are not strings', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-PROFILE-001': { kind: 'choice', value: 42 } },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /value to be a string/,
+    );
+  });
+
+  it('rejects multi_choice values when the values field is not an array', async () => {
+    const path = await writeYaml({
+      answers: { 'Q-PROFILE-003': { kind: 'multi_choice', values: 'hipaa' } },
+    });
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /values to be an array/,
+    );
+  });
+
+  it('rejects file paths that do not exist', async () => {
+    await expect(
+      loadAnswersFromYaml('/tmp/does-not-exist-' + Math.random() + '.yml', { registry: REGISTRY }),
+    ).rejects.toThrow(/Could not read questionnaire YAML/);
+  });
+
+  it('rejects malformed YAML', async () => {
+    const path = await writeYaml(
+      'answers:\n  - this is\n    : not valid: mapping yaml\n   bad: indent\n',
+    );
+    await expect(loadAnswersFromYaml(path, { registry: REGISTRY })).rejects.toThrow(
+      /Failed to parse YAML|must be a mapping/,
+    );
+  });
+
+  it('treats non-object metadata as empty', async () => {
+    const path = await writeYaml({
+      metadata: 'not-an-object',
+      answers: { 'Q-ACS-001': { kind: 'boolean', value: true } },
+    });
+    const result = await loadAnswersFromYaml(path, { registry: REGISTRY });
+    expect(result.metadata).toEqual({});
+  });
 });
