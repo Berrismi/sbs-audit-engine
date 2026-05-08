@@ -5,20 +5,26 @@ import { describe, it, expect } from 'vitest';
 import { runCodeAnalyzer } from '../../src/code-analyzer/runner';
 import type { CodeAnalyzerSpawner, TmpdirManager } from '../../src/code-analyzer/runner';
 
+// v5.x Code Analyzer JSON shape — matches the schema parse.ts targets.
 const okJsonOutput = JSON.stringify({
-  results: [
+  version: '5.12.0',
+  violations: [
     {
       engine: 'pmd',
       rule: 'ApexCSRF',
       severity: 1,
-      primaryLocation: { file: '/abs/MyController.cls', startLine: 42 },
+      tags: ['Recommended', 'Security', 'Apex'],
+      locations: [{ file: '/abs/MyController.cls', startLine: 42 }],
+      primaryLocationIndex: 0,
       message: 'CSRF protection missing',
     },
     {
       engine: 'pmd',
       rule: 'ApexBadCrypto',
       severity: 4,
-      primaryLocation: { file: '/abs/MyService.cls', startLine: 100 },
+      tags: ['Recommended', 'Security', 'Apex'],
+      locations: [{ file: '/abs/MyService.cls', startLine: 100 }],
+      primaryLocationIndex: 0,
       message: 'Weak crypto algorithm used',
     },
   ],
@@ -148,7 +154,11 @@ describe('runCodeAnalyzer', () => {
     expect(cleanupCalled).toBe(true);
   });
 
-  it('passes the configured metadataTypes to the retrieve subprocess', async () => {
+  it('emits one --metadata flag per type to the retrieve subprocess', async () => {
+    // sf project retrieve start does NOT accept comma-joined --metadata
+    // values; it tries to resolve the whole comma-string as a single
+    // fullName and rejects with RegistryError. The runner emits one
+    // --metadata flag per type. alpha.37 fix.
     const calls: string[][] = [];
     const trackingSpawner: CodeAnalyzerSpawner = async (_b, args) => {
       calls.push([...args]);
@@ -163,7 +173,17 @@ describe('runCodeAnalyzer', () => {
     });
 
     const retrieveCall = calls[0];
-    expect(retrieveCall?.join(' ')).toContain('ApexClass,CustomObject');
+    expect(retrieveCall).toBeDefined();
+    // Find every '--metadata' position and assert the next arg is the type.
+    const metadataIdxs = retrieveCall!.reduce<number[]>(
+      (acc, v, i) => (v === '--metadata' ? [...acc, i] : acc),
+      [],
+    );
+    expect(metadataIdxs).toHaveLength(2);
+    expect(retrieveCall![metadataIdxs[0]! + 1]).toBe('ApexClass');
+    expect(retrieveCall![metadataIdxs[1]! + 1]).toBe('CustomObject');
+    // No comma-joined value should appear anywhere in the args.
+    expect(retrieveCall!.some((a) => a === 'ApexClass,CustomObject')).toBe(false);
   });
 
   it('passes --rule-selector Security to code-analyzer by default (alpha.36+)', async () => {
