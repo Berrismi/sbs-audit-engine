@@ -517,7 +517,7 @@
         "soc2": ["CC3.2", "CC6.1"],
         "iso27001": ["A.5.9", "A.5.15", "A.8.3"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Every Apex class and Flow exposed to your portal users is inventoried with documented profile access, so your external attack surface is knowable, security testing has scope, and unexpected externally-callable code can't accumulate quietly."
     },
     "SBS-CPORTAL-004": {

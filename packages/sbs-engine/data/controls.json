@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-08T15:55:08.898Z",
-  "engine_version": "0.0.0-alpha.39",
+  "fetched_at": "2026-05-08T16:02:39.007Z",
+  "engine_version": "0.0.0-alpha.40",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -990,7 +990,7 @@
           "soc2": ["CC3.2", "CC6.1"],
           "iso27001": ["A.5.9", "A.5.15", "A.8.3"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Every Apex class and Flow exposed to your portal users is inventoried with documented profile access, so your external attack surface is knowable, security testing has scope, and unexpected externally-callable code can't accumulate quietly."
       }
     },

@@ -99,6 +99,11 @@
 //                   + (alpha.17) ECA equivalent: ExtlClntAppOauthPlcyCnfg.PermittedUsersPolicyType
 //   - SBS-DEP-006   (alpha.17) Connected Apps + ECAs with token policies that fail the
 //                   90-day refresh / 15-minute session audit thresholds (multi-query)
+//   - SBS-CPORTAL-002 (alpha.29) Object permissions granted to Guest profiles
+//                     (Experience Cloud guest users)
+//   - SBS-CPORTAL-003 (alpha.40) Apex classes with portal-exposable methods
+//                     (@AuraEnabled / @InvocableMethod / @RestResource) via
+//                     Tooling-API SymbolTable
 
 import { fieldsExist, toolingFieldsExist } from './applies-when';
 import type { SoqlQueryDef } from '../types';
@@ -857,6 +862,56 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'AND (PermissionsRead = true OR PermissionsCreate = true OR PermissionsEdit = true ' +
       'OR PermissionsDelete = true OR PermissionsViewAllRecords = true ' +
       'OR PermissionsModifyAllRecords = true)',
+  },
+
+  // SBS-CPORTAL-003 — Inventory Portal-Exposed Apex Classes and Flows.
+  // Tooling-API SOQL on ApexClass.SymbolTable to enumerate every Apex
+  // class with @AuraEnabled, @InvocableMethod, or @RestResource methods.
+  // SymbolTable is a complex JSON field that ships with each ApexClass;
+  // it carries methods + their annotations + signatures, so we can detect
+  // portal-exposable surface without parsing Apex source.
+  //
+  // Filter: NamespacePrefix = null (skip managed-package classes whose
+  // source we don't need to audit) AND Status = 'Active' (skip drafts /
+  // versions that aren't deployed). The audit_procedure scopes to the
+  // customer's own Apex; managed-package classes have their own ISV
+  // attestation lineage and aren't customer-controllable surface.
+  //
+  // alpha.40 multi-org probe (loan-maven, 36 unmanaged ApexClasses):
+  //   - 64 @AuraEnabled methods across 5+ classes
+  //   - 10 @InvocableMethod methods across 5+ classes
+  //   - 0 @RestResource methods on this org
+  // Confirms the SymbolTable shape used by the evaluator.
+  //
+  // Why cli_corroborating, not cli_primary: CLI surfaces the inventory
+  // of portal-EXPOSABLE methods. Cross-referencing which subset is
+  // actually accessible to portal user profiles requires a separate
+  // SetupEntityAccess / ProfilePermissionSet join + portal-profile
+  // identification, which is org-policy territory (consultant arbitrates
+  // via questionnaire). Future enhancement: auto-cross-reference if a
+  // tractable approach surfaces. For now, the inventory is the
+  // corroborating signal; questionnaire confirms the in-scope subset.
+  //
+  // Flow inventory is NOT in this query — Flow describe doesn't expose
+  // an "Experience Cloud accessible" attribute via SOQL, and Flow XML
+  // parsing is significant additional infrastructure. Tracked for a
+  // future follow-up.
+  {
+    id: 'cportal-003-portal-exposable-apex-inventory',
+    controlIds: ['SBS-CPORTAL-003'],
+    label:
+      'Apex classes with portal-exposable methods (@AuraEnabled / @InvocableMethod / @RestResource)',
+    source: 'tooling',
+    soql:
+      'SELECT Id, Name, SymbolTable FROM ApexClass ' +
+      "WHERE NamespacePrefix = null AND Status = 'Active'",
+    appliesWhen: toolingFieldsExist('ApexClass', [
+      'Id',
+      'Name',
+      'SymbolTable',
+      'NamespacePrefix',
+      'Status',
+    ]),
   },
 
   // SBS-AUTH-004 — Enforce Strong MFA for External Users with Substantial
