@@ -859,6 +859,78 @@ export const DEFAULT_SOQL_QUERIES: readonly SoqlQueryDef[] = [
       'OR PermissionsModifyAllRecords = true)',
   },
 
+  // SBS-AUTH-004 — Enforce Strong MFA for External Users with Substantial
+  // Access to Sensitive Data. Surfaces active external users (UserType IN
+  // the portal/community-shaped values) along with their Profile-level
+  // `PermissionsForceTwoFactor` flag inline. The companion permset query
+  // below catches users granted PermissionsForceTwoFactor via permission
+  // set override.
+  //
+  // External UserTypes (verified via DE describe of User.UserType):
+  //   PowerCustomerSuccess, CustomerSuccess, CspLitePortal, PowerPartner.
+  // (Other external-shaped values like Guest are excluded — guests
+  // shouldn't authenticate at all per CPORTAL-002.)
+  //
+  // Classification: cli_corroborating. The audit_procedure scopes to
+  // external users with "substantial access to sensitive data" — the
+  // SUBSTANTIAL-ACCESS classification is customer-defined (their data
+  // taxonomy + access policy) and stays in the questionnaire. CLI
+  // surfaces the inventory of external users + their MFA enforcement
+  // state; questionnaire confirms whether the classification of "in-scope
+  // users" matches the inventory and whether the questionnaire population
+  // includes any users this query missed (e.g., partner federation users
+  // routed through unusual UserType values).
+  //
+  // The actual permission name is `PermissionsForceTwoFactor` (verified
+  // via Profile + PermissionSet describe) — Salesforce internally calls
+  // this "Multi-Factor Authentication for User Interface Logins" in the
+  // UI. Don't confuse with `PermissionsBypassMFAForUiLogins` (the OPPOSITE
+  // — exempts user from MFA); a more thorough evaluator would check both,
+  // but for the foundation cli_corroborating verdict the FORCE flag alone
+  // is the canonical signal.
+  //
+  // alpha.34 restoration: alpha.29 CPORTAL-002 PR (#66) accidentally
+  // overwrote both auth-004 queries instead of appending the new
+  // cportal-002 query alongside them. The evaluator was wired up in
+  // alpha.28 looking for these query ids, so the silent removal sent
+  // every consumer scan from alpha.29 → alpha.33 to questionnaire
+  // fallback for AUTH-004 — a Critical-tier control. Multi-org
+  // verification (alpha.33) caught the regression: AUTH-004 produced no
+  // high-confidence verdict on any of 3 orgs despite being the first
+  // Critical-tier CLI promotion.
+  {
+    id: 'auth-004-external-users-mfa',
+    controlIds: ['SBS-AUTH-004'],
+    label: 'Active external (community / portal) users with Profile MFA-force flag inline',
+    soql:
+      'SELECT Id, Username, Name, UserType, ' +
+      'Profile.Name, Profile.PermissionsForceTwoFactor ' +
+      'FROM User ' +
+      'WHERE IsActive = true ' +
+      "AND UserType IN ('PowerCustomerSuccess', 'CustomerSuccess', 'CspLitePortal', 'PowerPartner')",
+  },
+
+  // SBS-AUTH-004 (permset override path) — explicit permission set or
+  // permission set group grants of PermissionsForceTwoFactor to external
+  // users. Mirrors the ACS-004 super-admin pattern: union with the inventory
+  // query above to determine effective MFA enforcement per user.
+  //
+  // Excludes profile-backed permsets (`IsOwnedByProfile = false`) so we
+  // don't double-count Profile-level grants the inventory query already
+  // surfaces.
+  {
+    id: 'auth-004-external-users-mfa-via-permsets',
+    controlIds: ['SBS-AUTH-004'],
+    label: 'Permission set / permset-group grants of MFA-force to external users',
+    soql:
+      'SELECT AssigneeId, Assignee.Username, PermissionSet.Label ' +
+      'FROM PermissionSetAssignment ' +
+      'WHERE Assignee.IsActive = true ' +
+      "AND Assignee.UserType IN ('PowerCustomerSuccess', 'CustomerSuccess', 'CspLitePortal', 'PowerPartner') " +
+      'AND PermissionSet.IsOwnedByProfile = false ' +
+      'AND PermissionSet.PermissionsForceTwoFactor = true',
+  },
+
   // SBS-MON-003 — Monitor for Suspicious Logins. Inventory of
   // TransactionSecurityPolicy (Tooling) records, with EventType filter
   // surfacing whether login-event monitoring is configured at the platform
