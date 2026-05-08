@@ -41,7 +41,7 @@ import {
   type ConnectionLike,
   type ProgressEvent,
 } from '@hellomavens/security-review-for-salesforce-scan-core';
-import { score } from '@hellomavens/security-review-for-salesforce-engine';
+import { ENGINE_VERSION, score } from '@hellomavens/security-review-for-salesforce-engine';
 import {
   REGISTRY,
   toQuestionnaireSubmission,
@@ -52,6 +52,7 @@ import { makeExecaSfRunner } from '../../../lib/sf-runner';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
 import { clickableLink } from '../../../lib/clickable-link';
+import { makeDebugLogger, makeScanStartedPayload } from '../../../lib/debug-logger';
 import { renderHtml } from '../../../lib/render-html';
 import { renderMarkdown } from '../../../lib/render-markdown';
 import { runQuestionnaire } from '../../../lib/questionnaire-runner';
@@ -143,12 +144,27 @@ required, no upload, no email.
         'Skip the questionnaire entirely. Controls that need operator input will be reported as inconclusive.',
       default: false,
     }),
+    debug: Flags.boolean({
+      summary:
+        'Write a JSON-lines diagnostic log to <output-dir>/.hm-debug.log. Aggregates only — no row data, no PII, no credentials. Useful for filing bug reports.',
+      default: false,
+    }),
   };
 
   public async run(): Promise<SecurityReviewRunResult> {
     const { flags } = await this.parse(SecurityReviewRun);
     const org = flags['target-org'];
     const alias = org.getUsername() ?? 'unknown';
+
+    // Resolve output dir + initialize debug logger early so every subsequent
+    // phase can record diagnostic events. Logger is a no-op when --debug is
+    // unset; never logs row data, credentials, or PII regardless.
+    const outputDir = resolve(flags['output-dir']);
+    await mkdir(outputDir, { recursive: true });
+    const debug = makeDebugLogger({ enabled: flags.debug, outputDir });
+    if (debug.enabled) {
+      this.log(`· --debug on; writing diagnostic log to ${debug.path}`);
+    }
 
     // 1. Preflight (existing).
     const runner = makeExecaSfRunner();
@@ -160,22 +176,27 @@ required, no upload, no email.
       fetchPerms: async () => ({ ApiEnabled: true, ViewSetup: true, ViewAllData: true }),
     });
     if (!preflight.ok) {
+      await debug.event('preflight', 'failed', { message: preflight.message }, 'error');
       throw new Error(`${preflight.message}\n\nRemediation: ${preflight.remediation}`);
     }
     this.log('✓ Preflight passed.');
+    await debug.event('preflight', 'ok');
 
     // 1.5. Questionnaire — interactive (TTY default), file (--questionnaire),
     //      or skipped (--no-questionnaire). Runs before the scan so the
     //      operator does the attentive part first; the long evidence
     //      collection happens after they can walk away.
     let answers: AnswerSet | null = null;
+    let questionnaireMode: 'interactive' | 'file' | 'skipped' = 'skipped';
     if (flags['no-questionnaire']) {
       this.log(
         '· Questionnaire skipped (--no-questionnaire). Operator-only controls will be inconclusive.',
       );
+      questionnaireMode = 'skipped';
     } else if (flags.questionnaire) {
       const loaded = await loadAnswersFromYaml(flags.questionnaire);
       answers = loaded.answers;
+      questionnaireMode = 'file';
       this.log(
         `✓ Loaded ${Object.keys(answers).length} questionnaire answer(s) from ${flags.questionnaire}`,
       );
@@ -184,6 +205,7 @@ required, no upload, no email.
       this.log('· Questionnaire — answer the next set of short questions to corroborate CLI');
       this.log('  evidence. Press Ctrl-C to abort.');
       answers = await runQuestionnaire({ log: (line) => this.log(line) });
+      questionnaireMode = 'interactive';
       const savedPath = await saveAnswers({
         alias,
         registryVersion: REGISTRY.version,
@@ -197,6 +219,10 @@ required, no upload, no email.
         'Cannot prompt interactively in a non-TTY environment. Pass --questionnaire <path-to.yml> to load saved answers, or --no-questionnaire to skip.',
       );
     }
+    await debug.event('questionnaire', 'resolved', {
+      mode: questionnaireMode,
+      answer_count: answers ? Object.keys(answers).length : 0,
+    });
 
     // 2. Resolve upload mode.
     const explicitUpload = flags.upload;
@@ -220,6 +246,18 @@ required, no upload, no email.
         '--client-email is required when uploading. Pass --client-email <email> or --no-upload to skip the upload step.',
       );
     }
+    await debug.event(
+      'cli',
+      'scan_started',
+      makeScanStartedPayload({
+        engineVersion: ENGINE_VERSION,
+        alias,
+        uploadModeRequested:
+          flags.upload === true ? 'upload' : flags.upload === false ? 'local' : 'auto',
+        questionnaireMode,
+        includeCodeAnalyzer: flags['include-code-analyzer'],
+      }),
+    );
 
     // 3. Collect evidence.
     const connection = (await org.getConnection()) as unknown as ConnectionLike;
@@ -244,10 +282,24 @@ required, no upload, no email.
           this.log(
             `  ✓ ${event.query.id} (${event.rowCount} row${event.rowCount === 1 ? '' : 's'})`,
           );
+          void debug.event('evidence', 'query_ok', {
+            query_id: event.query.id,
+            row_count: event.rowCount,
+          });
         } else if (event.type === 'query_failed') {
           this.log(`  ✗ ${event.query.id}: ${event.error.message}`);
+          void debug.event(
+            'evidence',
+            'query_failed',
+            { query_id: event.query.id, message: event.error.message },
+            'error',
+          );
         } else if (event.type === 'query_skipped') {
           this.log(`  · ${event.query.id} skipped (${event.reason})`);
+          void debug.event('evidence', 'query_skipped', {
+            query_id: event.query.id,
+            reason: event.reason,
+          });
         } else {
           this.log(`  · ${event.query.id}`);
         }
@@ -262,8 +314,13 @@ required, no upload, no email.
     }
 
     this.log('· Collecting evidence...');
+    const evidenceStart = Date.now();
     const collectResult = await collectEvidence(collectOpts);
     let bundle = collectResult.bundle;
+    await debug.event('evidence', 'collection_finished', {
+      duration_ms: Date.now() - evidenceStart,
+      cli_evidence_count: bundle.evidence.length,
+    });
 
     // 3.5. Merge questionnaire-derived evidence into the CLI bundle. The
     //      engine's score() consumes the union — questionnaire-only controls
@@ -289,11 +346,20 @@ required, no upload, no email.
     //    server-side in upload mode — these should match. (Determinism
     //    is enforced by the engine's score() purity.)
     this.log('· Scoring bundle locally...');
+    const scoreStart = Date.now();
     const report = score(bundle);
+    await debug.event('score', 'finished', {
+      duration_ms: Date.now() - scoreStart,
+      overall_score: report.overall_score,
+      risk_grade: report.risk_grade,
+      critical_fail_count: report.critical_fail_count,
+      inconclusive_percent: report.inconclusive_percent,
+      evidence_sufficiency: report.evidence_sufficiency,
+    });
 
-    // 5. Always emit findings.json + report.json + report.md to --output-dir.
-    const outputDir = resolve(flags['output-dir']);
-    await mkdir(outputDir, { recursive: true });
+    // 5. Always emit findings.json + report.json + report.{md,html} to --output-dir.
+    //    outputDir was resolved + created at the start of run() so the debug
+    //    log can sit alongside the report bundle.
     const findingsPath = join(outputDir, 'findings.json');
     const reportPath = join(outputDir, 'report.json');
     const reportMarkdownPath = join(outputDir, 'report.md');
@@ -309,6 +375,7 @@ required, no upload, no email.
     );
     this.log(`✓ report.md written to ${reportMarkdownPath}`);
     this.log(`✓ report.html written to ${reportHtmlPath}`);
+    await debug.event('emit', 'done');
 
     // 6. Upload if in upload mode.
     if (uploadMode === 'local') {

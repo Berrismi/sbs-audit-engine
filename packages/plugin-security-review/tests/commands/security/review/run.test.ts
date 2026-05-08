@@ -15,7 +15,10 @@ const mockScanCore = vi.hoisted(() => ({
   makeExecaCodeAnalyzerSpawner: vi.fn(() => ({})),
   makeNodeTmpdirManager: vi.fn(() => ({})),
 }));
-const mockEngine = vi.hoisted(() => ({ score: vi.fn() }));
+const mockEngine = vi.hoisted(() => ({
+  score: vi.fn(),
+  ENGINE_VERSION: '0.0.0-alpha.test',
+}));
 
 vi.mock('../../../../src/lib/preflight', () => mockPreflight);
 vi.mock('../../../../src/lib/sf-runner', () => mockRunner);
