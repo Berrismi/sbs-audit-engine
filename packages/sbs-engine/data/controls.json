@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-07T23:10:59.835Z",
-  "engine_version": "0.0.0-alpha.33",
+  "fetched_at": "2026-05-08T01:13:58.122Z",
+  "engine_version": "0.0.0-alpha.34",
   "controls": [
     {
       "id": "SBS-ACS-001",
