@@ -1,10 +1,9 @@
 {
   "name": "@hellomavens/security-review-for-salesforce-scan-core",
-  "version": "0.0.0-dev",
+  "version": "0.0.0-alpha.47",
   "description": "Side-effecting evidence collector for the HelloMavens security review. Takes a Salesforce Connection + options, returns an EvidenceBundle (SOQL bundle, Health Check API, Code Analyzer subprocess output) the engine can score.",
   "license": "MIT",
   "type": "module",
-  "private": true,
   "main": "./dist/index.js",
   "files": [
     "dist",
@@ -40,5 +39,8 @@
   "devDependencies": {
     "@salesforce/core": "^8",
     "tsx": "^4.21.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
