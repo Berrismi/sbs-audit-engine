@@ -244,7 +244,7 @@
         "soc2": ["CC6.1", "CC6.6"],
         "iso27001": ["A.5.15", "A.8.3", "A.8.26"]
       },
-      "cli_evidence_class": "questionnaire_only",
+      "cli_evidence_class": "cli_corroborating",
       "pass_narrative": "Portal Apex methods don't accept user-controlled parameters for record access, so external users can't manipulate inputs to enumerate records they shouldn't see."
     },
     "SBS-CPORTAL-002": {

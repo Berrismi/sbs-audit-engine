@@ -2,8 +2,8 @@
   "sbs_version": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
-  "fetched_at": "2026-05-08T15:34:44.365Z",
-  "engine_version": "0.0.0-alpha.37",
+  "fetched_at": "2026-05-08T15:55:08.898Z",
+  "engine_version": "0.0.0-alpha.39",
   "controls": [
     {
       "id": "SBS-ACS-001",
@@ -900,7 +900,7 @@
           "soc2": ["CC6.1", "CC6.6"],
           "iso27001": ["A.5.15", "A.8.3", "A.8.26"]
         },
-        "cli_evidence_class": "questionnaire_only",
+        "cli_evidence_class": "cli_corroborating",
         "pass_narrative": "Portal Apex methods don't accept user-controlled parameters for record access, so external users can't manipulate inputs to enumerate records they shouldn't see."
       }
     },
