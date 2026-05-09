@@ -36,14 +36,18 @@ export async function loadAnswersFromYaml(
   try {
     raw = await readFile(path, 'utf8');
   } catch (err) {
-    throw new Error(`Could not read questionnaire YAML at ${path}: ${(err as Error).message}`);
+    throw new Error(`Could not read questionnaire YAML at ${path}: ${(err as Error).message}`, {
+      cause: err,
+    });
   }
 
   let parsed: unknown;
   try {
     parsed = parse(raw);
   } catch (err) {
-    throw new Error(`Failed to parse YAML at ${path}: ${(err as Error).message}`);
+    throw new Error(`Failed to parse YAML at ${path}: ${(err as Error).message}`, {
+      cause: err,
+    });
   }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new Error(`YAML at ${path} must be a mapping with an "answers" field.`);

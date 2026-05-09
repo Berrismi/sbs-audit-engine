@@ -187,7 +187,7 @@ required, no upload, no email.
     //      operator does the attentive part first; the long evidence
     //      collection happens after they can walk away.
     let answers: AnswerSet | null = null;
-    let questionnaireMode: 'interactive' | 'file' | 'skipped' = 'skipped';
+    let questionnaireMode: 'interactive' | 'file' | 'skipped';
     if (flags['no-questionnaire']) {
       this.log(
         '· Questionnaire skipped (--no-questionnaire). Operator-only controls will be inconclusive.',
