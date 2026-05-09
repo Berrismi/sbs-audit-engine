@@ -25,8 +25,8 @@ pnpm add @hellomavens/security-review-for-salesforce-engine
 npm i @hellomavens/security-review-for-salesforce-engine
 ```
 
-> Phase 1 alpha. The API will change before 0.1.0. Pin exactly:
-> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.10"`.
+> Phase 5 alpha. The API will change before 0.1.0. Pin exactly:
+> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.47"`.
 
 ## What this is
 
@@ -53,9 +53,10 @@ console.log(`engine v${ENGINE_VERSION}, SBS v${controls.sbs_version}`);
 console.log(`${controls.controls.length} controls loaded`);
 ```
 
-The full evaluator surface plus the `score()` entry point ship in Phase 3 (already
-shipped); CLI evidence paths (SOQL / Code Analyzer / Health Check) ship alongside
-the consultant CLI in Phase 5.
+Both the full evaluator surface and the CLI evidence paths
+(SOQL/Tooling, Code Analyzer, Health Check, Metadata API) are live as of
+`0.0.0-alpha.47`. See [`@hellomavens/plugin-security-review`](../plugin-security-review)
+for the consumer-facing CLI that wires it all together.
 
 ## What HelloMavens added
 

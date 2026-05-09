@@ -12,24 +12,27 @@ SPDX-License-Identifier: MIT
 
 ## Status
 
-**Phase 5, Block B** — initial skeleton ships:
+**Phase 5 complete** — `0.0.0-alpha.47` on the `alpha` dist-tag.
 
-- Public `collectEvidence({ connection, ... })` entrypoint
-- SOQL executor with per-query error handling (org missing feature, query
-  timeout, invalid SObject)
-- Per-query progress events (run, ok, skipped, failed)
-- EvidenceBundle assembler that maps SOQL results to engine `Evidence`
-  variants
-- An initial query bundle of 4–5 representative queries (one per category)
-  proving the pattern; the full ~20-query bundle lands in Block B.1
+Four evidence sources ship today, all wired through a single
+`collectEvidence({ connection, ... })` entrypoint:
 
-What ships in later blocks:
+- **SOQL / Tooling API** — ~27 queries across 25 controls (ACS, AUTH,
+  OAUTH, INT, CPORTAL, MON, DATA, DEP categories), with per-query error
+  handling, applies-when predicates, and progress events
+  (`run`/`ok`/`skipped`/`failed`).
+- **Salesforce Health Check API** — pulls the org's HC score and risk
+  groups via REST.
+- **Salesforce Code Analyzer subprocess** — invokes `sf code-analyzer run`
+  with the `Security` rule selector and parses findings into the bundle.
+- **Metadata API read** — chunked `metadata.read()` in batches of 10
+  (working around the 10-record cap) for SecuritySettings, ConnectedApp
+  metadata, and other config that doesn't surface via SOQL.
 
-- Block B.1: remaining ACS / OAUTH / INT / CPORTAL queries (~15 more)
-- Block C: Salesforce Health Check API integration
-- Block D: Salesforce Code Analyzer subprocess wiring (`sf code-analyzer run`)
-- Block E: per-evaluator extensions in the engine consume the new evidence
-  variants
+Failed queries become `inconclusive` evidence the report viewer can flag
+rather than aborting the bundle. Sources that don't apply to the org
+(e.g., Communities-only queries on a non-Communities org) are skipped
+cleanly via `appliesWhen` predicates.
 
 ## Public API (current)
 
