@@ -37,11 +37,11 @@
     "@inquirer/checkbox": "^2.5.0",
     "@inquirer/input": "^2.3.0",
     "@inquirer/select": "^2.5.0",
-    "@oclif/core": "^4",
-    "@salesforce/core": "^8",
-    "@salesforce/sf-plugins-core": "^12",
+    "@oclif/core": "^4.11.1",
+    "@salesforce/core": "^8.29.0",
+    "@salesforce/sf-plugins-core": "^12.2.13",
     "execa": "^9",
-    "yaml": "^2.7.0"
+    "yaml": "^2.8.4"
   },
   "oclif": {
     "bin": "sf",
