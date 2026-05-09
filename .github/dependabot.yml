@@ -7,6 +7,15 @@ updates:
       interval: 'weekly'
       day: 'monday'
     open-pull-requests-limit: 10
+    # Pin runtime-shape deps to LTS-aligned majors; allow patch/minor only.
+    # The runtime is Node 24 LTS (see "engines.node" in package.json), so
+    # @types/node must track the same major. Major bumps for these are
+    # done as deliberate, focused PRs — not as part of weekly bundles.
+    ignore:
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
     groups:
       dev-dependencies:
         dependency-type: 'development'
