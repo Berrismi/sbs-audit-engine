@@ -52,7 +52,9 @@ locally without uploading is planned for Phase 8.`;
     try {
       bundle = JSON.parse(raw) as EvidenceBundle;
     } catch (err) {
-      throw new Error(`Could not parse bundle file ${flags.bundle}: ${(err as Error).message}`);
+      throw new Error(`Could not parse bundle file ${flags.bundle}: ${(err as Error).message}`, {
+        cause: err,
+      });
     }
 
     const result = await uploadBundle({
