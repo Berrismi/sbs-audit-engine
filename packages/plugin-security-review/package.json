@@ -36,7 +36,7 @@
     "@hellomavens/security-review-for-salesforce-scan-core": "workspace:*",
     "@inquirer/checkbox": "^2.5.0",
     "@inquirer/input": "^2.3.0",
-    "@inquirer/select": "^2.5.0",
+    "@inquirer/select": "^5.1.4",
     "@oclif/core": "^4.11.1",
     "@salesforce/core": "^8.29.0",
     "@salesforce/sf-plugins-core": "^12.2.13",
