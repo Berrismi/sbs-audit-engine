@@ -39,7 +39,7 @@
     "@inquirer/select": "^2.5.0",
     "@oclif/core": "^4",
     "@salesforce/core": "^8",
-    "@salesforce/sf-plugins-core": "^11",
+    "@salesforce/sf-plugins-core": "^12",
     "execa": "^9",
     "yaml": "^2.7.0"
   },
