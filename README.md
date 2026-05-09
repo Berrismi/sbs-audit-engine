@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 
 # sbs-audit-engine
 
-> Open source scoring engine and consultant CLI implementing the [Security
-> Benchmark for Salesforce (SBS)](https://docs.securitybenchmark.org)
+> Open source scoring engine and self-service Salesforce CLI implementing
+> the [Security Benchmark for Salesforce (SBS)](https://docs.securitybenchmark.org)
 > standard, with enrichments from Salesforce Code Analyzer, OWASP Top 10,
 > HIPAA / SOC 2 / ISO 27001 mappings, and a HelloMavens-developed evaluator
 > framework and scoring algorithm.
@@ -16,51 +16,58 @@ SPDX-License-Identifier: MIT
 
 ## Status — who this is for today
 
-This repo currently ships **consultant-mode tooling**: the
-`@hellomavens/plugin-security-review` Salesforce CLI plugin uploads scan
-results to HelloMavens' hosted scoring backend and requires a
-HelloMavens-issued consultant API key to use. If you're not a HelloMavens
-consultant, **`sf security review login` will not work for you yet**.
+This repo ships a **fully self-service Salesforce security audit CLI**.
+Anyone can install it, point it at a Salesforce org they have access to,
+and produce a local report — no HelloMavens API key, no upload, no
+hosted service required.
 
-A **self-service mode** that scores fully locally and produces an
-unbranded report — no consultant key, no upload, no HelloMavens hosted
-service involved — is planned for **Phase 8** per the project roadmap.
-Track [issue #1](https://github.com/Berrismi/sbs-audit-engine/issues) for
-progress; until then:
+```sh
+# Install the Salesforce CLI plugin
+sf plugins install @hellomavens/plugin-security-review
 
-- The **scoring engine** (`@hellomavens/security-review-for-salesforce-engine`)
-  works standalone today — pass it your own `EvidenceBundle` and call
-  `score()`. No backend involved. See the package's [README](./packages/sbs-engine/README.md).
-- The **plugin** is consultant-keyed today. `sf security review run` will
-  collect evidence successfully but the `upload` step expects a
-  HelloMavens API key obtained via `sf security review login`.
+# Run a local scan against any org you've authenticated
+sf security review run --target-org <alias>
 
-If you'd benefit from the self-service mode landing sooner, open an issue
-or upvote one. Until then, please don't `sf plugins install` expecting
-a self-serve experience — you'll hit a credentials wall.
+# Outputs land in ./security-review/<run-id>/:
+#   report.json   machine-readable findings
+#   report.md     terminal-friendly summary
+#   report.html   shareable single-file report
+```
+
+The optional `sf security review login` + `upload` flow is a side-channel
+for HelloMavens consultants who want to push results to the [hosted
+scoring service at audit.hellomavens.com](https://audit.hellomavens.com).
+It's strictly opt-in — the local `run` command produces a complete report
+on its own and never contacts a HelloMavens server unless you explicitly
+ask it to.
+
+If you'd rather skip the CLI entirely, the [scoring engine
+package](./packages/sbs-engine) is installable on its own: pass it your
+own `EvidenceBundle` and call `score()`.
 
 ## What this is
 
-Two npm packages today, three on the roadmap, one repo:
+Three npm packages, all published at `0.0.0-alpha.47` on the `alpha` dist-tag:
 
 - **`@hellomavens/security-review-for-salesforce-engine`** — typed scoring
   engine, control library, and evaluator framework. Pure TypeScript, no
   Salesforce dependencies, fully testable. _(Renamed from
   `@hellomavens/sbs-engine` at `0.0.0-alpha.5` — see Migration below.)_
-- **`@hellomavens/security-review-for-salesforce-scan-core`** _(Phase 5)_ —
+- **`@hellomavens/security-review-for-salesforce-scan-core`** —
   side-effecting evidence collector. Takes a Salesforce `Connection` +
-  options, returns an `EvidenceBundle` (SOQL bundle, Health Check API,
-  Code Analyzer subprocess output).
-- **`@hellomavens/plugin-security-review`** _(Phase 5)_ — Salesforce CLI
-  plugin shell. Installed via `sf plugins install`, invoked as
-  `sf security review run --target-org <alias>`. Thin shell over the two
-  packages above.
+  options, returns an `EvidenceBundle` (SOQL/Tooling, Health Check API,
+  Code Analyzer subprocess, Metadata API).
+- **`@hellomavens/plugin-security-review`** — Salesforce CLI plugin.
+  Installed via `sf plugins install`, invoked as
+  `sf security review run --target-org <alias>`. Local-first by default —
+  emits `report.json`, `report.md`, and `report.html` to disk. An optional
+  `upload` subcommand can push results to HelloMavens' hosted scoring service.
 
-The branded report templates, hosted questionnaire UI, and HelloMavens
+The branded PDF templates, hosted questionnaire UI, and HelloMavens
 remediation playbooks are NOT in this repo. They live in the closed
 `HelloMavens-SbsAudit` app and consume the engine as a dependency. If you
-want the hosted, consultant-friendly version of this product, visit
-[hellomavens.com/audit](https://hellomavens.com/) (link goes live with launch).
+want the hosted, consultant-supported version of this product, visit
+[audit.hellomavens.com](https://audit.hellomavens.com).
 
 ## Migration from `@hellomavens/sbs-engine`
 
@@ -134,12 +141,12 @@ readable pin manifest.
 
 ## Status
 
-**Phases 1–4 + 4.5 polish complete.** Phase 5 (consultant CLI) is in flight.
+**Phases 1–5 complete.** Phase 6 polish (sample reports, expanded docs,
+custom HelloMavens PMD ruleset) in progress.
 
-The currently published engine is
-`@hellomavens/security-review-for-salesforce-engine@0.0.0-alpha.5` under the
-`alpha` dist-tag. (`@hellomavens/sbs-engine@<=0.0.0-alpha.4` is deprecated;
-see Migration above.)
+The currently published engine, scan-core, and plugin are all at
+`0.0.0-alpha.47` under the `alpha` dist-tag.
+(`@hellomavens/sbs-engine@<=0.0.0-alpha.4` is deprecated; see Migration above.)
 
 What's shipping today:
 
@@ -170,18 +177,29 @@ What's shipping today:
   enrichments, and normalizes them into `controls.json`. Cron-driven
   `upstream-sync.yml` reports drift weekly.
 
+What's also shipped (Phase 5):
+
+- `@hellomavens/security-review-for-salesforce-scan-core` — side-effecting
+  evidence collector with SOQL/Tooling, Health Check API, Code Analyzer
+  subprocess, and Metadata API sources. ~27 SOQL queries across 25
+  controls, plus per-query error handling and applies-when predicates.
+- `@hellomavens/plugin-security-review` — Salesforce CLI plugin.
+  Local-first `run` command emits `report.json`, `report.md`, and
+  `report.html` to disk; optional `upload` subcommand for HelloMavens'
+  hosted scoring service.
+- 33 of 54 controls are CLI-verified end-to-end (cli_primary +
+  cli_corroborating); the remaining 21 are questionnaire-only and ship
+  with the same evaluator coverage.
+
 What's stubbed or in flight:
 
-- SOQL / Code Analyzer / Health Check evidence paths in individual
-  evaluators (Phase 5 with the consultant CLI — in flight).
-- The CLI shell itself (Phase 5 — was previously the
-  `@hellomavens/sbs-scan` stub at `packages/cli/`; that stub has been
-  removed and `packages/plugin-security-review/` will replace it).
-- The custom HelloMavens PMD ruleset (placeholder + `rulesets/TODO.md`
-  documents how to swap one in later via Salesforce Code Analyzer).
-- Note: 54 controls today, mirroring SBS upstream `main` (sha
-  `d4304e1`), which is ahead of latest tagged release `v0.4.1` (42
-  controls). Re-pin to a tagged release once SBS publishes v0.5.0 / v1.0.
+- The custom HelloMavens PMD ruleset for Code Analyzer (placeholder +
+  [`packages/sbs-engine/rulesets/TODO.md`](./packages/sbs-engine/rulesets/TODO.md)
+  documents how to swap one in later). Today the plugin runs Code
+  Analyzer's stock `Security` selector.
+- Re-pin to a tagged SBS release once upstream publishes v0.5.0 / v1.0.
+  Current pin (`main` @ `d4304e1`) carries 54 controls vs. 42 in
+  v0.4.1 — see [Standard implemented](#what-hellomavens-added) below.
 
 ## Local development
 

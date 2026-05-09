@@ -15,6 +15,12 @@ export default defineConfig({
   },
   test: {
     include: ['tests/**/*.test.ts'],
+    // Avoid oclif's dev-plugin autoload at test boot, which warns under pnpm's
+    // hoisted layout because @oclif/plugin-help and @oclif/plugin-plugins are
+    // not co-located with @oclif/core. Production mode skips that path.
+    env: {
+      NODE_ENV: 'production',
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'html'],
