@@ -13,10 +13,6 @@ SPDX-License-Identifier: MIT
 [![npm version](https://img.shields.io/npm/v/@hellomavens/security-review-for-salesforce-engine?label=npm)](https://www.npmjs.com/package/@hellomavens/security-review-for-salesforce-engine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **Renamed from `@hellomavens/sbs-engine`** as of `0.0.0-alpha.5`. See the
-> [Migration section in the repo README](https://github.com/Berrismi/sbs-audit-engine#migration-from-hellomavenssbs-engine)
-> for details. The old package is deprecated; this package supersedes it.
-
 ## Install
 
 ```sh

@@ -51,8 +51,7 @@ Three npm packages, all published at `0.0.0-alpha.47` on the `alpha` dist-tag:
 
 - **`@hellomavens/security-review-for-salesforce-engine`** — typed scoring
   engine, control library, and evaluator framework. Pure TypeScript, no
-  Salesforce dependencies, fully testable. _(Renamed from
-  `@hellomavens/sbs-engine` at `0.0.0-alpha.5` — see Migration below.)_
+  Salesforce dependencies, fully testable.
 - **`@hellomavens/security-review-for-salesforce-scan-core`** —
   side-effecting evidence collector. Takes a Salesforce `Connection` +
   options, returns an `EvidenceBundle` (SOQL/Tooling, Health Check API,
@@ -68,51 +67,6 @@ remediation playbooks are NOT in this repo. They live in the closed
 `HelloMavens-SbsAudit` app and consume the engine as a dependency. If you
 want the hosted, consultant-supported version of this product, visit
 [audit.hellomavens.com](https://audit.hellomavens.com).
-
-## Migration from `@hellomavens/sbs-engine`
-
-Versions `0.0.0-alpha.0` through `0.0.0-alpha.4` were published under
-`@hellomavens/sbs-engine`. Starting `0.0.0-alpha.5`, the package is published
-as `@hellomavens/security-review-for-salesforce-engine` to honor the
-[SBS naming guidance](https://github.com/Salesforce-Security-Benchmark/docs-site/blob/main/LICENSE.md)
-that derivative works should not echo the `<vendor> SBS` shape.
-
-To migrate:
-
-```diff
- // package.json
- {
-   "dependencies": {
--    "@hellomavens/sbs-engine": "0.0.0-alpha.4"
-+    "@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.5"
-   }
- }
-```
-
-```diff
- // your code
--import { score, type EvidenceBundle } from '@hellomavens/sbs-engine';
--import controls from '@hellomavens/sbs-engine/controls';
-+import { score, type EvidenceBundle } from '@hellomavens/security-review-for-salesforce-engine';
-+import controls from '@hellomavens/security-review-for-salesforce-engine/controls';
-```
-
-The exported API is identical — only the package name changed. If the long
-name is awkward in import lines, consider a TypeScript path alias in your
-`tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@engine/*": ["./node_modules/@hellomavens/security-review-for-salesforce-engine/*"]
-    }
-  }
-}
-```
-
-The old package has been deprecated on npm. New work should not depend on
-`@hellomavens/sbs-engine`.
 
 ## What HelloMavens added
 
@@ -146,7 +100,6 @@ custom HelloMavens PMD ruleset) in progress.
 
 The currently published engine, scan-core, and plugin are all at
 `0.0.0-alpha.47` under the `alpha` dist-tag.
-(`@hellomavens/sbs-engine@<=0.0.0-alpha.4` is deprecated; see Migration above.)
 
 What's shipping today:
 
