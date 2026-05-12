@@ -3,7 +3,7 @@
   "upstream_ref": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "upstream_sha": "d4304e18e6f3747b04b1a7097b3d03a6036e5a3f",
   "fetched_at": "2026-05-08T16:55:09.948Z",
-  "engine_version": "0.0.0-alpha.47",
+  "engine_version": "0.0.0-alpha.48",
   "controls": [
     {
       "id": "SBS-ACS-001",
