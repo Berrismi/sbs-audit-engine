@@ -34,7 +34,7 @@
   "dependencies": {
     "@hellomavens/security-review-for-salesforce-engine": "workspace:*",
     "@hellomavens/security-review-for-salesforce-scan-core": "workspace:*",
-    "@inquirer/checkbox": "^5.1.4",
+    "@inquirer/checkbox": "^5.1.5",
     "@inquirer/input": "^5.0.12",
     "@inquirer/select": "^5.1.4",
     "@oclif/core": "^4.11.1",
