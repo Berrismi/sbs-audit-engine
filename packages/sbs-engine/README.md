@@ -22,7 +22,7 @@ npm i @hellomavens/security-review-for-salesforce-engine
 ```
 
 > Phase 5 alpha. The API will change before 0.1.0. Pin exactly:
-> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.47"`.
+> `"@hellomavens/security-review-for-salesforce-engine": "0.0.0-alpha.48"`.
 
 ## What this is
 
@@ -51,7 +51,7 @@ console.log(`${controls.controls.length} controls loaded`);
 
 Both the full evaluator surface and the CLI evidence paths
 (SOQL/Tooling, Code Analyzer, Health Check, Metadata API) are live as of
-`0.0.0-alpha.47`. See [`@hellomavens/plugin-security-review`](../plugin-security-review)
+`0.0.0-alpha.48`. See [`@hellomavens/plugin-security-review`](../plugin-security-review)
 for the consumer-facing CLI that wires it all together.
 
 ## What HelloMavens added

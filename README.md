@@ -47,7 +47,7 @@ own `EvidenceBundle` and call `score()`.
 
 ## What this is
 
-Three npm packages, all published at `0.0.0-alpha.47` on the `alpha` dist-tag:
+Three npm packages, all published at `0.0.0-alpha.48` on the `alpha` dist-tag:
 
 - **`@hellomavens/security-review-for-salesforce-engine`** — typed scoring
   engine, control library, and evaluator framework. Pure TypeScript, no
@@ -99,7 +99,7 @@ readable pin manifest.
 custom HelloMavens PMD ruleset) in progress.
 
 The currently published engine, scan-core, and plugin are all at
-`0.0.0-alpha.47` under the `alpha` dist-tag.
+`0.0.0-alpha.48` under the `alpha` dist-tag.
 
 What's shipping today:
 
