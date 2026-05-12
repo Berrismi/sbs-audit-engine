@@ -784,3 +784,144 @@ describe('runQuestionnaire — "None of these" exclusivity (Tier 2b)', () => {
     });
   });
 });
+
+describe('runQuestionnaire — review summary covers every answer kind', () => {
+  it('renders one summary line per visible question with the correct formatted answer', async () => {
+    // Exercises summarizeAnswer for boolean / idk / choice / multi_choice /
+    // numeric_range / free_text — the display logic the review screen relies on.
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-BOOL',
+          section: 'profile',
+          controlId: null,
+          text: 'boolean Q?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+        {
+          id: 'Q-CHOICE',
+          section: 'profile',
+          controlId: null,
+          text: 'choice Q?',
+          allowIdk: false,
+          kind: 'choice',
+          options: [
+            { value: 'a', label: 'Option A' },
+            { value: 'b', label: 'Option B' },
+          ],
+        },
+        {
+          id: 'Q-MULTI',
+          section: 'profile',
+          controlId: null,
+          text: 'multi Q?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [
+            { value: 'hipaa', label: 'HIPAA' },
+            { value: 'soc2', label: 'SOC 2' },
+          ],
+        },
+        {
+          id: 'Q-RANGE',
+          section: 'profile',
+          controlId: null,
+          text: 'range Q?',
+          allowIdk: false,
+          kind: 'numeric_range',
+          options: [
+            { value: 'small', label: 'Small (<100)' },
+            { value: 'large', label: 'Large (1000+)' },
+          ],
+        },
+        {
+          id: 'Q-TEXT',
+          section: 'profile',
+          controlId: null,
+          text: 'text Q?',
+          allowIdk: false,
+          kind: 'free_text',
+        },
+        {
+          id: 'Q-IDK',
+          section: 'profile',
+          controlId: 'SBS-X',
+          text: 'idk Q?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+    });
+    const lines: string[] = [];
+    // Five linear-walk answers + idk + Submit. Order: bool, choice, multi,
+    // range, text, idk, then submit on the review menu.
+    const prompts = makeStubAdapter({
+      select: ['yes', 'a', 'small', '__hm_idk__', '__hm_submit__'],
+      checkbox: [['hipaa', 'soc2']],
+      input: ['Healthcare SaaS'],
+    });
+
+    const answers = await runQuestionnaire({
+      registry,
+      prompts,
+      log: (l) => lines.push(l),
+    });
+
+    // Assert collected answers cover every kind for downstream scoring.
+    expect(answers['Q-BOOL']).toEqual({ kind: 'boolean', value: true });
+    expect(answers['Q-CHOICE']).toEqual({ kind: 'choice', value: 'a' });
+    expect(answers['Q-MULTI']).toEqual({ kind: 'multi_choice', values: ['hipaa', 'soc2'] });
+    expect(answers['Q-RANGE']).toEqual({ kind: 'numeric_range', value: 'small' });
+    expect(answers['Q-TEXT']).toEqual({ kind: 'free_text', value: 'Healthcare SaaS' });
+    expect(answers['Q-IDK']).toEqual({ kind: 'idk' });
+
+    // Assert the review summary rendered each kind correctly via summarizeAnswer.
+    const summary = lines.join('\n');
+    expect(summary).toContain('→ Yes');
+    expect(summary).toContain('→ Option A');
+    expect(summary).toContain('→ HIPAA, SOC 2');
+    expect(summary).toContain('→ Small (<100)');
+    expect(summary).toContain('→ Healthcare SaaS');
+    expect(summary).toContain("→ I don't know");
+  });
+
+  it('summarizes empty multi_choice as "(none selected)" and empty free_text as "(empty)"', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-MULTI-EMPTY',
+          section: 'profile',
+          controlId: null,
+          text: 'multi empty?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [{ value: 'x', label: 'X' }],
+        },
+        {
+          id: 'Q-TEXT-EMPTY',
+          section: 'profile',
+          controlId: null,
+          text: 'text empty?',
+          allowIdk: true,
+          kind: 'free_text',
+        },
+      ],
+    });
+    const lines: string[] = [];
+    // Empty multi-select + empty free-text-with-IDK-allowed (becomes idk).
+    // Then submit.
+    const prompts = makeStubAdapter({
+      checkbox: [[]],
+      input: ['   '],
+      select: ['__hm_submit__'],
+    });
+
+    await runQuestionnaire({ registry, prompts, log: (l) => lines.push(l) });
+
+    const summary = lines.join('\n');
+    expect(summary).toContain('→ (none selected)');
+    // Empty free-text with allowIdk=true becomes idk, not "(empty)".
+    expect(summary).toContain("→ I don't know");
+  });
+});
