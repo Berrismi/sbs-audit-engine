@@ -263,3 +263,102 @@ describe('renderMarkdown', () => {
     expect(out).toContain('Scan target: `unknown`');
   });
 });
+
+describe('renderMarkdown — respondent answer (Tier 1a)', () => {
+  const registry = {
+    version: 'test-1',
+    sbsVersion: 'v0.4.1+d4304e1',
+    sections: [{ id: 'CODE' as const, index: 3, title: 'Code security', blurb: '' }],
+    questions: [
+      {
+        id: 'Q-CODE-004',
+        section: 'CODE' as const,
+        controlId: 'SBS-CODE-004',
+        text: 'Have you confirmed your application logs do not contain passwords?',
+        allowIdk: true,
+        kind: 'boolean' as const,
+      },
+    ],
+    skipRules: [],
+  };
+
+  it('renders a "Respondent answer" line for questionnaire-evidence controls', () => {
+    const out = renderMarkdown(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['questionnaire'],
+            status: 'inconclusive',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'idk' } },
+        registry,
+      },
+    );
+    expect(out).toContain('**Respondent answer**:');
+    expect(out).toContain('Have you confirmed your application logs do not contain passwords?');
+    expect(out).toContain("**I don't know**");
+  });
+
+  it('shows the Respondent answer line even when canonical evidence is non-questionnaire (cli_corroborating context)', () => {
+    const out = renderMarkdown(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['soql'],
+            status: 'inconclusive',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'boolean', value: false } },
+        registry,
+      },
+    );
+    expect(out).toContain('Respondent answer');
+    expect(out).toContain('Have you confirmed your application logs do not contain passwords?');
+    expect(out).toContain('**No**');
+  });
+
+  it('omits the Respondent answer line when no questionnaire question backs this control', () => {
+    const out = renderMarkdown(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-ACS-001',
+            category: 'ACS',
+            evidence_used: ['soql'],
+            status: 'pass',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'boolean', value: true } },
+        registry,
+      },
+    );
+    expect(out).not.toContain('Respondent answer');
+  });
+
+  it('omits the Respondent answer line when answers / registry are not provided', () => {
+    const out = renderMarkdown(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['questionnaire'],
+            status: 'inconclusive',
+          }),
+        ],
+      }),
+    );
+    expect(out).not.toContain('Respondent answer');
+  });
+});

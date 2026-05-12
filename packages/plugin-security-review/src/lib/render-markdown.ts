@@ -26,23 +26,38 @@ import type {
   EvidenceSource,
   ScoredReport,
 } from '@hellomavens/security-review-for-salesforce-engine';
+import type {
+  AnswerSet,
+  QuestionnaireRegistry,
+} from '@hellomavens/security-review-for-salesforce-engine/questionnaire';
+import { formatRespondentAnswers } from './format-respondent-answer';
 
 export interface RenderMarkdownOptions {
   /** ISO timestamp of when the scan ran. Defaults to current time. */
   generatedAt?: string;
   /** Target org alias the scan ran against. */
   alias?: string;
+  /**
+   * Optional pair: the respondent's questionnaire answers + the registry that
+   * captured them. When both are provided, per-control sections render an
+   * inline "Respondent answer" row for any control backed by questionnaire
+   * evidence. Omit (or omit either piece) for `--no-questionnaire` runs.
+   */
+  answers?: AnswerSet;
+  registry?: QuestionnaireRegistry;
 }
 
 export function renderMarkdown(report: ScoredReport, opts: RenderMarkdownOptions = {}): string {
   const generatedAt = opts.generatedAt ?? new Date().toISOString();
   const alias = opts.alias ?? 'unknown';
+  const answers = opts.answers;
+  const registry = opts.registry;
 
   const sections: string[] = [
     renderHeader(generatedAt, alias),
     renderSummary(report),
     renderCategoryTable(report.by_category),
-    renderControlSections(report.control_results),
+    renderControlSections(report.control_results, answers, registry),
     renderAttribution(report),
   ];
 
@@ -102,7 +117,11 @@ function renderCategoryTable(categories: ReadonlyArray<CategoryScoreOutput>): st
   ].join('\n');
 }
 
-function renderControlSections(controls: ReadonlyArray<ControlScoreResult>): string {
+function renderControlSections(
+  controls: ReadonlyArray<ControlScoreResult>,
+  answers: AnswerSet | undefined,
+  registry: QuestionnaireRegistry | undefined,
+): string {
   if (controls.length === 0) {
     return '## By control\n\n_No controls evaluated._';
   }
@@ -118,29 +137,51 @@ function renderControlSections(controls: ReadonlyArray<ControlScoreResult>): str
     list.sort((a, b) => a.control_id.localeCompare(b.control_id));
     blocks.push('', `### ${category}`);
     for (const c of list) {
-      blocks.push('', renderControl(c));
+      blocks.push('', renderControl(c, answers, registry));
     }
   }
   return blocks.join('\n');
 }
 
-function renderControl(c: ControlScoreResult): string {
+function renderControl(
+  c: ControlScoreResult,
+  answers: AnswerSet | undefined,
+  registry: QuestionnaireRegistry | undefined,
+): string {
   const evidenceList =
     c.evidence_used.length === 0 ? 'none' : c.evidence_used.map(formatEvidenceSource).join(', ');
+  const respondentLines = renderRespondentAnswerLines(c, answers, registry);
   const findingsBlock =
     c.findings.length === 0
       ? '_No findings._'
       : c.findings.map((f) => `> ${f.split('\n').join('\n> ')}`).join('\n>\n');
-  return [
-    `#### ${c.control_id}`,
-    '',
+  const meta: string[] = [
     `- **Status**: ${formatStatus(c.status)}`,
     `- **Confidence**: ${formatConfidence(c.confidence)}`,
     `- **Risk tier**: ${c.risk_level} (weight ${c.weight})`,
     `- **Evidence**: ${evidenceList}`,
-    '',
-    findingsBlock,
-  ].join('\n');
+  ];
+  if (respondentLines.length > 0) {
+    meta.push('- **Respondent answer**:');
+    for (const line of respondentLines) {
+      meta.push(`  - ${line}`);
+    }
+  }
+  return [`#### ${c.control_id}`, '', ...meta, '', findingsBlock].join('\n');
+}
+
+function renderRespondentAnswerLines(
+  c: ControlScoreResult,
+  answers: AnswerSet | undefined,
+  registry: QuestionnaireRegistry | undefined,
+): string[] {
+  if (!answers || !registry) return [];
+  // Show the respondent's answer whenever a questionnaire question backs this
+  // control AND an answer was recorded. For cli_corroborating controls (where
+  // evidence_used is something like 'soql'), the questionnaire answer is
+  // context the user wants to see alongside the canonical evidence.
+  const pairs = formatRespondentAnswers(c.control_id, answers, registry);
+  return pairs.map((p) => `${p.questionText} → **${p.formattedAnswer}**`);
 }
 
 function renderAttribution(report: ScoredReport): string {

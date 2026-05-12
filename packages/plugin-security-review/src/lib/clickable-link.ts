@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2026 HelloMavens LLC
 // SPDX-License-Identifier: MIT
 
+import { pathToFileURL } from 'node:url';
+
 /**
  * Wrap a URL in an OSC 8 hyperlink escape sequence so it renders as a
  * cmd-clickable link in supportive terminals. Falls back to the raw URL
@@ -20,7 +22,24 @@ const SUPPORTED_TERM_PROGRAMS = new Set([
   'vscode',
   'WezTerm',
   'ghostty',
+  'Hyper',
+  'WarpTerminal',
+  'Tabby',
 ]);
+
+/**
+ * Some terminals advertise OSC 8 support via their own env vars rather than
+ * TERM_PROGRAM. Detect those independently so we still emit clickable links
+ * for them.
+ */
+function detectByEnvVar(): boolean {
+  return Boolean(
+    process.env.KITTY_WINDOW_ID ||
+    process.env.WT_SESSION ||
+    process.env.ALACRITTY_LOG ||
+    process.env.WEZTERM_EXECUTABLE,
+  );
+}
 
 interface Options {
   /** Display text for the hyperlink. Defaults to the URL itself. */
@@ -30,13 +49,34 @@ interface Options {
 export function clickableLink(url: string, options: Options = {}): string {
   const supports =
     process.stdout.isTTY === true &&
-    typeof process.env.TERM_PROGRAM === 'string' &&
-    SUPPORTED_TERM_PROGRAMS.has(process.env.TERM_PROGRAM);
+    ((typeof process.env.TERM_PROGRAM === 'string' &&
+      SUPPORTED_TERM_PROGRAMS.has(process.env.TERM_PROGRAM)) ||
+      detectByEnvVar());
 
-  if (!supports) return url;
+  // Falls back to the human-readable form so unsupportive terminals don't
+  // get the (less-readable) raw URL. clickableFilePath sets label to the
+  // bare path; URL-based callers default label to the URL anyway.
+  if (!supports) return options.label ?? url;
 
   const text = options.label ?? url;
-  // ESC ] 8 ; ; <url> ESC \ <text> ESC ] 8 ; ; ESC \
-  // Using  for ESC and \\ for the closing backslash-after-OSC.
-  return `]8;;${url}\\${text}]8;;\\`;
+  // OSC 8 hyperlink wraps clickable text. Some terminals (notably Apple
+  // Terminal) do not visually distinguish hyperlinks at all — the text looks
+  // identical to plain output even though it is cmd-clickable. We wrap the
+  // label in ANSI underline + a soft blue color so users see "this is a
+  // link" even where the terminal itself does not decorate it.
+  //
+  // ESC ] 8 ; ; <url> ESC \ <SGR underline+color> <text> <SGR reset> ESC ] 8 ; ; ESC \
+  return `]8;;${url}\\[4;38;5;33m${text}[0m]8;;\\`;
+}
+
+/**
+ * Render an absolute filesystem path as a cmd-clickable link in supportive
+ * terminals. The displayed text is the bare path (no `file://` prefix), so
+ * unsupportive terminals still show a copyable, recognizable path. Cross-
+ * platform: `pathToFileURL` correctly handles drive letters on Windows and
+ * percent-encodes special characters.
+ */
+export function clickableFilePath(absolutePath: string): string {
+  const fileUrl = pathToFileURL(absolutePath).href;
+  return clickableLink(fileUrl, { label: absolutePath });
 }

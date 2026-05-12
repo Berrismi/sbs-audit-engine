@@ -23,7 +23,7 @@
 // caveat is surfaced through `MetadataFetchOk.cap` so evaluators can render
 // it in findings.
 
-import type { ConnectionLike } from '../types';
+import type { ConnectionLike, ProgressListener } from '../types';
 
 /** A successful retrieval for one metadata type. */
 export interface MetadataFetchTypeResult {
@@ -76,14 +76,34 @@ const DEFAULT_PROFILE_CAP = 100;
 export async function fetchMetadata(
   connection: ConnectionLike,
   probes: readonly MetadataProbe[],
+  onProgress?: ProgressListener,
 ): Promise<MetadataFetchResult> {
   if (!connection.metadata) {
     return { kind: 'unsupported', reason: 'no_metadata_namespace' };
   }
   const results: MetadataFetchTypeResult[] = [];
-  for (const probe of probes) {
+  for (let i = 0; i < probes.length; i++) {
+    const probe = probes[i]!;
+    onProgress?.({
+      type: 'metadata_probe_start',
+      probeId: probe.id,
+      probeType: probe.type,
+      index: i,
+      total: probes.length,
+    });
+    const start = Date.now();
     try {
-      results.push(await fetchOneProbe(connection, probe));
+      const result = await fetchOneProbe(connection, probe);
+      onProgress?.({
+        type: 'metadata_probe_done',
+        probeId: probe.id,
+        probeType: probe.type,
+        index: i,
+        total: probes.length,
+        durationMs: Date.now() - start,
+        recordsRetrieved: result.records.length,
+      });
+      results.push(result);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return { kind: 'failed', error: { message: `${probe.id}: ${message}` } };

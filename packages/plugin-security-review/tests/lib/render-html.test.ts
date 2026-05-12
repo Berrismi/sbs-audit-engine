@@ -257,3 +257,131 @@ describe('renderHtml — empty edge cases', () => {
     expect(out).toContain('No controls evaluated.');
   });
 });
+
+describe('renderHtml — respondent answer (Tier 1a)', () => {
+  const registry = {
+    version: 'test-1',
+    sbsVersion: 'v0.4.1+d4304e1',
+    sections: [{ id: 'CODE' as const, index: 3, title: 'Code security', blurb: '' }],
+    questions: [
+      {
+        id: 'Q-CODE-004',
+        section: 'CODE' as const,
+        controlId: 'SBS-CODE-004',
+        text: 'Have you confirmed your application logs do not contain passwords?',
+        allowIdk: true,
+        kind: 'boolean' as const,
+      },
+    ],
+    skipRules: [],
+  };
+
+  it('renders a "Respondent answer" row for questionnaire-evidence controls when answers are provided', () => {
+    const out = renderHtml(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['questionnaire'],
+            status: 'inconclusive',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'idk' } },
+        registry,
+      },
+    );
+    expect(out).toContain('Respondent answer');
+    expect(out).toContain('respondent-answers');
+    expect(out).toContain('Have you confirmed your application logs do not contain passwords?');
+    expect(out).toContain('I don&#39;t know');
+  });
+
+  it('formats boolean answers as Yes / No, not raw values', () => {
+    const out = renderHtml(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['questionnaire'],
+            status: 'pass',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'boolean', value: true } },
+        registry,
+      },
+    );
+    expect(out).toContain('>Yes<');
+    expect(out).not.toContain('>true<');
+  });
+
+  it('shows the Respondent answer row even when canonical evidence is non-questionnaire (cli_corroborating context)', () => {
+    // For cli_corroborating controls (status reached via SOQL/Metadata) the
+    // user's questionnaire answer is still high-signal context — they want
+    // to see what they said alongside the SOQL-based verdict. The renderer
+    // gates on "question exists for controlId + answer recorded", NOT on
+    // evidence_used containing 'questionnaire'.
+    const out = renderHtml(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['soql'],
+            status: 'inconclusive',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'boolean', value: false } },
+        registry,
+      },
+    );
+    expect(out).toContain('Respondent answer');
+    expect(out).toContain('Have you confirmed your application logs do not contain passwords?');
+    expect(out).toContain('>No<');
+  });
+
+  it('omits the Respondent answer row when no questionnaire question backs this control', () => {
+    // SBS-ACS-001 has no Q-* in this test registry (only Q-CODE-004 is
+    // present). No question → no respondent-answer row to render.
+    const out = renderHtml(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-ACS-001',
+            category: 'ACS',
+            evidence_used: ['soql'],
+            status: 'pass',
+          }),
+        ],
+      }),
+      {
+        answers: { 'Q-CODE-004': { kind: 'boolean', value: true } },
+        registry,
+      },
+    );
+    expect(out).not.toContain('Respondent answer');
+  });
+
+  it('omits the Respondent answer row when answers / registry are not provided', () => {
+    const out = renderHtml(
+      makeReport({
+        control_results: [
+          makeControl({
+            control_id: 'SBS-CODE-004',
+            category: 'CODE',
+            evidence_used: ['questionnaire'],
+            status: 'inconclusive',
+          }),
+        ],
+      }),
+    );
+    expect(out).not.toContain('Respondent answer');
+  });
+});

@@ -30,7 +30,7 @@ describe('collectEvidence', () => {
     expect(result.queryResults[0]?.kind).toBe('ok');
   });
 
-  it('plumbs onProgress through to the executor', async () => {
+  it('plumbs onProgress through to the executor + brackets each phase with phase_start/phase_done', async () => {
     const events: ProgressEvent[] = [];
 
     await collectEvidence({
@@ -40,7 +40,18 @@ describe('collectEvidence', () => {
       onProgress: (e) => events.push(e),
     });
 
-    expect(events.map((e) => e.type)).toEqual(['query_start', 'query_ok']);
+    // The SOQL phase emits phase_start, then per-query events, then phase_done.
+    const types = events.map((e) => e.type);
+    expect(types[0]).toBe('phase_start');
+    expect(types).toContain('query_start');
+    expect(types).toContain('query_ok');
+    expect(types[types.length - 1]).toBe('phase_done');
+    // phase_start carries the source identifier for consumer rendering.
+    const phaseStart = events.find((e) => e.type === 'phase_start');
+    expect(phaseStart && 'source' in phaseStart ? phaseStart.source : undefined).toBe('soql');
+    // phase_done carries a non-negative duration.
+    const phaseDone = events.find((e) => e.type === 'phase_done');
+    expect(phaseDone && 'durationMs' in phaseDone ? phaseDone.durationMs >= 0 : false).toBe(true);
   });
 
   it('returns an empty bundle when onlySources excludes "soql"', async () => {

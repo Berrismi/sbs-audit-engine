@@ -87,7 +87,7 @@ describe('runQuestionnaire — answer collection by question kind', () => {
     });
     const prompts = makeStubAdapter({ select: ['yes', 'no'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(answers).toEqual<AnswerSet>({
       'Q-ACS-001': { kind: 'boolean', value: true },
@@ -110,7 +110,7 @@ describe('runQuestionnaire — answer collection by question kind', () => {
     });
     const prompts = makeStubAdapter({ select: ['__hm_idk__'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(answers).toEqual<AnswerSet>({ 'Q-ACS-001': { kind: 'idk' } });
   });
@@ -134,7 +134,7 @@ describe('runQuestionnaire — answer collection by question kind', () => {
     });
     const prompts = makeStubAdapter({ select: ['enterprise'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(answers).toEqual<AnswerSet>({
       'Q-PROFILE-001': { kind: 'choice', value: 'enterprise' },
@@ -160,7 +160,7 @@ describe('runQuestionnaire — answer collection by question kind', () => {
     });
     const prompts = makeStubAdapter({ checkbox: [['hipaa', 'soc2']] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(answers).toEqual<AnswerSet>({
       'Q-PROFILE-003': { kind: 'multi_choice', values: ['hipaa', 'soc2'] },
@@ -182,7 +182,7 @@ describe('runQuestionnaire — answer collection by question kind', () => {
     });
     const prompts = makeStubAdapter({ input: ['Healthcare SaaS'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(answers).toEqual<AnswerSet>({
       'Q-PROFILE-002': { kind: 'free_text', value: 'Healthcare SaaS' },
@@ -227,7 +227,7 @@ describe('runQuestionnaire — skip-rule integration', () => {
     // skip rule fires once Q-SCOPE-CPORTAL=no is recorded.
     const prompts = makeStubAdapter({ select: ['no'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(Object.keys(answers)).toEqual(['Q-SCOPE-CPORTAL']);
     expect(answers['Q-SCOPE-CPORTAL']).toEqual({ kind: 'boolean', value: false });
@@ -267,7 +267,7 @@ describe('runQuestionnaire — skip-rule integration', () => {
     });
     const prompts = makeStubAdapter({ select: ['yes', 'yes'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(answers).toEqual<AnswerSet>({
       'Q-SCOPE-CPORTAL': { kind: 'boolean', value: true },
@@ -297,7 +297,7 @@ describe('runQuestionnaire — section ordering and chrome', () => {
     });
     const prompts = makeStubAdapter({ select: ['yes'] });
 
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
 
     expect(Object.keys(answers)).toEqual(['Q-ACS-001']);
   });
@@ -342,6 +342,7 @@ describe('runQuestionnaire — section ordering and chrome', () => {
       registry,
       prompts,
       log: (line) => lines.push(line),
+      skipReview: true,
     });
 
     expect(Object.keys(answers)).toEqual(['Q-A', 'Q-B', 'Q-C']);
@@ -365,7 +366,7 @@ describe('runQuestionnaire — allowIdk=false coverage', () => {
       ],
     });
     const prompts = makeStubAdapter({ select: ['no'] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-PROFILE-X': { kind: 'boolean', value: false } });
   });
 
@@ -384,7 +385,7 @@ describe('runQuestionnaire — allowIdk=false coverage', () => {
       ],
     });
     const prompts = makeStubAdapter({ select: ['mid'] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-PROFILE-001': { kind: 'choice', value: 'mid' } });
   });
 
@@ -403,7 +404,7 @@ describe('runQuestionnaire — allowIdk=false coverage', () => {
       ],
     });
     const prompts = makeStubAdapter({ select: ['0'] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-NR': { kind: 'numeric_range', value: '0' } });
   });
 
@@ -422,7 +423,7 @@ describe('runQuestionnaire — allowIdk=false coverage', () => {
       ],
     });
     const prompts = makeStubAdapter({ checkbox: [['a']] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-MC': { kind: 'multi_choice', values: ['a'] } });
   });
 });
@@ -446,7 +447,7 @@ describe('runQuestionnaire — multi_choice IDK semantics', () => {
       ],
     });
     const prompts = makeStubAdapter({ checkbox: [['__hm_idk__']] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-MC': { kind: 'idk' } });
   });
 
@@ -468,7 +469,7 @@ describe('runQuestionnaire — multi_choice IDK semantics', () => {
       ],
     });
     const prompts = makeStubAdapter({ checkbox: [['a', '__hm_idk__']] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-MC': { kind: 'multi_choice', values: ['a'] } });
   });
 });
@@ -488,13 +489,16 @@ describe('runQuestionnaire — free_text edge cases', () => {
       ],
     });
     const prompts = makeStubAdapter({ input: ['   '] });
-    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {}, skipReview: true });
     expect(answers).toEqual<AnswerSet>({ 'Q-FT': { kind: 'idk' } });
   });
 });
 
-describe('runQuestionnaire — helpText surfaces as description', () => {
-  it('passes helpText through to the adapter as `description`', async () => {
+describe('runQuestionnaire — helpText surfaces as inline log', () => {
+  it('logs the helpText as an inline hint before the prompt fires', async () => {
+    // @inquirer v5 dropped the top-level `description` option, so we surface
+    // helpText by logging it ourselves before invoking the prompt. The test
+    // asserts the log line lands ahead of the prompt call.
     const registry = makeRegistry({
       questions: [
         {
@@ -509,16 +513,415 @@ describe('runQuestionnaire — helpText surfaces as description', () => {
         },
       ],
     });
-    let received: { description?: string } | undefined;
+    const lines: string[] = [];
+    let promptCalledAfterHelp = false;
     const adapter: PromptAdapter = {
-      select: async (args) => {
-        received = args;
+      select: async () => {
+        promptCalledAfterHelp = lines.some((l) =>
+          l.includes('Supplemental guidance for the operator.'),
+        );
         return 'a';
       },
       checkbox: async () => [],
       input: async () => '',
     };
-    await runQuestionnaire({ registry, prompts: adapter, log: () => {} });
-    expect(received?.description).toBe('Supplemental guidance for the operator.');
+    await runQuestionnaire({
+      registry,
+      prompts: adapter,
+      log: (line) => lines.push(line),
+      skipReview: true,
+    });
+    expect(promptCalledAfterHelp).toBe(true);
+    expect(lines.some((l) => l.includes('Supplemental guidance for the operator.'))).toBe(true);
+  });
+});
+
+describe('runQuestionnaire — review loop (Tier 3)', () => {
+  it('submits immediately when the operator picks Submit on the review menu', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-ACS-001',
+          section: 'ACS',
+          controlId: 'SBS-ACS-001',
+          text: 'is permission model written?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+    });
+    // 1 select for the question itself, 1 select for the review menu (submit).
+    const prompts = makeStubAdapter({ select: ['yes', '__hm_submit__'] });
+
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-ACS-001': { kind: 'boolean', value: true },
+    });
+  });
+
+  it('lets the operator edit an answer in review and reflects the new value', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-ACS-001',
+          section: 'ACS',
+          controlId: 'SBS-ACS-001',
+          text: 'is permission model written?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+    });
+    // Q-ACS-001 first answer: yes. Review menu: pick Q-ACS-001 (edit). Re-ask: no.
+    // Review menu again: submit.
+    const prompts = makeStubAdapter({
+      select: ['yes', 'Q-ACS-001', 'no', '__hm_submit__'],
+    });
+
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-ACS-001': { kind: 'boolean', value: false },
+    });
+  });
+
+  it('asks newly-visible questions before re-showing the review when an edit changes skip rules', async () => {
+    // Scope question Q-SCOPE controls whether Q-CPORTAL is visible.
+    // Initial answer: scope = no → Q-CPORTAL skipped → review shows only scope.
+    // Edit scope → yes → Q-CPORTAL is now visible but unanswered → runner asks
+    // it before showing review again → submit.
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-SCOPE',
+          section: 'profile',
+          controlId: null,
+          text: 'do you use portals?',
+          allowIdk: false,
+          kind: 'boolean',
+        },
+        {
+          id: 'Q-CPORTAL-001',
+          section: 'CPORTAL',
+          controlId: 'SBS-CPORTAL-001',
+          text: 'portal apex reviewed?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+      skipRules: [
+        {
+          id: 'rule-cportal',
+          appliesTo: ['Q-CPORTAL-001'],
+          decide: (a) =>
+            a['Q-SCOPE']?.kind === 'boolean' && a['Q-SCOPE'].value ? 'show' : 'skip_inapplicable',
+          reason: 'no portals',
+          naExplanation: 'No portals in scope.',
+        },
+      ],
+    });
+    // Initial: Q-SCOPE=no → no Q-CPORTAL ask.
+    // Review menu: edit Q-SCOPE.
+    // Re-ask Q-SCOPE: yes.
+    // Q-CPORTAL-001 now visible — runner asks it: yes.
+    // Review menu again: submit.
+    const prompts = makeStubAdapter({
+      select: ['no', 'Q-SCOPE', 'yes', 'yes', '__hm_submit__'],
+    });
+
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-SCOPE': { kind: 'boolean', value: true },
+      'Q-CPORTAL-001': { kind: 'boolean', value: true },
+    });
+  });
+
+  it('drops answers for questions that become hidden after an edit', async () => {
+    // Initial: scope = yes → Q-CPORTAL visible and answered.
+    // Edit scope → no → Q-CPORTAL now hidden → its answer is dropped.
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-SCOPE',
+          section: 'profile',
+          controlId: null,
+          text: 'do you use portals?',
+          allowIdk: false,
+          kind: 'boolean',
+        },
+        {
+          id: 'Q-CPORTAL-001',
+          section: 'CPORTAL',
+          controlId: 'SBS-CPORTAL-001',
+          text: 'portal apex reviewed?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+      skipRules: [
+        {
+          id: 'rule-cportal',
+          appliesTo: ['Q-CPORTAL-001'],
+          decide: (a) =>
+            a['Q-SCOPE']?.kind === 'boolean' && a['Q-SCOPE'].value ? 'show' : 'skip_inapplicable',
+          reason: 'no portals',
+          naExplanation: 'No portals in scope.',
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({
+      select: ['yes', 'no', 'Q-SCOPE', 'no', '__hm_submit__'],
+    });
+
+    const answers = await runQuestionnaire({ registry, prompts, log: () => {} });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-SCOPE': { kind: 'boolean', value: false },
+    });
+    expect(answers['Q-CPORTAL-001']).toBeUndefined();
+  });
+});
+
+describe('runQuestionnaire — "None of these" exclusivity (Tier 2b)', () => {
+  it('re-asks when the operator selects "None of these" together with other options', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-REGS',
+          section: 'profile',
+          controlId: null,
+          text: 'regs?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [
+            { value: 'hipaa', label: 'HIPAA' },
+            { value: 'soc2', label: 'SOC 2' },
+            { value: 'none', label: 'None of these' },
+          ],
+        },
+      ],
+    });
+    const warnLines: string[] = [];
+    // First call: bad combination (none + hipaa). Second call: just hipaa.
+    const prompts = makeStubAdapter({
+      checkbox: [['none', 'hipaa'], ['hipaa']],
+    });
+
+    const answers = await runQuestionnaire({
+      registry,
+      prompts,
+      log: (l) => warnLines.push(l),
+      skipReview: true,
+    });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-REGS': { kind: 'multi_choice', values: ['hipaa'] },
+    });
+    expect(warnLines.some((l) => l.includes('exclusive'))).toBe(true);
+  });
+
+  it('accepts "None of these" alone', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-REGS',
+          section: 'profile',
+          controlId: null,
+          text: 'regs?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [
+            { value: 'hipaa', label: 'HIPAA' },
+            { value: 'none', label: 'None of these' },
+          ],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ checkbox: [['none']] });
+
+    const answers = await runQuestionnaire({
+      registry,
+      prompts,
+      log: () => {},
+      skipReview: true,
+    });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-REGS': { kind: 'multi_choice', values: ['none'] },
+    });
+  });
+
+  it('does not enforce exclusivity for questions without a "none" option', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-FRUITS',
+          section: 'profile',
+          controlId: null,
+          text: 'fruits?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [
+            { value: 'apple', label: 'Apple' },
+            { value: 'banana', label: 'Banana' },
+          ],
+        },
+      ],
+    });
+    const prompts = makeStubAdapter({ checkbox: [['apple', 'banana']] });
+
+    const answers = await runQuestionnaire({
+      registry,
+      prompts,
+      log: () => {},
+      skipReview: true,
+    });
+
+    expect(answers).toEqual<AnswerSet>({
+      'Q-FRUITS': { kind: 'multi_choice', values: ['apple', 'banana'] },
+    });
+  });
+});
+
+describe('runQuestionnaire — review summary covers every answer kind', () => {
+  it('renders one summary line per visible question with the correct formatted answer', async () => {
+    // Exercises summarizeAnswer for boolean / idk / choice / multi_choice /
+    // numeric_range / free_text — the display logic the review screen relies on.
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-BOOL',
+          section: 'profile',
+          controlId: null,
+          text: 'boolean Q?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+        {
+          id: 'Q-CHOICE',
+          section: 'profile',
+          controlId: null,
+          text: 'choice Q?',
+          allowIdk: false,
+          kind: 'choice',
+          options: [
+            { value: 'a', label: 'Option A' },
+            { value: 'b', label: 'Option B' },
+          ],
+        },
+        {
+          id: 'Q-MULTI',
+          section: 'profile',
+          controlId: null,
+          text: 'multi Q?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [
+            { value: 'hipaa', label: 'HIPAA' },
+            { value: 'soc2', label: 'SOC 2' },
+          ],
+        },
+        {
+          id: 'Q-RANGE',
+          section: 'profile',
+          controlId: null,
+          text: 'range Q?',
+          allowIdk: false,
+          kind: 'numeric_range',
+          options: [
+            { value: 'small', label: 'Small (<100)' },
+            { value: 'large', label: 'Large (1000+)' },
+          ],
+        },
+        {
+          id: 'Q-TEXT',
+          section: 'profile',
+          controlId: null,
+          text: 'text Q?',
+          allowIdk: false,
+          kind: 'free_text',
+        },
+        {
+          id: 'Q-IDK',
+          section: 'profile',
+          controlId: 'SBS-X',
+          text: 'idk Q?',
+          allowIdk: true,
+          kind: 'boolean',
+        },
+      ],
+    });
+    const lines: string[] = [];
+    // Five linear-walk answers + idk + Submit. Order: bool, choice, multi,
+    // range, text, idk, then submit on the review menu.
+    const prompts = makeStubAdapter({
+      select: ['yes', 'a', 'small', '__hm_idk__', '__hm_submit__'],
+      checkbox: [['hipaa', 'soc2']],
+      input: ['Healthcare SaaS'],
+    });
+
+    const answers = await runQuestionnaire({
+      registry,
+      prompts,
+      log: (l) => lines.push(l),
+    });
+
+    // Assert collected answers cover every kind for downstream scoring.
+    expect(answers['Q-BOOL']).toEqual({ kind: 'boolean', value: true });
+    expect(answers['Q-CHOICE']).toEqual({ kind: 'choice', value: 'a' });
+    expect(answers['Q-MULTI']).toEqual({ kind: 'multi_choice', values: ['hipaa', 'soc2'] });
+    expect(answers['Q-RANGE']).toEqual({ kind: 'numeric_range', value: 'small' });
+    expect(answers['Q-TEXT']).toEqual({ kind: 'free_text', value: 'Healthcare SaaS' });
+    expect(answers['Q-IDK']).toEqual({ kind: 'idk' });
+
+    // Assert the review summary rendered each kind correctly via summarizeAnswer.
+    const summary = lines.join('\n');
+    expect(summary).toContain('→ Yes');
+    expect(summary).toContain('→ Option A');
+    expect(summary).toContain('→ HIPAA, SOC 2');
+    expect(summary).toContain('→ Small (<100)');
+    expect(summary).toContain('→ Healthcare SaaS');
+    expect(summary).toContain("→ I don't know");
+  });
+
+  it('summarizes empty multi_choice as "(none selected)" and empty free_text as "(empty)"', async () => {
+    const registry = makeRegistry({
+      questions: [
+        {
+          id: 'Q-MULTI-EMPTY',
+          section: 'profile',
+          controlId: null,
+          text: 'multi empty?',
+          allowIdk: false,
+          kind: 'multi_choice',
+          options: [{ value: 'x', label: 'X' }],
+        },
+        {
+          id: 'Q-TEXT-EMPTY',
+          section: 'profile',
+          controlId: null,
+          text: 'text empty?',
+          allowIdk: true,
+          kind: 'free_text',
+        },
+      ],
+    });
+    const lines: string[] = [];
+    // Empty multi-select + empty free-text-with-IDK-allowed (becomes idk).
+    // Then submit.
+    const prompts = makeStubAdapter({
+      checkbox: [[]],
+      input: ['   '],
+      select: ['__hm_submit__'],
+    });
+
+    await runQuestionnaire({ registry, prompts, log: (l) => lines.push(l) });
+
+    const summary = lines.join('\n');
+    expect(summary).toContain('→ (none selected)');
+    // Empty free-text with allowIdk=true becomes idk, not "(empty)".
+    expect(summary).toContain("→ I don't know");
   });
 });

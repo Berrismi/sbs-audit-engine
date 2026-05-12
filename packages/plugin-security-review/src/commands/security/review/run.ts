@@ -51,7 +51,7 @@ import { runPreflight } from '../../../lib/preflight';
 import { makeExecaSfRunner } from '../../../lib/sf-runner';
 import { loadCredentials } from '../../../lib/consultant-key';
 import { uploadBundle } from '../../../lib/upload-client';
-import { clickableLink } from '../../../lib/clickable-link';
+import { clickableFilePath, clickableLink } from '../../../lib/clickable-link';
 import { makeDebugLogger, makeScanStartedPayload } from '../../../lib/debug-logger';
 import { renderHtml } from '../../../lib/render-html';
 import { renderMarkdown } from '../../../lib/render-markdown';
@@ -161,6 +161,8 @@ required, no upload, no email.
     // unset; never logs row data, credentials, or PII regardless.
     const outputDir = resolve(flags['output-dir']);
     await mkdir(outputDir, { recursive: true });
+    this.log(`· Reports will be written to: ${clickableFilePath(outputDir)}`);
+    this.log('  (use --output-dir <path> to change the location)');
     const debug = makeDebugLogger({ enabled: flags.debug, outputDir });
     if (debug.enabled) {
       this.log(`· --debug on; writing diagnostic log to ${debug.path}`);
@@ -273,6 +275,42 @@ required, no upload, no email.
     )[] = ['soql', 'health_check_api', 'limits_rest_api', 'metadata_api'];
     if (flags['include-code-analyzer']) onlySources.push('code_analyzer');
 
+    // Per-probe spinner for the metadata_api phase. Probes can run 30-90+
+    // seconds on real orgs (chunked metadata.read() calls); without ongoing
+    // activity feedback the CLI appears frozen. The spinner overwrites the
+    // same line with elapsed-time updates while a probe runs, then yields
+    // back to normal scrolling output when the probe completes.
+    //
+    // TTY-gated: in non-TTY contexts (CI, log capture, --json mode) we just
+    // log the start line once. No carriage-return tricks where they would
+    // render as garbage.
+    const spinner: {
+      interval: NodeJS.Timeout | null;
+      text: string;
+      startedAt: number;
+    } = { interval: null, text: '', startedAt: 0 };
+    const stopSpinner = (): void => {
+      if (spinner.interval) {
+        clearInterval(spinner.interval);
+        spinner.interval = null;
+        if (process.stdout.isTTY) process.stdout.write('\r\x1b[2K');
+      }
+    };
+    const startSpinner = (initialText: string): void => {
+      stopSpinner();
+      spinner.text = initialText;
+      spinner.startedAt = Date.now();
+      if (process.stdout.isTTY) {
+        process.stdout.write(initialText);
+        spinner.interval = setInterval(() => {
+          const elapsed = formatDuration(Date.now() - spinner.startedAt);
+          process.stdout.write(`\r\x1b[2K${initialText} — ${elapsed} elapsed`);
+        }, 1000);
+      } else {
+        this.log(initialText);
+      }
+    };
+
     const collectOpts: CollectEvidenceOptions = {
       connection,
       subjectId,
@@ -300,8 +338,49 @@ required, no upload, no email.
             query_id: event.query.id,
             reason: event.reason,
           });
-        } else {
+        } else if (event.type === 'query_start') {
           this.log(`  · ${event.query.id}`);
+        } else if (event.type === 'phase_start') {
+          this.log(`· ${formatPhaseLabel(event.source)} — running...`);
+          void debug.event('evidence', 'phase_start', { source: event.source });
+        } else if (event.type === 'phase_done') {
+          // Defensive: a probe_done event should have stopped any active
+          // spinner; clean up here too in case the phase ended without one
+          // (e.g., a probe error path).
+          stopSpinner();
+          this.log(
+            `✓ ${formatPhaseLabel(event.source)} complete (${formatDuration(event.durationMs)})`,
+          );
+          void debug.event('evidence', 'phase_done', {
+            source: event.source,
+            duration_ms: event.durationMs,
+          });
+        } else if (event.type === 'phase_skipped') {
+          void debug.event('evidence', 'phase_skipped', {
+            source: event.source,
+            reason: event.reason,
+          });
+        } else if (event.type === 'metadata_probe_start') {
+          // Replace the static "... done" pattern with a live spinner that
+          // shows elapsed time. The bare TTY case (which most users hit) gets
+          // an overwriting line; non-TTY logs the start line once.
+          startSpinner(`  · ${event.probeId} (${event.index + 1}/${event.total})`);
+          void debug.event('evidence', 'metadata_probe_start', {
+            probe_id: event.probeId,
+            probe_type: event.probeType,
+            index: event.index,
+            total: event.total,
+          });
+        } else if (event.type === 'metadata_probe_done') {
+          stopSpinner();
+          this.log(
+            `  ✓ ${event.probeId} (${event.recordsRetrieved} record${event.recordsRetrieved === 1 ? '' : 's'}, ${formatDuration(event.durationMs)})`,
+          );
+          void debug.event('evidence', 'metadata_probe_done', {
+            probe_id: event.probeId,
+            duration_ms: event.durationMs,
+            records_retrieved: event.recordsRetrieved,
+          });
         }
       },
     };
@@ -367,14 +446,19 @@ required, no upload, no email.
     const generatedAt = new Date().toISOString();
     await writeFile(findingsPath, JSON.stringify(bundle, null, 2));
     await writeFile(reportPath, JSON.stringify(report, null, 2));
-    await writeFile(reportMarkdownPath, renderMarkdown(report, { generatedAt, alias }));
-    await writeFile(reportHtmlPath, renderHtml(report, { generatedAt, alias }));
-    this.log(`✓ findings.json written to ${findingsPath}`);
+    const renderOpts = {
+      generatedAt,
+      alias,
+      ...(answers ? { answers, registry: REGISTRY } : {}),
+    };
+    await writeFile(reportMarkdownPath, renderMarkdown(report, renderOpts));
+    await writeFile(reportHtmlPath, renderHtml(report, renderOpts));
+    this.log(`✓ findings.json written to ${clickableFilePath(findingsPath)}`);
     this.log(
-      `✓ report.json written to ${reportPath}  (overall: ${report.overall_score}/100, grade ${report.risk_grade})`,
+      `✓ report.json written to ${clickableFilePath(reportPath)}  (overall: ${report.overall_score}/100, grade ${report.risk_grade})`,
     );
-    this.log(`✓ report.md written to ${reportMarkdownPath}`);
-    this.log(`✓ report.html written to ${reportHtmlPath}`);
+    this.log(`✓ report.md written to ${clickableFilePath(reportMarkdownPath)}`);
+    this.log(`✓ report.html written to ${clickableFilePath(reportHtmlPath)}`);
     await debug.event('emit', 'done');
 
     // 6. Upload if in upload mode.
@@ -420,4 +504,29 @@ required, no upload, no email.
       out.consultantPreviewUrl = uploadResult.consultantPreviewUrl;
     return out;
   }
+}
+
+function formatPhaseLabel(
+  source: 'soql' | 'health_check_api' | 'limits_rest_api' | 'metadata_api' | 'code_analyzer',
+): string {
+  switch (source) {
+    case 'soql':
+      return 'SOQL / Tooling queries';
+    case 'health_check_api':
+      return 'Health Check API';
+    case 'limits_rest_api':
+      return 'Limits REST API';
+    case 'metadata_api':
+      return 'Metadata API probes';
+    case 'code_analyzer':
+      return 'Salesforce Code Analyzer';
+  }
+}
+
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms} ms`;
+  if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
+  const m = Math.floor(ms / 60_000);
+  const s = Math.round((ms % 60_000) / 1000);
+  return `${m}m ${s}s`;
 }
