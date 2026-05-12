@@ -6,10 +6,7 @@
 // paths that convert raw option values into their display labels.
 
 import { describe, expect, it } from 'vitest';
-import {
-  formatAnswer,
-  formatRespondentAnswers,
-} from '../../src/lib/format-respondent-answer';
+import { formatAnswer, formatRespondentAnswers } from '../../src/lib/format-respondent-answer';
 import type {
   Answer,
   Question,
