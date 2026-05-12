@@ -35,9 +35,9 @@ const SUPPORTED_TERM_PROGRAMS = new Set([
 function detectByEnvVar(): boolean {
   return Boolean(
     process.env.KITTY_WINDOW_ID ||
-      process.env.WT_SESSION ||
-      process.env.ALACRITTY_LOG ||
-      process.env.WEZTERM_EXECUTABLE,
+    process.env.WT_SESSION ||
+    process.env.ALACRITTY_LOG ||
+    process.env.WEZTERM_EXECUTABLE,
   );
 }
 

@@ -160,7 +160,13 @@ export type ProgressEvent =
   | { type: 'query_ok'; query: SoqlQueryDef; rowCount: number }
   | { type: 'query_skipped'; query: SoqlQueryDef; reason: SkipReason }
   | { type: 'query_failed'; query: SoqlQueryDef; error: { message: string } }
-  | { type: 'metadata_probe_start'; probeId: string; probeType: string; index: number; total: number }
+  | {
+      type: 'metadata_probe_start';
+      probeId: string;
+      probeType: string;
+      index: number;
+      total: number;
+    }
   | {
       type: 'metadata_probe_done';
       probeId: string;

@@ -296,7 +296,7 @@ describe('renderHtml — respondent answer (Tier 1a)', () => {
     expect(out).toContain('Respondent answer');
     expect(out).toContain('respondent-answers');
     expect(out).toContain('Have you confirmed your application logs do not contain passwords?');
-    expect(out).toContain("I don&#39;t know");
+    expect(out).toContain('I don&#39;t know');
   });
 
   it('formats boolean answers as Yes / No, not raw values', () => {

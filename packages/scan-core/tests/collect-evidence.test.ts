@@ -51,9 +51,7 @@ describe('collectEvidence', () => {
     expect(phaseStart && 'source' in phaseStart ? phaseStart.source : undefined).toBe('soql');
     // phase_done carries a non-negative duration.
     const phaseDone = events.find((e) => e.type === 'phase_done');
-    expect(
-      phaseDone && 'durationMs' in phaseDone ? phaseDone.durationMs >= 0 : false,
-    ).toBe(true);
+    expect(phaseDone && 'durationMs' in phaseDone ? phaseDone.durationMs >= 0 : false).toBe(true);
   });
 
   it('returns an empty bundle when onlySources excludes "soql"', async () => {

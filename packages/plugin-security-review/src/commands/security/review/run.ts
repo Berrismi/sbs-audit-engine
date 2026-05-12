@@ -348,7 +348,9 @@ required, no upload, no email.
           // spinner; clean up here too in case the phase ended without one
           // (e.g., a probe error path).
           stopSpinner();
-          this.log(`✓ ${formatPhaseLabel(event.source)} complete (${formatDuration(event.durationMs)})`);
+          this.log(
+            `✓ ${formatPhaseLabel(event.source)} complete (${formatDuration(event.durationMs)})`,
+          );
           void debug.event('evidence', 'phase_done', {
             source: event.source,
             duration_ms: event.durationMs,
