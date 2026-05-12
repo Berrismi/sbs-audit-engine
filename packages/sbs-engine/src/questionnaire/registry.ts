@@ -431,9 +431,9 @@ const CONTROL_QUESTIONS: readonly Question[] = [
     id: 'Q-CODE-004',
     section: 'CODE',
     controlId: 'SBS-CODE-004',
-    text: 'Are you sure your application logs never contain passwords, tokens, or sensitive personal data?',
+    text: 'Have you confirmed your application logs do not contain passwords, tokens, or sensitive personal data?',
     helpText:
-      "Sensitive data leaking into logs is one of the most common audit findings. The control asks whether you've actively confirmed this, not just hoped.",
+      "Sensitive data leaking into logs is one of the most common audit findings. Answer Yes only if you've actively reviewed log output (e.g., searched recent debug logs for known secrets). If you haven't checked, or you've found partial leakage you haven't fully fixed, answer No.",
     allowIdk: true,
     kind: 'boolean',
   },
@@ -670,7 +670,7 @@ const CONTROL_QUESTIONS: readonly Question[] = [
     controlId: 'SBS-OAUTH-004',
     text: 'For every high-risk Connected App vendor, do you keep their security documentation on file (and explicitly note when something is missing)?',
     helpText:
-      'SOC 2 reports, pentest summaries, etc. The "explicitly note when missing" part matters — silence ≠ approval.',
+      'Security documentation means anything an auditor could ask for: SOC 2 report, ISO 27001 cert, pentest summary, vendor security questionnaire response, public trust-page URL. "On file" means tracked somewhere you can point to — saved PDF in shared storage, a row in a vendor inventory, a link in a wiki page — not "I think I saw it once." The "explicitly note when missing" part matters — silence ≠ approval.',
     allowIdk: true,
     kind: 'boolean',
   },
@@ -835,7 +835,7 @@ const KNOWN_DEFERRED_CONTROLS: readonly string[] = [];
 })();
 
 export const REGISTRY: QuestionnaireRegistry = {
-  version: '2026.05.02-1',
+  version: '2026.05.11-1',
   sbsVersion: controls.sbs_version,
   sections: SECTIONS,
   questions: ALL_QUESTIONS,
