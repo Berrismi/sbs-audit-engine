@@ -24,23 +24,40 @@ import type {
   EvidenceSource,
   ScoredReport,
 } from '@hellomavens/security-review-for-salesforce-engine';
+import type {
+  AnswerSet,
+  QuestionnaireRegistry,
+} from '@hellomavens/security-review-for-salesforce-engine/questionnaire';
+import { formatRespondentAnswers } from './format-respondent-answer';
 
 export interface RenderHtmlOptions {
   /** ISO timestamp of when the scan ran. Defaults to current time. */
   generatedAt?: string;
   /** Target org alias the scan ran against. */
   alias?: string;
+  /**
+   * Optional pair: the respondent's questionnaire answers + the registry that
+   * captured them. When both are provided, the per-control sections render
+   * an inline "Respondent answer" row for any control backed by questionnaire
+   * evidence — much easier to self-verify than reading the canned rationale.
+   * Omit (or omit either piece) for renders where the questionnaire was
+   * skipped, e.g. `--no-questionnaire` runs.
+   */
+  answers?: AnswerSet;
+  registry?: QuestionnaireRegistry;
 }
 
 export function renderHtml(report: ScoredReport, opts: RenderHtmlOptions = {}): string {
   const generatedAt = opts.generatedAt ?? new Date().toISOString();
   const alias = opts.alias ?? 'unknown';
+  const answers = opts.answers;
+  const registry = opts.registry;
 
   const body = [
     renderHeader(generatedAt, alias),
     renderSummary(report),
     renderCategoryTable(report.by_category),
-    renderControlSections(report.control_results),
+    renderControlSections(report.control_results, answers, registry),
     renderAttribution(report),
   ].join('\n\n');
 
@@ -121,7 +138,11 @@ ${rows}
 </section>`;
 }
 
-function renderControlSections(controls: ReadonlyArray<ControlScoreResult>): string {
+function renderControlSections(
+  controls: ReadonlyArray<ControlScoreResult>,
+  answers: AnswerSet | undefined,
+  registry: QuestionnaireRegistry | undefined,
+): string {
   if (controls.length === 0) {
     return `<section><h2>By control</h2><p><em>No controls evaluated.</em></p></section>`;
   }
@@ -135,7 +156,7 @@ function renderControlSections(controls: ReadonlyArray<ControlScoreResult>): str
     .sort()
     .map(([category, list]) => {
       list.sort((a, b) => a.control_id.localeCompare(b.control_id));
-      const items = list.map(renderControl).join('\n');
+      const items = list.map((c) => renderControl(c, answers, registry)).join('\n');
       return `<section class="category-group">
   <h3>${escape(category)}</h3>
   ${items}
@@ -148,11 +169,16 @@ function renderControlSections(controls: ReadonlyArray<ControlScoreResult>): str
 </section>`;
 }
 
-function renderControl(c: ControlScoreResult): string {
+function renderControl(
+  c: ControlScoreResult,
+  answers: AnswerSet | undefined,
+  registry: QuestionnaireRegistry | undefined,
+): string {
   const evidenceList =
     c.evidence_used.length === 0
       ? 'none'
       : c.evidence_used.map((s) => escape(formatEvidenceSource(s))).join(', ');
+  const respondentRow = renderRespondentAnswerRow(c, answers, registry);
   const findingsBlock =
     c.findings.length === 0
       ? '<p class="findings empty"><em>No findings.</em></p>'
@@ -167,10 +193,34 @@ function renderControl(c: ControlScoreResult): string {
     <dt>Status</dt><dd><span class="status status-${escape(c.status)}">${escape(formatStatus(c.status))}</span></dd>
     <dt>Confidence</dt><dd>${escape(formatConfidence(c.confidence))}</dd>
     <dt>Risk tier</dt><dd>${escape(c.risk_level)} (weight ${c.weight})</dd>
-    <dt>Evidence</dt><dd>${evidenceList}</dd>
+    <dt>Evidence</dt><dd>${evidenceList}</dd>${respondentRow}
   </dl>
   ${findingsBlock}
 </article>`;
+}
+
+function renderRespondentAnswerRow(
+  c: ControlScoreResult,
+  answers: AnswerSet | undefined,
+  registry: QuestionnaireRegistry | undefined,
+): string {
+  if (!answers || !registry) return '';
+  // Show the respondent's answer whenever a questionnaire question backs this
+  // control AND an answer was recorded — even when the canonical evidence_used
+  // is something else (SOQL, Metadata API). For cli_corroborating controls,
+  // the questionnaire answer is context the user wants to see ("I said Yes;
+  // why is this still inconclusive?") — the rationale field already explains
+  // the verdict path, so showing the answer alongside is high-signal context.
+  const pairs = formatRespondentAnswers(c.control_id, answers, registry);
+  if (pairs.length === 0) return '';
+  const items = pairs
+    .map(
+      (p) =>
+        `<li><span class="respondent-question">${escape(p.questionText)}</span><br><span class="respondent-answer">${escape(p.formattedAnswer)}</span></li>`,
+    )
+    .join('');
+  return `
+    <dt>Respondent answer</dt><dd><ul class="respondent-answers">${items}</ul></dd>`;
 }
 
 function renderAttribution(report: ScoredReport): string {
@@ -339,6 +389,19 @@ dl.control-meta {
 }
 dl.control-meta dt { color: var(--muted); }
 dl.control-meta dd { margin: 0; }
+ul.respondent-answers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+ul.respondent-answers li + li { margin-top: 6px; }
+.respondent-question {
+  color: var(--muted);
+  font-size: 13px;
+}
+.respondent-answer {
+  font-weight: 600;
+}
 .status {
   display: inline-block;
   padding: 2px 8px;
