@@ -12,7 +12,7 @@ SPDX-License-Identifier: MIT
 
 ## Status
 
-**Phase 5 complete** — `0.0.0-alpha.47` on the `alpha` dist-tag.
+**Phase 5 complete** — `0.0.0-alpha.48` on the `alpha` dist-tag.
 
 Four evidence sources ship today, all wired through a single
 `collectEvidence({ connection, ... })` entrypoint:
