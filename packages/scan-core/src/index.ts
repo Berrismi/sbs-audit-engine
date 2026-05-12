@@ -35,6 +35,21 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
     source: 'soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api' | 'metadata_api',
   ): boolean => !opts.onlySources || opts.onlySources.includes(source);
 
+  const emit = opts.onProgress;
+  // Helper: time a phase, bracket it with phase_start / phase_done events
+  // so consumers can render progress between SOQL and the silent sources
+  // (health_check_api, limits_rest_api, metadata_api, code_analyzer).
+  const runPhase = async <T>(
+    source: 'soql' | 'health_check_api' | 'code_analyzer' | 'limits_rest_api' | 'metadata_api',
+    fn: () => Promise<T>,
+  ): Promise<T> => {
+    emit?.({ type: 'phase_start', source });
+    const start = Date.now();
+    const result = await fn();
+    emit?.({ type: 'phase_done', source, durationMs: Date.now() - start });
+    return result;
+  };
+
   let queryResults: QueryResult[] = [];
   let healthCheck: HealthCheckResult | undefined;
   let limits: LimitsResult | undefined;
@@ -42,27 +57,33 @@ export async function collectEvidence(opts: CollectEvidenceOptions): Promise<Sca
 
   if (sourceAllowed('soql')) {
     const queries = opts.soqlQueries ?? DEFAULT_SOQL_QUERIES;
-    queryResults = await executeSoqlBundle(opts.connection, queries, opts.onProgress);
+    queryResults = await runPhase('soql', () =>
+      executeSoqlBundle(opts.connection, queries, opts.onProgress),
+    );
   }
 
   if (sourceAllowed('health_check_api')) {
-    healthCheck = await fetchHealthCheck(opts.connection);
+    healthCheck = await runPhase('health_check_api', () => fetchHealthCheck(opts.connection));
   }
 
   if (sourceAllowed('limits_rest_api')) {
-    limits = await fetchLimits(opts.connection);
+    limits = await runPhase('limits_rest_api', () => fetchLimits(opts.connection));
   }
 
   if (sourceAllowed('metadata_api')) {
     const probes = opts.metadataProbes ?? DEFAULT_METADATA_PROBES;
     if (probes.length > 0) {
-      metadata = await fetchMetadata(opts.connection, probes);
+      metadata = await runPhase('metadata_api', () =>
+        fetchMetadata(opts.connection, probes, opts.onProgress),
+      );
+    } else {
+      emit?.({ type: 'phase_skipped', source: 'metadata_api', reason: 'no_probes_configured' });
     }
   }
 
   let codeAnalyzer: CodeAnalyzerExecution | undefined;
   if (sourceAllowed('code_analyzer') && opts.codeAnalyzer) {
-    codeAnalyzer = await runCodeAnalyzer(opts.codeAnalyzer);
+    codeAnalyzer = await runPhase('code_analyzer', () => runCodeAnalyzer(opts.codeAnalyzer!));
   }
 
   const bundle = assembleEvidenceBundle({

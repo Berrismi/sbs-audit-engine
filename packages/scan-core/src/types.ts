@@ -145,11 +145,31 @@ export type QueryResult =
  * Lifecycle events emitted by the scan executor. Subscribe via the
  * `onProgress` option to collectEvidence.
  */
+export type EvidenceSourcePhase =
+  | 'soql'
+  | 'health_check_api'
+  | 'limits_rest_api'
+  | 'metadata_api'
+  | 'code_analyzer';
+
 export type ProgressEvent =
+  | { type: 'phase_start'; source: EvidenceSourcePhase }
+  | { type: 'phase_done'; source: EvidenceSourcePhase; durationMs: number }
+  | { type: 'phase_skipped'; source: EvidenceSourcePhase; reason: string }
   | { type: 'query_start'; query: SoqlQueryDef }
   | { type: 'query_ok'; query: SoqlQueryDef; rowCount: number }
   | { type: 'query_skipped'; query: SoqlQueryDef; reason: SkipReason }
-  | { type: 'query_failed'; query: SoqlQueryDef; error: { message: string } };
+  | { type: 'query_failed'; query: SoqlQueryDef; error: { message: string } }
+  | { type: 'metadata_probe_start'; probeId: string; probeType: string; index: number; total: number }
+  | {
+      type: 'metadata_probe_done';
+      probeId: string;
+      probeType: string;
+      index: number;
+      total: number;
+      durationMs: number;
+      recordsRetrieved: number;
+    };
 
 export type ProgressListener = (event: ProgressEvent) => void;
 
